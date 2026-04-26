@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X, Mail } from "lucide-react";
-import { nav, site } from "@/i18n/content";
+import { nav } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const { settings } = useSiteSettings();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -46,14 +48,14 @@ export function Header() {
                 }`
               }
             >
-              {item.label.ar}
+              {item.label}
             </NavLink>
           ))}
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
           <Button asChild variant="default" size="sm" className="bg-primary hover:bg-primary-deep">
-            <a href={`mailto:${site.email}`}>
+            <a href={`mailto:${settings.contact_email}`}>
               <Mail className="h-4 w-4" />
               تواصل
             </a>
@@ -83,12 +85,12 @@ export function Header() {
                   }`
                 }
               >
-                {item.label.ar}
+                {item.label}
               </NavLink>
             ))}
             <div className="flex items-center justify-end pt-3 mt-2 border-t border-border">
               <Button asChild size="sm">
-                <a href={`mailto:${site.email}`}>
+                <a href={`mailto:${settings.contact_email}`}>
                   <Mail className="h-4 w-4" />
                   تواصل
                 </a>

@@ -469,6 +469,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      bootstrap_first_super_admin: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
       can_publish: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
@@ -478,6 +482,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      public_has_any_super_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       app_role: "super_admin" | "admin" | "editor" | "media_manager"

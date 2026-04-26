@@ -47,8 +47,8 @@ export default function VideosPage() {
 
   return (
     <SiteLayout>
-      <PageHero eyebrow={{ ar: "المرئيات", it: "" }} title={{ ar: "المرئيات والبث المباشر", it: "" }}
-        description={{ ar: "محاضرات ولقاءات وبثوث مباشرة من فعاليات الاتحاد.", it: "" }} />
+      <PageHero eyebrow="المرئيات" title="المرئيات والبث المباشر"
+        description="محاضرات ولقاءات وبثوث مباشرة من فعاليات الاتحاد." />
 
       <section className="section-padding">
         <div className="container-wide">

@@ -59,8 +59,8 @@ export default function ContactPage() {
 
   return (
     <SiteLayout>
-      <PageHero eyebrow={{ ar: "تواصل", it: "" }} title={{ ar: "تواصل معنا", it: "" }}
-        description={{ ar: "يسعدنا تواصلكم لأي استفسار أو اقتراح أو طلب تعاون.", it: "" }} />
+      <PageHero eyebrow="تواصل" title="تواصل معنا"
+        description="يسعدنا تواصلكم لأي استفسار أو اقتراح أو طلب تعاون." />
 
       <section className="section-padding">
         <div className="container-narrow grid lg:grid-cols-[1fr,1.5fr] gap-10">

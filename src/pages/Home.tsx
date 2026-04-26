@@ -1,16 +1,19 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  ArrowLeft, Calendar, BookOpen, Newspaper, PlayCircle,
+  ArrowLeft, Calendar, BookOpen, Newspaper, PlayCircle, Radio,
   Scale, GitFork, ShieldCheck, Building2, HeartHandshake, Megaphone,
-  GraduationCap, Tv, Users, Sparkles, MapPin, Mail, Facebook,
+  GraduationCap, Tv, Users, Sparkles, MapPin, Mail, Facebook, Loader2,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import {
-  hero, about, vision, mission, values, workAreas,
-  sampleNews, sampleEvents, ui, site,
+  hero, about, vision, mission, values, workAreas, ui, site,
 } from "@/i18n/content";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
+import logoDefault from "@/assets/logo.png";
+import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 
 const iconMap: Record<string, any> = {
   Scale, GitFork, BookOpen, ShieldCheck, Building2, HeartHandshake,
@@ -18,6 +21,45 @@ const iconMap: Record<string, any> = {
 };
 
 export default function Home() {
+  const { settings } = useSiteSettings();
+  const logo = settings.logo_url || logoDefault;
+
+  const [news, setNews] = useState<any[] | null>(null);
+  const [events, setEvents] = useState<any[] | null>(null);
+  const [library, setLibrary] = useState<any[] | null>(null);
+  const [videos, setVideos] = useState<any[] | null>(null);
+  const [liveNow, setLiveNow] = useState<any | null>(null);
+
+  useEffect(() => {
+    document.title = `${settings.seo_title || site.name.ar} — ${settings.site_slogan || site.slogan.ar}`;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta && settings.seo_description) meta.setAttribute("content", settings.seo_description);
+  }, [settings]);
+
+  useEffect(() => {
+    (async () => {
+      const [newsR, eventsR, libR, vidsR] = await Promise.all([
+        supabase.from("news_posts").select("id,slug,title,excerpt,cover_image,category,publisher_source,published_at,created_at")
+          .eq("status", "published").order("published_at", { ascending: false, nullsFirst: false }).limit(3),
+        supabase.from("events").select("id,slug,title,description,cover_image,event_type,start_datetime,location,status,organizer_source")
+          .eq("publish_status", "published").eq("status", "upcoming").order("start_datetime", { ascending: true }).limit(3),
+        supabase.from("library_items").select("id,slug,title,category,cover_image,publisher_source,description")
+          .eq("status", "published").order("is_featured", { ascending: false })
+          .order("published_at", { ascending: false, nullsFirst: false }).limit(4),
+        supabase.from("videos").select("id,slug,title,thumbnail,video_url,embed_url,scheduled_at,created_at,type,live_status,category")
+          .eq("status", "published").order("scheduled_at", { ascending: false, nullsFirst: false })
+          .order("created_at", { ascending: false }).limit(4),
+      ]);
+      setNews(newsR.data ?? []);
+      setEvents(eventsR.data ?? []);
+      setLibrary(libR.data ?? []);
+      const vids = vidsR.data ?? [];
+      const live = vids.find((v: any) => v.type === "live" && v.live_status === "live");
+      setLiveNow(live ?? null);
+      setVideos(vids.filter((v: any) => v !== live));
+    })();
+  }, []);
+
   return (
     <SiteLayout>
       {/* HERO */}
@@ -32,25 +74,25 @@ export default function Home() {
               <Sparkles className="h-3.5 w-3.5" />
               مؤسسة إسلامية دعوية علمية
             </div>
-            <h1 className="heading-display mb-5">{hero.title.ar}</h1>
+            <h1 className="heading-display mb-5">{settings.site_name || hero.title}</h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90 mb-3 font-normal">
-              {hero.subtitle.ar}
+              {settings.site_slogan || hero.subtitle}
             </p>
             <p className="text-base md:text-lg text-primary-foreground/80 max-w-2xl leading-relaxed">
-              {hero.description.ar}
+              {hero.description}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
                 <Link to={hero.buttons.primary.href}>
-                  {hero.buttons.primary.ar}
+                  {hero.buttons.primary.label}
                   <ArrowLeft className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground">
-                <Link to={hero.buttons.secondary.href}>{hero.buttons.secondary.ar}</Link>
+                <Link to={hero.buttons.secondary.href}>{hero.buttons.secondary.label}</Link>
               </Button>
               <Button asChild size="lg" variant="ghost" className="text-primary-foreground hover:bg-white/10">
-                <Link to={hero.buttons.tertiary.href}>{hero.buttons.tertiary.ar}</Link>
+                <Link to={hero.buttons.tertiary.href}>{hero.buttons.tertiary.label}</Link>
               </Button>
             </div>
           </div>
@@ -59,7 +101,7 @@ export default function Home() {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-primary-glow/30 to-crimson/20 blur-3xl scale-110" />
               <div className="relative bg-white/95 rounded-[2rem] p-10 shadow-elegant">
-                <img src={logo} alt={site.name.ar} className="w-72 h-72 object-contain" />
+                <img src={logo} alt={settings.site_name || site.name.ar} className="w-72 h-72 object-contain" />
               </div>
             </div>
           </div>
@@ -72,7 +114,7 @@ export default function Home() {
           <div>
             <span className="eyebrow">من نحن</span>
             <h2 className="heading-section mt-3 mb-5">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
-            <p className="text-muted-foreground leading-loose mb-6">{about.full.ar}</p>
+            <p className="text-muted-foreground leading-loose mb-6">{about.full}</p>
             <Button asChild variant="outline">
               <Link to="/about">
                 اقرأ المزيد عنا
@@ -112,7 +154,7 @@ export default function Home() {
                   <Sparkles className="h-6 w-6" />
                 </div>
                 <h3 className="text-2xl font-bold mb-3">رؤيتنا</h3>
-                <p className="text-muted-foreground leading-loose">{vision.ar}</p>
+                <p className="text-muted-foreground leading-loose">{vision}</p>
               </div>
             </div>
             <div className="card-elegant p-8 md:p-10 relative overflow-hidden">
@@ -122,7 +164,7 @@ export default function Home() {
                   <HeartHandshake className="h-6 w-6" />
                 </div>
                 <h3 className="text-2xl font-bold mb-3">رسالتنا</h3>
-                <p className="text-muted-foreground leading-loose">{mission.ar}</p>
+                <p className="text-muted-foreground leading-loose">{mission}</p>
               </div>
             </div>
           </div>
@@ -144,7 +186,7 @@ export default function Home() {
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-3">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="font-semibold text-sm">{v.ar}</div>
+                  <div className="font-semibold text-sm">{v.label}</div>
                 </div>
               );
             })}
@@ -152,7 +194,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* WORK AREAS — replaces homepage statistics */}
+      {/* WORK AREAS */}
       <section className="section-padding bg-gradient-soft">
         <div className="container-wide">
           <div className="text-center mb-12">
@@ -180,113 +222,164 @@ export default function Home() {
       </section>
 
       {/* LATEST NEWS */}
-      <section className="section-padding">
-        <div className="container-wide">
-          <div className="flex items-end justify-between mb-10 gap-4">
-            <div>
-              <span className="eyebrow">الأخبار</span>
-              <h2 className="heading-section mt-3">آخر الأخبار والبيانات</h2>
+      {settings.show_news_section !== false && (
+        <section className="section-padding">
+          <div className="container-wide">
+            <div className="flex items-end justify-between mb-10 gap-4">
+              <div>
+                <span className="eyebrow">الأخبار</span>
+                <h2 className="heading-section mt-3">آخر الأخبار والبيانات</h2>
+              </div>
+              <Button asChild variant="outline" className="hidden sm:inline-flex">
+                <Link to="/news">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
+              </Button>
             </div>
-            <Button asChild variant="outline" className="hidden sm:inline-flex">
-              <Link to="/news">{ui.viewAll.ar} <ArrowLeft className="h-4 w-4" /></Link>
-            </Button>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sampleNews.slice(0, 3).map((n, i) => (
-              <article key={i} className="card-elegant overflow-hidden flex flex-col">
-                <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40">
-                  <Newspaper className="h-16 w-16" />
-                </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                      {n.category.ar}
-                    </span>
-                    <span>{n.date}</span>
-                  </div>
-                  <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title.ar}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt.ar}</p>
-                  <div className="text-xs text-muted-foreground mb-3">
-                    {ui.publishedBy.ar}: <span className="font-medium text-foreground/80">{n.publisher}</span>
-                  </div>
-                  <Link to="/news" className="text-sm font-semibold text-primary inline-flex items-center gap-1.5 hover:gap-2.5 transition-all">
-                    {ui.readMore.ar} <ArrowLeft className="h-4 w-4" />
+            {news === null ? (
+              <div className="card-elegant p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
+            ) : news.length === 0 ? (
+              <div className="card-elegant p-12 text-center text-muted-foreground">
+                لا توجد أخبار منشورة حاليًا. ترقبوا المحتوى الجديد قريبًا.
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {news.map((n) => (
+                  <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
+                    <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40 overflow-hidden">
+                      {n.cover_image ? <img src={n.cover_image} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <Newspaper className="h-16 w-16" />}
+                    </div>
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
+                        <span>{formatDate(n.published_at ?? n.created_at)}</span>
+                      </div>
+                      <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
+                      {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
+                      <div className="text-xs text-muted-foreground mb-3">
+                        {ui.publishedBy}: <span className="font-medium text-foreground/80">{n.publisher_source}</span>
+                      </div>
+                      <span className="text-sm font-semibold text-primary inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                        {ui.readMore} <ArrowLeft className="h-4 w-4" />
+                      </span>
+                    </div>
                   </Link>
-                </div>
-              </article>
-            ))}
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* UPCOMING EVENTS */}
-      <section className="section-padding bg-gradient-soft">
-        <div className="container-wide">
-          <div className="flex items-end justify-between mb-10 gap-4">
-            <div>
-              <span className="eyebrow">الفعاليات</span>
-              <h2 className="heading-section mt-3">{ui.upcomingEvents.ar}</h2>
+      {settings.show_events_section !== false && (
+        <section className="section-padding bg-gradient-soft">
+          <div className="container-wide">
+            <div className="flex items-end justify-between mb-10 gap-4">
+              <div>
+                <span className="eyebrow">الفعاليات</span>
+                <h2 className="heading-section mt-3">{ui.upcomingEvents}</h2>
+              </div>
+              <Button asChild variant="outline" className="hidden sm:inline-flex">
+                <Link to="/events">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
+              </Button>
             </div>
-            <Button asChild variant="outline" className="hidden sm:inline-flex">
-              <Link to="/events">{ui.viewAll.ar} <ArrowLeft className="h-4 w-4" /></Link>
-            </Button>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {sampleEvents.filter(e => e.status === "upcoming").slice(0, 3).map((e, i) => (
-              <article key={i} className="card-elegant p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="text-center bg-primary/10 text-primary rounded-xl px-3 py-2 min-w-[64px]">
-                    <div className="text-2xl font-bold leading-none">{new Date(e.date).getDate()}</div>
-                    <div className="text-[10px] uppercase tracking-wider mt-1">
-                      {new Date(e.date).toLocaleDateString("ar-EG", { month: "short" })}
+            {events === null ? (
+              <div className="card-elegant p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
+            ) : events.length === 0 ? (
+              <div className="card-elegant p-12 text-center text-muted-foreground">
+                لا توجد فعاليات قادمة حاليًا.
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-3 gap-6">
+                {events.map((e) => (
+                  <Link key={e.id} to={`/events/${e.slug || e.id}`} className="card-elegant p-6 block hover:shadow-elegant transition-shadow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="text-center bg-primary/10 text-primary rounded-xl px-3 py-2 min-w-[64px]">
+                        <div className="text-2xl font-bold leading-none">{new Date(e.start_datetime).getDate()}</div>
+                        <div className="text-[10px] uppercase tracking-wider mt-1">
+                          {new Date(e.start_datetime).toLocaleDateString("ar-EG", { month: "short" })}
+                        </div>
+                      </div>
+                      <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">{e.event_type}</span>
                     </div>
-                  </div>
-                  <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
-                    {e.type.ar}
-                  </span>
-                </div>
-                <h3 className="font-bold text-lg mb-2">{e.title.ar}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{e.description.ar}</p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {e.location.ar}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {ui.organizedBy.ar}: <span className="font-medium text-foreground/80">{e.organizer}</span>
-                </div>
-              </article>
-            ))}
+                    <h3 className="font-bold text-lg mb-2">{e.title}</h3>
+                    {e.description && <p className="text-sm text-muted-foreground line-clamp-2 mb-4">{e.description}</p>}
+                    {e.location && (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {e.location}
+                      </div>
+                    )}
+                    <div className="text-xs text-muted-foreground">
+                      {ui.organizedBy}: <span className="font-medium text-foreground/80">{e.organizer_source}</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* LIBRARY + VIDEO PREVIEW */}
+      {/* LIBRARY + VIDEOS */}
       <section className="section-padding">
         <div className="container-wide grid md:grid-cols-2 gap-6">
-          <Link to="/library" className="card-elegant p-8 group block">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-5 group-hover:scale-110 transition-transform">
+          <div className="card-elegant p-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/10 text-primary mb-5">
               <BookOpen className="h-7 w-7" />
             </div>
             <h3 className="text-2xl font-bold mb-2">المكتبة الرقمية</h3>
             <p className="text-muted-foreground mb-4">
               كتب وبحوث وإصدارات الاتحاد متاحة للقراءة والتحميل.
             </p>
-            <span className="text-primary font-semibold inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+            {library && library.length > 0 ? (
+              <ul className="space-y-2 mb-4">
+                {library.slice(0, 3).map((b) => (
+                  <li key={b.id}>
+                    <Link to={`/library/${b.slug || b.id}`} className="text-sm hover:text-primary line-clamp-1">
+                      • {b.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : library !== null ? (
+              <p className="text-xs text-muted-foreground mb-4">سيتم إضافة المحتوى قريبًا.</p>
+            ) : null}
+            <Link to="/library" className="text-primary font-semibold inline-flex items-center gap-1.5 hover:gap-2.5 transition-all">
               استكشف المكتبة <ArrowLeft className="h-4 w-4" />
-            </span>
-          </Link>
-          <Link to="/videos" className="card-elegant p-8 group block">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-crimson/10 text-crimson mb-5 group-hover:scale-110 transition-transform">
-              <PlayCircle className="h-7 w-7" />
+            </Link>
+          </div>
+          <div className="card-elegant p-8">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-crimson/10 text-crimson mb-5">
+              {liveNow ? <Radio className="h-7 w-7 animate-pulse" /> : <PlayCircle className="h-7 w-7" />}
             </div>
             <h3 className="text-2xl font-bold mb-2">المرئيات والبث المباشر</h3>
-            <p className="text-muted-foreground mb-4">
-              محاضرات ولقاءات وبثوث مباشرة تواكب أنشطة الاتحاد.
-            </p>
-            <span className="text-crimson font-semibold inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+            {liveNow ? (
+              <>
+                <div className="inline-flex items-center gap-1 text-crimson text-xs font-semibold mb-2">
+                  <Radio className="h-3 w-3 animate-pulse" /> مباشر الآن
+                </div>
+                <Link to={`/videos/${liveNow.slug || liveNow.id}`} className="block text-base font-semibold mb-3 hover:text-primary line-clamp-2">
+                  {liveNow.title}
+                </Link>
+              </>
+            ) : (
+              <p className="text-muted-foreground mb-4">محاضرات ولقاءات وبثوث مباشرة تواكب أنشطة الاتحاد.</p>
+            )}
+            {videos && videos.length > 0 && (
+              <ul className="space-y-1 mb-4">
+                {videos.slice(0, 3).map((v) => (
+                  <li key={v.id}>
+                    <Link to={`/videos/${v.slug || v.id}`} className="text-sm hover:text-primary line-clamp-1">
+                      • {v.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <Link to="/videos" className="text-crimson font-semibold inline-flex items-center gap-1.5 hover:gap-2.5 transition-all">
               مشاهدة المرئيات <ArrowLeft className="h-4 w-4" />
-            </span>
-          </Link>
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -296,24 +389,22 @@ export default function Home() {
           <div className="relative overflow-hidden rounded-3xl bg-gradient-hero text-primary-foreground p-10 md:p-16 text-center">
             <div className="absolute inset-0 pattern-islamic opacity-20" />
             <div className="relative">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-foreground/80">
-                الشراكات
-              </span>
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-foreground/80">الشراكات</span>
               <h2 className="heading-section mt-3 mb-4 max-w-2xl mx-auto">شراكاتنا المؤسسية</h2>
-              <p className="text-primary-foreground/85 max-w-2xl mx-auto mb-8 leading-relaxed">
-                {ui.partnerCta.ar}
-              </p>
+              <p className="text-primary-foreground/85 max-w-2xl mx-auto mb-8 leading-relaxed">{ui.partnerCta}</p>
               <div className="flex flex-wrap justify-center gap-3">
                 <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-                  <a href={`mailto:${site.email}`}>
-                    <Mail className="h-4 w-4" /> {site.email}
+                  <a href={`mailto:${settings.contact_email}`}>
+                    <Mail className="h-4 w-4" /> {settings.contact_email}
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground">
-                  <a href={site.facebook} target="_blank" rel="noreferrer">
-                    <Facebook className="h-4 w-4" /> فيسبوك
-                  </a>
-                </Button>
+                {settings.facebook_url && (
+                  <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground">
+                    <a href={settings.facebook_url} target="_blank" rel="noreferrer">
+                      <Facebook className="h-4 w-4" /> فيسبوك
+                    </a>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

@@ -1,13 +1,17 @@
-import logo from "@/assets/logo.png";
-import { site } from "@/i18n/content";
 import { Link } from "react-router-dom";
+import logoDefault from "@/assets/logo.png";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export function Logo({ size = 44, withText = false }: { size?: number; withText?: boolean }) {
+  const { settings } = useSiteSettings();
+  const logoSrc = settings.logo_url || logoDefault;
+  const name = settings.site_name || "اتحاد علماء الأزهر";
+  const slogan = settings.site_slogan || "منهج أزهري… ورسالة عالمية";
   return (
-    <Link to="/" className="flex items-center gap-3 group" aria-label={site.name.ar}>
+    <Link to="/" className="flex items-center gap-3 group" aria-label={name}>
       <img
-        src={logo}
-        alt={site.name.ar}
+        src={logoSrc}
+        alt={name}
         width={size}
         height={size}
         className="object-contain transition-transform group-hover:scale-105"
@@ -15,12 +19,8 @@ export function Logo({ size = 44, withText = false }: { size?: number; withText?
       />
       {withText && (
         <div className="leading-tight">
-          <div className="font-bold text-foreground text-base">
-            {site.name.ar}
-          </div>
-          <div className="text-[11px] text-muted-foreground">
-            {site.slogan.ar}
-          </div>
+          <div className="font-bold text-foreground text-base">{name}</div>
+          <div className="text-[11px] text-muted-foreground">{slogan}</div>
         </div>
       )}
     </Link>

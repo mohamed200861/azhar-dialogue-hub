@@ -31,8 +31,8 @@ export default function EventsPage() {
 
   return (
     <SiteLayout>
-      <PageHero eyebrow={{ ar: "الفعاليات", it: "" }} title={{ ar: "فعاليات الاتحاد", it: "" }}
-        description={{ ar: "مؤتمرات وندوات ودورات ولقاءات علمية ودعوية.", it: "" }} />
+      <PageHero eyebrow="الفعاليات" title="فعاليات الاتحاد"
+        description="مؤتمرات وندوات ودورات ولقاءات علمية ودعوية." />
 
       <section className="section-padding">
         <div className="container-wide">
