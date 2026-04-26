@@ -47,8 +47,8 @@ export default function Settings() {
 
   const save = async () => {
     setSaving(true);
-    const upserts = Object.entries(s).map(([key, value]) => ({ key, value: { value } }));
-    const { error } = await supabase.from("site_settings").upsert(upserts, { onConflict: "key" });
+    const upserts = Object.entries(s).map(([key, value]) => ({ key, value: { value } as any }));
+    const { error } = await supabase.from("site_settings").upsert(upserts as any, { onConflict: "key" });
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم حفظ الإعدادات");
