@@ -1,9 +1,6 @@
 import { ReactNode, createContext, useContext, useEffect } from "react";
 
-// Arabic-only stub. Kept as a context so existing pages that import
-// useLanguage / t / dir keep working without code changes. The `t` helper
-// always returns the Arabic value and ignores the second argument.
-
+// Arabic-only stub kept for backwards compatibility with old imports.
 interface LanguageContextValue {
   lang: "ar";
   dir: "rtl";
