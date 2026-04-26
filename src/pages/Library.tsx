@@ -57,8 +57,8 @@ export default function LibraryPage() {
 
   return (
     <SiteLayout>
-      <PageHero eyebrow={{ ar: "المكتبة", it: "" }} title={{ ar: "المكتبة الرقمية", it: "" }}
-        description={{ ar: "كتب وبحوث وإصدارات ومواد تدريبية متاحة للقراءة والتحميل.", it: "" }} />
+      <PageHero eyebrow="المكتبة" title="المكتبة الرقمية"
+        description="كتب وبحوث وإصدارات ومواد تدريبية متاحة للقراءة والتحميل." />
 
       <section className="section-padding">
         <div className="container-wide">

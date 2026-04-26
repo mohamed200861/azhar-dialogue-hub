@@ -36,9 +36,9 @@ export default function NewsPage() {
   return (
     <SiteLayout>
       <PageHero
-        eyebrow={{ ar: "الأخبار", it: "" }}
-        title={{ ar: "الأخبار والبيانات الرسمية", it: "" }}
-        description={{ ar: "تابعوا آخر بيانات الاتحاد وأنشطته العلمية والدعوية.", it: "" }}
+        eyebrow="الأخبار"
+        title="الأخبار والبيانات الرسمية"
+        description="تابعوا آخر بيانات الاتحاد وأنشطته العلمية والدعوية."
       />
 
       <section className="section-padding">
