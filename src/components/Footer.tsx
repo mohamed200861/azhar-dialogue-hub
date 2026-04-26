@@ -6,14 +6,30 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function Footer() {
   const [email, setEmail] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
       toast.error("يرجى إدخال بريد إلكتروني صحيح");
+      return;
+    }
+    setBusy(true);
+    const { data: existing } = await supabase.from("newsletter_subscribers").select("id").eq("email", email).maybeSingle();
+    if (existing) {
+      toast.info("هذا البريد الإلكتروني مشترك بالفعل.");
+      setBusy(false);
+      setEmail("");
+      return;
+    }
+    const { error } = await supabase.from("newsletter_subscribers").insert({ email });
+    setBusy(false);
+    if (error) {
+      toast.error("تعذر الاشتراك. حاول لاحقًا.");
       return;
     }
     toast.success("تم الاشتراك في النشرة البريدية بنجاح.");

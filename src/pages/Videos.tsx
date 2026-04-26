@@ -1,84 +1,134 @@
-import { useLanguage } from "@/i18n/LanguageContext";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
-import { videoCategories, placeholders } from "@/i18n/content";
-import { PlayCircle, Radio, Calendar, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PlayCircle, Radio, Calendar, Clock, Loader2 } from "lucide-react";
+import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
 
-const sampleVideos = [
-  { title: { ar: "كلمة الأمين العام بمناسبة افتتاح المؤتمر", it: "Discorso del Segretario Generale" }, duration: "12:34", date: "2024-09-12" },
-  { title: { ar: "محاضرة: مقاصد الشريعة في عصرنا", it: "Lezione: Gli obiettivi della Sharia oggi" }, duration: "45:21", date: "2024-08-04" },
-  { title: { ar: "ندوة: الأسرة المسلمة في الغرب", it: "Seminario: La famiglia musulmana in Occidente" }, duration: "01:12:08", date: "2024-07-21" },
-  { title: { ar: "لقاء مع علماء الاتحاد", it: "Intervista con gli studiosi dell'Unione" }, duration: "38:15", date: "2024-06-30" },
-];
+const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
 
-export default function Videos() {
-  const { t } = useLanguage();
+function Countdown({ to }: { to: string }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const diff = Math.max(0, new Date(to).getTime() - now);
+  const d = Math.floor(diff / 86400000), h = Math.floor((diff / 3600000) % 24), m = Math.floor((diff / 60000) % 60), s = Math.floor((diff / 1000) % 60);
+  return (
+    <div className="flex gap-3 mt-4 text-primary-foreground">
+      {[[d, "يوم"], [h, "س"], [m, "د"], [s, "ث"]].map(([v, l], i) => (
+        <div key={i} className="bg-white/15 rounded-lg px-3 py-2 min-w-[60px] text-center">
+          <div className="text-xl font-bold">{v}</div>
+          <div className="text-[10px]">{l}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function VideosPage() {
+  const [list, setList] = useState<any[] | null>(null);
+  const [cat, setCat] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "المرئيات والبث المباشر — اتحاد علماء الأزهر";
+    (async () => {
+      const { data } = await supabase
+        .from("videos").select("*").eq("status", "published")
+        .order("scheduled_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false });
+      setList(data ?? []);
+    })();
+  }, []);
+
+  const liveNow = useMemo(() => (list ?? []).find((v) => v.type === "live" && v.live_status === "live"), [list]);
+  const scheduled = useMemo(() => (list ?? []).filter((v) => v.type === "live" && v.live_status === "scheduled" && v.scheduled_at && new Date(v.scheduled_at) > new Date()).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0], [list]);
+  const replays = (list ?? []).filter((v) => !(v.type === "live" && (v.live_status === "live" || v.live_status === "scheduled")));
+  const filtered = replays.filter((v) => !cat || v.category === cat);
+
   return (
     <SiteLayout>
-      <PageHero
-        eyebrow={{ ar: "المرئيات", it: "Video" }}
-        title={{ ar: "المرئيات والبث المباشر", it: "Video e dirette" }}
-        description={{
-          ar: "محاضرات ولقاءات وبثوث مباشرة من فعاليات الاتحاد.",
-          it: "Lezioni, interviste e dirette dalle attività dell'Unione.",
-        }}
-      />
+      <PageHero eyebrow={{ ar: "المرئيات", it: "" }} title={{ ar: "المرئيات والبث المباشر", it: "" }}
+        description={{ ar: "محاضرات ولقاءات وبثوث مباشرة من فعاليات الاتحاد.", it: "" }} />
 
-      {/* Live block */}
       <section className="section-padding">
         <div className="container-wide">
-          <div className="card-elegant overflow-hidden grid lg:grid-cols-2">
-            <div className="aspect-video lg:aspect-auto bg-gradient-hero flex flex-col items-center justify-center text-primary-foreground p-8 relative">
-              <div className="absolute inset-0 pattern-islamic opacity-20" />
-              <Radio className="h-16 w-16 mb-4 relative" />
-              <div className="text-xs uppercase tracking-[0.25em] mb-2 relative">
-                {t("البث المباشر", "Diretta live")}
-              </div>
-              <div className="text-2xl font-bold relative">{t("غير متاح حاليًا", "Non disponibile")}</div>
-            </div>
-            <div className="p-8 lg:p-10">
-              <h2 className="text-2xl font-bold mb-3">{t("لا يوجد بث حاليًا", "Nessuna diretta in corso")}</h2>
-              <p className="text-muted-foreground leading-relaxed mb-6">{t(placeholders.noLive.ar, placeholders.noLive.it)}</p>
-              <Button variant="outline">{t("تنبيهي عند البث القادم", "Avvisami alla prossima diretta")}</Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="pb-12">
-        <div className="container-wide">
-          <div className="flex flex-wrap gap-2">
-            {videoCategories.map((c, i) => (
-              <Button key={i} variant="outline" size="sm">{t(c.ar, c.it)}</Button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recordings */}
-      <section className="pb-20">
-        <div className="container-wide">
-          <h2 className="heading-section mb-8">{t("أحدث التسجيلات", "Ultime registrazioni")}</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sampleVideos.map((v, i) => (
-              <article key={i} className="card-elegant overflow-hidden group cursor-pointer">
-                <div className="aspect-video bg-gradient-emerald relative flex items-center justify-center">
-                  <PlayCircle className="h-14 w-14 text-white/80 group-hover:scale-110 transition-transform" />
-                  <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1">
-                    <Clock className="h-3 w-3" /> {v.duration}
-                  </span>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold mb-2 line-clamp-2">{t(v.title.ar, v.title.it)}</h3>
-                  <div className="text-xs text-muted-foreground inline-flex items-center gap-1">
-                    <Calendar className="h-3 w-3" /> {v.date}
+          {list === null ? (
+            <div className="card-elegant p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
+          ) : (
+            <>
+              <div className="card-elegant overflow-hidden grid lg:grid-cols-2 mb-12">
+                {liveNow ? (
+                  <div className="aspect-video lg:aspect-auto bg-black">
+                    {liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") ? (
+                      <iframe src={liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") || ""} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white"><Radio className="h-16 w-16" /></div>
+                    )}
                   </div>
+                ) : (
+                  <div className="aspect-video lg:aspect-auto bg-gradient-hero flex flex-col items-center justify-center text-primary-foreground p-8 relative">
+                    <div className="absolute inset-0 pattern-islamic opacity-20" />
+                    <Radio className="h-16 w-16 mb-4 relative" />
+                    <div className="text-xs uppercase tracking-[0.25em] mb-2 relative">البث المباشر</div>
+                    <div className="text-2xl font-bold relative">{scheduled ? "بث قادم" : "غير متاح حاليًا"}</div>
+                    {scheduled && <Countdown to={scheduled.scheduled_at} />}
+                  </div>
+                )}
+                <div className="p-8 lg:p-10">
+                  {liveNow ? (
+                    <>
+                      <div className="inline-flex items-center gap-2 text-crimson text-xs font-semibold mb-2">
+                        <Radio className="h-4 w-4 animate-pulse" /> مباشر الآن
+                      </div>
+                      <h2 className="text-2xl font-bold mb-3">{liveNow.title}</h2>
+                      <p className="text-muted-foreground leading-relaxed">{liveNow.description}</p>
+                    </>
+                  ) : scheduled ? (
+                    <>
+                      <h2 className="text-2xl font-bold mb-3">{scheduled.title}</h2>
+                      <p className="text-muted-foreground leading-relaxed mb-4">{scheduled.description ?? ""}</p>
+                      <div className="text-sm text-muted-foreground">موعد البث: <span className="font-medium text-foreground/80">{formatDateTime(scheduled.scheduled_at)}</span></div>
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-2xl font-bold mb-3">لا يوجد بث حاليًا</h2>
+                      <p className="text-muted-foreground leading-relaxed">لا يوجد بث مباشر حاليًا. تابعونا لمعرفة مواعيد البث القادمة.</p>
+                    </>
+                  )}
                 </div>
-              </article>
-            ))}
-          </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mb-8">
+                <Button variant={cat === null ? "default" : "outline"} size="sm" onClick={() => setCat(null)}>الكل</Button>
+                {CATEGORIES.map((c) => (
+                  <Button key={c} variant={cat === c ? "default" : "outline"} size="sm" onClick={() => setCat(c)}>{c}</Button>
+                ))}
+              </div>
+
+              <h2 className="heading-section mb-8">أحدث التسجيلات</h2>
+              {filtered.length === 0 ? (
+                <div className="card-elegant p-12 text-center text-muted-foreground">لا توجد مرئيات منشورة بعد.</div>
+              ) : (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {filtered.map((v) => {
+                    const url = v.embed_url || getYouTubeEmbed(v.video_url || "") || v.video_url;
+                    return (
+                      <a key={v.id} href={url ?? "#"} target="_blank" rel="noreferrer" className="card-elegant overflow-hidden group block">
+                        <div className="aspect-video bg-gradient-emerald relative flex items-center justify-center">
+                          {v.thumbnail ? <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" /> : <PlayCircle className="h-14 w-14 text-white/80 group-hover:scale-110 transition-transform" />}
+                          {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
+                        </div>
+                        <div className="p-5">
+                          <h3 className="font-semibold mb-2 line-clamp-2">{v.title}</h3>
+                          <div className="text-xs text-muted-foreground inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(v.scheduled_at ?? v.created_at)}</div>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </SiteLayout>

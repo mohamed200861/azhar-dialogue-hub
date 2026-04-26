@@ -1,96 +1,84 @@
-import { useState, useMemo } from "react";
-import { useLanguage } from "@/i18n/LanguageContext";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
-import { PageHero } from "@/components/PageHero";
-import { sampleNews, newsCategories, ui } from "@/i18n/content";
-import { Newspaper, Search, Calendar } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PageHero } from "@/components/PageHero";
+import { Newspaper, Search, Calendar, Loader2, Download, ArrowRight } from "lucide-react";
+import { formatDate } from "@/lib/admin-utils";
 
-export default function News() {
-  const { t } = useLanguage();
-  const [query, setQuery] = useState("");
-  const [activeCat, setActiveCat] = useState<string | null>(null);
+const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
 
-  const filtered = useMemo(() => {
-    return sampleNews.filter((n) => {
-      const text = `${n.title.ar} ${n.title.it} ${n.excerpt.ar} ${n.excerpt.it}`.toLowerCase();
-      const matchesQuery = !query || text.includes(query.toLowerCase());
-      const matchesCat = !activeCat || n.category.ar === activeCat;
-      return matchesQuery && matchesCat;
-    });
-  }, [query, activeCat]);
+export default function NewsPage() {
+  const [items, setItems] = useState<any[] | null>(null);
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "الأخبار والبيانات — اتحاد علماء الأزهر";
+    (async () => {
+      const { data } = await supabase
+        .from("news_posts")
+        .select("id,slug,title,excerpt,cover_image,category,publisher_source,published_at,created_at,is_featured")
+        .eq("status", "published")
+        .order("published_at", { ascending: false, nullsFirst: false });
+      setItems(data ?? []);
+    })();
+  }, []);
+
+  const filtered = (items ?? []).filter((n) => {
+    const matchesQ = !q || (n.title?.includes(q) || n.excerpt?.includes(q));
+    const matchesC = !cat || n.category === cat;
+    return matchesQ && matchesC;
+  });
 
   return (
     <SiteLayout>
       <PageHero
-        eyebrow={{ ar: "الأخبار", it: "News" }}
-        title={{ ar: "الأخبار والبيانات الرسمية", it: "News e comunicati ufficiali" }}
-        description={{
-          ar: "تابعوا آخر بيانات الاتحاد وأنشطته العلمية والدعوية.",
-          it: "Segui gli ultimi comunicati e le attività scientifiche e religiose dell'Unione.",
-        }}
+        eyebrow={{ ar: "الأخبار", it: "" }}
+        title={{ ar: "الأخبار والبيانات الرسمية", it: "" }}
+        description={{ ar: "تابعوا آخر بيانات الاتحاد وأنشطته العلمية والدعوية.", it: "" }}
       />
 
       <section className="section-padding">
         <div className="container-wide">
-          {/* Filters */}
           <div className="mb-10 space-y-5">
             <div className="relative max-w-xl">
               <Search className="absolute top-1/2 -translate-y-1/2 start-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t(ui.search.ar, ui.search.it)}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="ps-10 h-11"
-              />
+              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="بحث في الأخبار…" className="ps-10 h-11" />
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button
-                variant={activeCat === null ? "default" : "outline"}
-                size="sm"
-                onClick={() => setActiveCat(null)}
-              >
-                {t("الكل", "Tutti")}
-              </Button>
-              {newsCategories.map((c, i) => (
-                <Button
-                  key={i}
-                  variant={activeCat === c.ar ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setActiveCat(c.ar)}
-                >
-                  {t(c.ar, c.it)}
-                </Button>
+              <Button variant={cat === null ? "default" : "outline"} size="sm" onClick={() => setCat(null)}>الكل</Button>
+              {CATEGORIES.map((c) => (
+                <Button key={c} variant={cat === c ? "default" : "outline"} size="sm" onClick={() => setCat(c)}>{c}</Button>
               ))}
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {items === null ? (
+            <div className="card-elegant p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
+          ) : filtered.length === 0 ? (
             <div className="card-elegant p-12 text-center text-muted-foreground">
-              {t("لا توجد نتائج مطابقة.", "Nessun risultato trovato.")}
+              لا توجد أخبار منشورة حاليًا. ترقبوا المحتوى الجديد قريبًا.
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((n, i) => (
-                <article key={i} className="card-elegant overflow-hidden flex flex-col">
-                  <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40">
-                    <Newspaper className="h-16 w-16" />
+              {filtered.map((n) => (
+                <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
+                  <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40 overflow-hidden">
+                    {n.cover_image ? <img src={n.cover_image} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <Newspaper className="h-16 w-16" />}
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
-                        {t(n.category.ar, n.category.it)}
-                      </span>
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="h-3 w-3" /> {n.date}
-                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
+                      <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(n.published_at ?? n.created_at)}</span>
                     </div>
-                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{t(n.title.ar, n.title.it)}</h3>
-                    <p className="text-sm text-muted-foreground line-clamp-3 mb-4 flex-1">{t(n.excerpt.ar, n.excerpt.it)}</p>
-                    <span className="text-sm font-semibold text-primary">{t(ui.readMore.ar, ui.readMore.it)} ←</span>
+                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
+                    {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
+                    <div className="text-xs text-muted-foreground mt-auto">نُشر بواسطة: <span className="font-medium text-foreground/80">{n.publisher_source}</span></div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           )}

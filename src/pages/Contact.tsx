@@ -1,115 +1,125 @@
 import { useState } from "react";
-import { useLanguage } from "@/i18n/LanguageContext";
+import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
-import { site, ui } from "@/i18n/content";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Mail, MapPin, Facebook } from "lucide-react";
+import { Mail, MapPin, Facebook, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const reasons = [
-  { ar: "استفسار عام", it: "Richiesta generica" },
-  { ar: "شراكة", it: "Collaborazione" },
-  { ar: "طلب إعلامي", it: "Richiesta media" },
-  { ar: "طلب فعالية", it: "Richiesta evento" },
-  { ar: "المكتبة / الإصدارات", it: "Biblioteca / pubblicazioni" },
-  { ar: "أخرى", it: "Altro" },
+const REASONS = [
+  "استفسار عام",
+  "تعاون وشراكات",
+  "طلب إعلامي",
+  "فعاليات",
+  "مكتبة وإصدارات",
+  "أخرى",
 ];
 
-export default function Contact() {
-  const { t } = useLanguage();
-  const [form, setForm] = useState({ name: "", email: "", subject: "", reason: reasons[0].ar, message: "" });
+const schema = z.object({
+  name: z.string().trim().min(1, "الاسم مطلوب").max(200),
+  email: z.string().trim().email("بريد إلكتروني غير صحيح").max(320),
+  subject: z.string().trim().max(300).optional().or(z.literal("")),
+  contact_type: z.string().trim().max(100),
+  message: z.string().trim().min(1, "الرسالة مطلوبة").max(5000),
+});
 
-  const submit = (e: React.FormEvent) => {
+export default function ContactPage() {
+  const { settings } = useSiteSettings();
+  const [form, setForm] = useState({ name: "", email: "", subject: "", contact_type: REASONS[0], message: "" });
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      toast.error(t("يرجى استكمال الحقول المطلوبة", "Compila i campi obbligatori"));
+    const parsed = schema.safeParse(form);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0].message);
       return;
     }
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      toast.error(t("بريد إلكتروني غير صحيح", "Email non valida"));
+    setSubmitting(true);
+    const { error } = await supabase.from("contact_messages").insert({
+      name: parsed.data.name,
+      email: parsed.data.email,
+      subject: parsed.data.subject || null,
+      contact_type: parsed.data.contact_type,
+      message: parsed.data.message,
+    });
+    setSubmitting(false);
+    if (error) {
+      toast.error("تعذر إرسال الرسالة. يرجى المحاولة لاحقًا.");
       return;
     }
-    toast.success(t(
-      "تم إرسال رسالتك بنجاح. سنقوم بالرد عليك في أقرب وقت ممكن.",
-      "Il tuo messaggio è stato inviato con successo. Ti risponderemo il prima possibile."
-    ));
-    setForm({ name: "", email: "", subject: "", reason: reasons[0].ar, message: "" });
+    toast.success("تم إرسال رسالتك بنجاح. سنقوم بالرد عليك في أقرب وقت ممكن.");
+    setForm({ name: "", email: "", subject: "", contact_type: REASONS[0], message: "" });
   };
 
   return (
     <SiteLayout>
-      <PageHero
-        eyebrow={{ ar: "تواصل", it: "Contatti" }}
-        title={{ ar: "تواصل معنا", it: "Contattaci" }}
-        description={{
-          ar: "يسعدنا تواصلكم لأي استفسار أو اقتراح أو طلب تعاون.",
-          it: "Saremo felici di rispondere a qualsiasi richiesta, suggerimento o proposta di collaborazione.",
-        }}
-      />
+      <PageHero eyebrow={{ ar: "تواصل", it: "" }} title={{ ar: "تواصل معنا", it: "" }}
+        description={{ ar: "يسعدنا تواصلكم لأي استفسار أو اقتراح أو طلب تعاون.", it: "" }} />
 
       <section className="section-padding">
         <div className="container-narrow grid lg:grid-cols-[1fr,1.5fr] gap-10">
           <div className="space-y-4">
-            <a href={`mailto:${site.email}`} className="card-elegant p-6 flex items-start gap-4 block hover:bg-muted/30 transition-colors">
+            <a href={`mailto:${settings.contact_email}`} className="card-elegant p-6 flex items-start gap-4 hover:bg-muted/30 transition-colors">
               <Mail className="h-6 w-6 text-primary mt-1 shrink-0" />
               <div>
-                <div className="text-xs text-muted-foreground">{t("البريد الإلكتروني", "Email")}</div>
-                <div className="font-semibold mt-1 break-all">{site.email}</div>
+                <div className="text-xs text-muted-foreground">البريد الإلكتروني</div>
+                <div className="font-semibold mt-1 break-all">{settings.contact_email}</div>
               </div>
             </a>
             <div className="card-elegant p-6 flex items-start gap-4">
               <MapPin className="h-6 w-6 text-primary mt-1 shrink-0" />
               <div>
-                <div className="text-xs text-muted-foreground">{t("المقر", "Sede")}</div>
-                <div className="font-semibold mt-1">{t(site.hq.ar, site.hq.it)}</div>
+                <div className="text-xs text-muted-foreground">المقر</div>
+                <div className="font-semibold mt-1">إنجلترا</div>
               </div>
             </div>
-            <a href={site.facebook} target="_blank" rel="noreferrer" className="card-elegant p-6 flex items-start gap-4 block hover:bg-muted/30 transition-colors">
-              <Facebook className="h-6 w-6 text-primary mt-1 shrink-0" />
-              <div>
-                <div className="text-xs text-muted-foreground">Facebook</div>
-                <div className="font-semibold mt-1">{t("صفحة الاتحاد الرسمية", "Pagina ufficiale")}</div>
-              </div>
-            </a>
+            {settings.facebook_url && (
+              <a href={settings.facebook_url} target="_blank" rel="noreferrer" className="card-elegant p-6 flex items-start gap-4 hover:bg-muted/30 transition-colors">
+                <Facebook className="h-6 w-6 text-primary mt-1 shrink-0" />
+                <div>
+                  <div className="text-xs text-muted-foreground">فيسبوك</div>
+                  <div className="font-semibold mt-1">صفحة الاتحاد الرسمية</div>
+                </div>
+              </a>
+            )}
           </div>
 
           <form onSubmit={submit} className="card-elegant p-8 space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">{t("الاسم الكامل *", "Nome completo *")}</Label>
-                <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                <Label htmlFor="name">الاسم الكامل *</Label>
+                <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required maxLength={200} />
               </div>
               <div>
-                <Label htmlFor="email">{t("البريد الإلكتروني *", "Email *")}</Label>
-                <Input id="email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
+                <Label htmlFor="email">البريد الإلكتروني *</Label>
+                <Input id="email" type="email" dir="ltr" className="text-left" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required maxLength={320} />
               </div>
             </div>
             <div>
-              <Label htmlFor="subject">{t("الموضوع", "Oggetto")}</Label>
-              <Input id="subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} />
+              <Label htmlFor="subject">الموضوع</Label>
+              <Input id="subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} maxLength={300} />
             </div>
             <div>
-              <Label htmlFor="reason">{t("سبب التواصل", "Motivo del contatto")}</Label>
-              <select
-                id="reason"
-                value={form.reason}
-                onChange={(e) => setForm({ ...form, reason: e.target.value })}
-                className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
-              >
-                {reasons.map((r, i) => (
-                  <option key={i} value={r.ar}>{t(r.ar, r.it)}</option>
-                ))}
+              <Label htmlFor="reason">نوع التواصل</Label>
+              <select id="reason" value={form.contact_type} onChange={(e) => setForm({ ...form, contact_type: e.target.value })}
+                className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm">
+                {REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
             <div>
-              <Label htmlFor="message">{t("الرسالة *", "Messaggio *")}</Label>
-              <Textarea id="message" rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required />
+              <Label htmlFor="message">الرسالة *</Label>
+              <Textarea id="message" rows={6} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} required maxLength={5000} />
             </div>
-            <Button type="submit" size="lg" className="w-full">{t(ui.send.ar, ui.send.it)}</Button>
+            <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+              إرسال
+            </Button>
           </form>
         </div>
       </section>
