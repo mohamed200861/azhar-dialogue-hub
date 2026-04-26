@@ -7,7 +7,6 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index.tsx";
 import About from "./pages/About.tsx";
 import Vision from "./pages/Vision.tsx";
-import Leadership from "./pages/Leadership.tsx";
 import News from "./pages/News.tsx";
 import Events from "./pages/Events.tsx";
 import Library from "./pages/Library.tsx";
@@ -29,7 +28,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
             <Route path="/vision" element={<Vision />} />
-            <Route path="/leadership" element={<Leadership />} />
             <Route path="/news" element={<News />} />
             <Route path="/events" element={<Events />} />
             <Route path="/library" element={<Library />} />
