@@ -1,48 +1,31 @@
-import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { ReactNode, createContext, useContext, useEffect } from "react";
 
-export type Lang = "ar" | "it";
+// Arabic-only stub. Kept as a context so existing pages that import
+// useLanguage / t / dir keep working without code changes. The `t` helper
+// always returns the Arabic value and ignores the second argument.
 
 interface LanguageContextValue {
-  lang: Lang;
-  setLang: (l: Lang) => void;
-  dir: "rtl" | "ltr";
-  t: <T>(ar: T, it: T) => T;
+  lang: "ar";
+  dir: "rtl";
+  t: <T>(ar: T, _it?: T) => T;
 }
 
-const LanguageContext = createContext<LanguageContextValue | null>(null);
+const value: LanguageContextValue = {
+  lang: "ar",
+  dir: "rtl",
+  t: (ar) => ar,
+};
 
-const STORAGE_KEY = "asu_lang";
+const LanguageContext = createContext<LanguageContextValue>(value);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>(() => {
-    if (typeof window === "undefined") return "ar";
-    const saved = window.localStorage.getItem(STORAGE_KEY) as Lang | null;
-    return saved === "it" || saved === "ar" ? saved : "ar";
-  });
-
-  const dir = lang === "ar" ? "rtl" : "ltr";
-
   useEffect(() => {
-    document.documentElement.lang = lang;
-    document.documentElement.dir = dir;
-    window.localStorage.setItem(STORAGE_KEY, lang);
-  }, [lang, dir]);
-
-  const value = useMemo<LanguageContextValue>(
-    () => ({
-      lang,
-      setLang: setLangState,
-      dir,
-      t: (ar, it) => (lang === "ar" ? ar : it),
-    }),
-    [lang, dir]
-  );
-
+    document.documentElement.lang = "ar";
+    document.documentElement.dir = "rtl";
+  }, []);
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 }
 
 export function useLanguage() {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) throw new Error("useLanguage must be used within LanguageProvider");
-  return ctx;
+  return useContext(LanguageContext);
 }
