@@ -2,104 +2,175 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Azhar Scholars Union — Design System
+   Inspired by the institutional logo: deep Islamic green, dark crimson accent,
+   warm cream backgrounds, ivory cards. All colors HSL.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Surfaces */
+    --background: 44 33% 96%;          /* warm cream #F7F5EF */
+    --foreground: 0 0% 7%;             /* near-black */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 0 0% 7%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand — deep Azhar green */
+    --primary: 115 45% 33%;            /* #367A2E */
+    --primary-foreground: 44 33% 97%;
+    --primary-glow: 92 47% 43%;        /* #6EA43A */
+    --primary-deep: 120 50% 22%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Secondary — ivory */
+    --secondary: 44 28% 92%;
+    --secondary-foreground: 120 50% 18%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 42 22% 91%;
+    --muted-foreground: 0 0% 33%;      /* #555 */
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 115 45% 33%;
+    --accent-foreground: 44 33% 97%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Crimson accent (sparingly, for highlights) */
+    --crimson: 0 100% 27%;             /* #8B0000 */
+    --crimson-foreground: 44 33% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --destructive: 0 72% 42%;
+    --destructive-foreground: 44 33% 97%;
 
-    --radius: 0.5rem;
+    --border: 44 18% 86%;              /* #E5E2D8 */
+    --input: 44 18% 86%;
+    --ring: 115 45% 33%;
 
+    --radius: 0.875rem;
+
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(120 50% 18%) 0%, hsl(115 45% 28%) 50%, hsl(92 40% 35%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(44 33% 97%) 0%, hsl(42 22% 91%) 100%);
+    --gradient-emerald: linear-gradient(135deg, hsl(115 45% 33%), hsl(92 47% 43%));
+
+    /* Shadows */
+    --shadow-card: 0 1px 2px hsl(120 40% 10% / 0.04), 0 8px 24px -8px hsl(120 40% 10% / 0.08);
+    --shadow-elegant: 0 10px 40px -12px hsl(120 50% 18% / 0.25);
+    --shadow-soft: 0 2px 12px -4px hsl(120 30% 15% / 0.08);
+
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Sidebar (unused publicly but kept for shadcn) */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-primary: 115 45% 33%;
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 115 45% 33%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 120 25% 6%;
+    --foreground: 44 33% 95%;
+    --card: 120 22% 9%;
+    --card-foreground: 44 33% 95%;
+    --popover: 120 22% 9%;
+    --popover-foreground: 44 33% 95%;
+    --primary: 92 47% 50%;
+    --primary-foreground: 120 50% 8%;
+    --secondary: 120 18% 14%;
+    --secondary-foreground: 44 33% 95%;
+    --muted: 120 18% 14%;
+    --muted-foreground: 44 15% 70%;
+    --accent: 92 47% 50%;
+    --accent-foreground: 120 50% 8%;
+    --crimson: 0 75% 55%;
+    --crimson-foreground: 44 33% 97%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 44 33% 95%;
+    --border: 120 18% 18%;
+    --input: 120 18% 18%;
+    --ring: 92 47% 50%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-family: 'Cairo', 'Inter', system-ui, sans-serif;
+    font-feature-settings: "kern", "liga";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[lang="ar"] body {
+    font-family: 'Cairo', 'Amiri', system-ui, sans-serif;
+  }
+
+  html[lang="it"] body {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight;
+    font-family: 'Cairo', 'Cormorant Garamond', serif;
+  }
+
+  html[lang="it"] h1,
+  html[lang="it"] h2,
+  html[lang="it"] h3 {
+    font-family: 'Cormorant Garamond', 'Cairo', serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* RTL/LTR helpers */
+  [dir="rtl"] .flip-x { transform: scaleX(-1); }
+}
+
+@layer components {
+  .container-narrow {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .container-wide {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+
+  .heading-display {
+    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight;
+  }
+  .heading-section {
+    @apply text-3xl md:text-4xl font-bold leading-tight;
+  }
+  .eyebrow {
+    @apply inline-block text-xs md:text-sm font-semibold uppercase tracking-[0.2em] text-primary;
+  }
+
+  /* Decorative Islamic geometric pattern (subtle) */
+  .pattern-islamic {
+    background-image:
+      radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.08) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  .card-elegant {
+    @apply bg-card rounded-2xl border border-border/60;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition-smooth);
+  }
+  .card-elegant:hover {
+    box-shadow: var(--shadow-elegant);
+    transform: translateY(-2px);
   }
 }
