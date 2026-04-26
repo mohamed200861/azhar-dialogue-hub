@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Menu, X, Mail } from "lucide-react";
-import { useLanguage } from "@/i18n/LanguageContext";
 import { nav, site } from "@/i18n/content";
 import { Logo } from "./Logo";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
-  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
@@ -49,17 +46,16 @@ export function Header() {
                 }`
               }
             >
-              {t(item.label.ar, item.label.it)}
+              {item.label.ar}
             </NavLink>
           ))}
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
-          <LanguageSwitcher />
           <Button asChild variant="default" size="sm" className="bg-primary hover:bg-primary-deep">
             <a href={`mailto:${site.email}`}>
               <Mail className="h-4 w-4" />
-              {t("تواصل", "Contatti")}
+              تواصل
             </a>
           </Button>
         </div>
@@ -67,13 +63,12 @@ export function Header() {
         <button
           className="lg:hidden p-2 rounded-md hover:bg-muted"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Menu"
+          aria-label="القائمة"
         >
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="lg:hidden border-t border-border bg-background animate-fade-in">
           <div className="container-wide py-4 flex flex-col gap-1">
@@ -88,15 +83,14 @@ export function Header() {
                   }`
                 }
               >
-                {t(item.label.ar, item.label.it)}
+                {item.label.ar}
               </NavLink>
             ))}
-            <div className="flex items-center justify-between pt-3 mt-2 border-t border-border">
-              <LanguageSwitcher compact />
+            <div className="flex items-center justify-end pt-3 mt-2 border-t border-border">
               <Button asChild size="sm">
                 <a href={`mailto:${site.email}`}>
                   <Mail className="h-4 w-4" />
-                  {t("تواصل", "Contatti")}
+                  تواصل
                 </a>
               </Button>
             </div>
