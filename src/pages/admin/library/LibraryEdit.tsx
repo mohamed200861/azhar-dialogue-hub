@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
-import { slugify } from "@/lib/admin-utils";
+import { slugify, sanitizeSlug, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
