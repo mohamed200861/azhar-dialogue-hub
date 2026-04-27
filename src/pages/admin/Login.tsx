@@ -110,6 +110,15 @@ export default function AdminLogin() {
           <p className="text-xs text-muted-foreground text-center">
             بالدخول إلى لوحة التحكم فإنك توافق على سياسة الاستخدام الخاصة بإدارة الموقع.
           </p>
+
+          {needsSetup && (
+            <div className="text-center pt-2 border-t">
+              <p className="text-xs text-muted-foreground mb-2">لم يتم إنشاء المدير العام بعد.</p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/admin/setup">إعداد المدير العام</Link>
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </div>
