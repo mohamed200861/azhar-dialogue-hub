@@ -61,12 +61,18 @@ const App = () => (
               <Route path="/news" element={<News />} />
               <Route path="/news/:slug" element={<NewsDetail />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/events/:slug" element={<EventDetail />} />
               <Route path="/library" element={<Library />} />
+              <Route path="/library/:slug" element={<LibraryDetail />} />
               <Route path="/videos" element={<Videos />} />
+              <Route path="/videos/:slug" element={<VideoDetail />} />
               <Route path="/partnerships" element={<Partnerships />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
 
               {/* Admin */}
+              <Route path="/admin/setup" element={<AdminSetup />} />
               <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
                 <Route index element={<Dashboard />} />
