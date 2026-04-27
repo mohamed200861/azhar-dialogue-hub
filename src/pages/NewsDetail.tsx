@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react";
-import { formatDate } from "@/lib/admin-utils";
+import { formatDate, fileNameFromUrl } from "@/lib/admin-utils";
 
 export default function NewsDetail() {
   const { slug } = useParams();
