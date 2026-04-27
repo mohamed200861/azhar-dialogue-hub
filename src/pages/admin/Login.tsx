@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,14 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
     document.title = "تسجيل الدخول — لوحة تحكم اتحاد علماء الأزهر";
+    (async () => {
+      const { data } = await supabase.rpc("public_has_any_super_admin");
+      setNeedsSetup(!data);
+    })();
   }, []);
 
   if (!loading && user && isAdmin) return <Navigate to="/admin" replace />;
