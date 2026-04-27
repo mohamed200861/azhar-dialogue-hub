@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, ArrowRight, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
-import { slugify } from "@/lib/admin-utils";
+import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
@@ -62,7 +62,7 @@ export default function NewsEdit() {
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
     };
     if (publish === true) {

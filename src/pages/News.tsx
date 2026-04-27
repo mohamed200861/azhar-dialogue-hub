@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHero } from "@/components/PageHero";
-import { Newspaper, Search, Calendar, Loader2, Download, ArrowRight } from "lucide-react";
+import { Search, Calendar, Loader2, Download, ArrowRight } from "lucide-react";
 import { formatDate } from "@/lib/admin-utils";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
@@ -66,8 +67,8 @@ export default function NewsPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((n) => (
                 <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
-                  <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40 overflow-hidden">
-                    {n.cover_image ? <img src={n.cover_image} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <Newspaper className="h-16 w-16" />}
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                   </div>
                   <div className="p-6 flex flex-col flex-1">
                     <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">

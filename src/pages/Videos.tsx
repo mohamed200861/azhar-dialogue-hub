@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Radio, Calendar, Clock, Loader2 } from "lucide-react";
@@ -113,8 +114,8 @@ export default function VideosPage() {
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {filtered.map((v) => (
                     <Link key={v.id} to={`/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
-                      <div className="aspect-video bg-gradient-emerald relative flex items-center justify-center">
-                        {v.thumbnail ? <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" /> : <PlayCircle className="h-14 w-14 text-white/80 group-hover:scale-110 transition-transform" />}
+                      <div className="aspect-video relative">
+                        <SmartImage src={v.thumbnail} alt={v.title} variant="video" className="w-full h-full object-cover" fallbackClassName="bg-gradient-emerald" />
                         {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
                       </div>
                       <div className="p-5">

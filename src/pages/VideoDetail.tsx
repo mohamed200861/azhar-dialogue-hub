@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, PlayCircle, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
 
-const TYPE_LABEL: Record<string, string> = { video: "فيديو مسجل", live: "بث مباشر" };
-const LIVE_LABEL: Record<string, string> = { scheduled: "مجدول", live: "مباشر الآن", ended: "انتهى" };
+const TYPE_LABEL: Record<string, string> = { video: "فيديو مسجل", live: "بث مباشر", recording: "تسجيل" };
+const LIVE_LABEL: Record<string, string> = { scheduled: "بث قادم", live: "مباشر الآن", completed: "تسجيل سابق", cancelled: "ملغي" };
 
 export default function VideoDetail() {
   const { slug } = useParams();
@@ -17,9 +18,11 @@ export default function VideoDetail() {
   useEffect(() => {
     if (!slug) return;
     (async () => {
-      const { data } = await supabase
-        .from("videos").select("*").eq("status", "published")
-        .or(`slug.eq.${slug},id.eq.${slug}`).maybeSingle();
+      const isUuid = /^[0-9a-f-]{36}$/i.test(slug);
+      const q = supabase.from("videos").select("*").eq("status", "published");
+      const { data } = isUuid
+        ? await q.eq("id", slug).maybeSingle()
+        : await q.eq("slug", slug).maybeSingle();
       if (!data) { setVideo(null); return; }
       setVideo(data);
       document.title = `${data.title} — مرئيات الاتحاد`;
@@ -32,11 +35,12 @@ export default function VideoDetail() {
 
   if (video === undefined) return <SiteLayout><div className="p-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div></SiteLayout>;
   if (video === null) return <SiteLayout><div className="container-narrow py-20 text-center">
-    <h1 className="text-2xl font-bold mb-4">الفيديو غير موجود</h1>
+    <h1 className="text-2xl font-bold mb-4">العنصر غير موجود أو لم يعد متاحًا.</h1>
     <Button asChild><Link to="/videos">العودة إلى المرئيات</Link></Button>
   </div></SiteLayout>;
 
-  const embed = video.embed_url || getYouTubeEmbed(video.video_url || "");
+  const embed = video.embed_url || getYouTubeEmbed(video.video_url);
+  const hasAnyVideo = !!(embed || video.video_url);
 
   return (
     <SiteLayout>
@@ -48,14 +52,27 @@ export default function VideoDetail() {
             <div className="card-elegant overflow-hidden mb-6">
               <div className="aspect-video bg-black">
                 {embed ? (
-                  <iframe src={embed} title={video.title} className="w-full h-full" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+                  <iframe
+                    src={embed}
+                    title={video.title}
+                    className="w-full h-full"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
                 ) : video.video_url ? (
-                  <div className="w-full h-full flex flex-col items-center justify-center text-white gap-3">
-                    <PlayCircle className="h-16 w-16" />
-                    <Button asChild variant="secondary"><a href={video.video_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> مشاهدة الفيديو</a></Button>
+                  <div className="w-full h-full flex flex-col items-center justify-center text-white gap-3 p-6 text-center">
+                    <PlayCircle className="h-16 w-16 opacity-80" />
+                    <p className="text-sm opacity-90">لا يمكن تضمين هذا الفيديو هنا.</p>
+                    <Button asChild variant="secondary">
+                      <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4" /> مشاهدة الفيديو
+                      </a>
+                    </Button>
                   </div>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-white/80">لا يوجد فيديو متاح حاليًا.</div>
+                  <div className="w-full h-full flex items-center justify-center text-white/80">
+                    لا يوجد فيديو متاح حاليًا.
+                  </div>
                 )}
               </div>
             </div>
@@ -67,6 +84,12 @@ export default function VideoDetail() {
               </div>
             )}
             {video.description && <p className="text-muted-foreground leading-loose whitespace-pre-line">{video.description}</p>}
+
+            {!hasAnyVideo && video.thumbnail && (
+              <div className="mt-6 rounded-xl overflow-hidden aspect-video">
+                <SmartImage src={video.thumbnail} alt={video.title} variant="video" className="w-full h-full object-cover" />
+              </div>
+            )}
           </div>
 
           <div className="lg:col-span-1">
@@ -77,6 +100,15 @@ export default function VideoDetail() {
               {video.live_status && <div className="flex justify-between"><span className="text-muted-foreground">حالة البث</span><span className="font-medium">{LIVE_LABEL[video.live_status] ?? video.live_status}</span></div>}
               {video.scheduled_at && <div className="flex justify-between"><span className="text-muted-foreground">تاريخ البث</span><span className="font-medium">{formatDateTime(video.scheduled_at)}</span></div>}
               <div className="flex justify-between"><span className="text-muted-foreground">جهة النشر</span><span className="font-medium">{video.publisher_source}</span></div>
+              {video.video_url && (
+                <div className="pt-3 border-t">
+                  <Button asChild variant="outline" className="w-full">
+                    <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4" /> مشاهدة على المنصة
+                    </a>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -87,8 +119,8 @@ export default function VideoDetail() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {related.map((r) => (
                 <Link key={r.id} to={`/videos/${r.slug || r.id}`} className="card-elegant overflow-hidden block hover:bg-muted/20">
-                  <div className="aspect-video bg-gradient-emerald flex items-center justify-center">
-                    {r.thumbnail ? <img src={r.thumbnail} alt={r.title} className="w-full h-full object-cover" /> : <PlayCircle className="h-12 w-12 text-white/80" />}
+                  <div className="aspect-video">
+                    <SmartImage src={r.thumbnail} alt={r.title} variant="video" className="w-full h-full object-cover" fallbackClassName="bg-gradient-emerald" />
                   </div>
                   <div className="p-4">
                     <div className="text-xs text-primary mb-1">{r.category}</div>

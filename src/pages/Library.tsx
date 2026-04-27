@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BookOpen, Download, Eye, Search, Loader2, Star } from "lucide-react";
+import { Download, Eye, Search, Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
@@ -47,12 +48,13 @@ export default function LibraryPage() {
   });
 
   const handleDownload = async (item: any) => {
-    if (!item.file_url && !item.external_url) {
+    const url = item.file_url || item.external_url;
+    if (!url || !/^https?:\/\//i.test(url)) {
       toast.error("لا يوجد ملف متاح للتحميل");
       return;
     }
     await supabase.from("library_items").update({ downloads_count: (item.downloads_count ?? 0) + 1 }).eq("id", item.id);
-    window.open(item.file_url || item.external_url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -95,8 +97,8 @@ export default function LibraryPage() {
               {filtered.map((b) => (
                 <article key={b.id} className="card-elegant overflow-hidden flex flex-col">
                   <Link to={`/library/${b.slug || b.id}`} className="block">
-                    <div className="aspect-[3/4] bg-gradient-to-br from-primary/15 to-primary-glow/10 flex items-center justify-center relative">
-                      {b.cover_image ? <img src={b.cover_image} alt={b.title} className="w-full h-full object-cover" /> : <BookOpen className="h-16 w-16 text-primary/40" />}
+                    <div className="aspect-[3/4] relative overflow-hidden">
+                      <SmartImage src={b.cover_image} alt={b.title} variant="library" className="w-full h-full object-cover" />
                       {b.is_featured && <span className="absolute top-2 start-2 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> مميز</span>}
                     </div>
                   </Link>

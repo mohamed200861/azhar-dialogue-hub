@@ -10,9 +10,9 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileUploadField } from "@/components/admin/FileUploadField";
-import { Loader2, ArrowRight, Save } from "lucide-react";
+import { Loader2, ArrowRight, Save, FlaskConical } from "lucide-react";
 import { toast } from "sonner";
-import { slugify, getYouTubeEmbed } from "@/lib/admin-utils";
+import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
@@ -26,6 +26,7 @@ export default function VideosEdit() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [previewEmbed, setPreviewEmbed] = useState<string | null>(null);
   const [form, setForm] = useState<any>({
     title: "", slug: "", description: "", thumbnail: null, video_url: "", embed_url: "",
     platform: "YouTube", type: "video", live_status: null, scheduled_at: null,
@@ -44,13 +45,19 @@ export default function VideosEdit() {
 
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
+    if (!isValidUrl(form.video_url)) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
+    if (!isValidUrl(form.embed_url)) return toast.error("يرجى إدخال رابط تضمين صحيح يبدأ بـ https://");
+    if (publish === true && !(form.video_url?.trim() || form.embed_url?.trim())) {
+      return toast.error("يجب إضافة رابط فيديو أو تضمين قبل النشر");
+    }
     setSaving(true);
     const embed = form.embed_url?.trim() || (form.video_url ? getYouTubeEmbed(form.video_url) ?? "" : "");
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
       embed_url: embed || null,
+      video_url: form.video_url?.trim() || null,
       duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : null,
       scheduled_at: form.scheduled_at ? new Date(form.scheduled_at).toISOString() : null,
       live_status: form.type === "live" ? (form.live_status ?? "scheduled") : null,
@@ -67,6 +74,20 @@ export default function VideosEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
+  };
+
+  const testLink = () => {
+    const candidate = form.embed_url?.trim() || form.video_url?.trim();
+    if (!candidate) { toast.error("أضف رابط فيديو أو تضمين أولًا"); return; }
+    if (!isValidUrl(candidate)) { toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://"); return; }
+    const embed = form.embed_url?.trim() || getYouTubeEmbed(form.video_url);
+    if (!embed) {
+      setPreviewEmbed(null);
+      toast.warning("لا يمكن تضمين هذا الرابط داخل الموقع، لكن يمكن فتحه كرابط خارجي.");
+      return;
+    }
+    setPreviewEmbed(embed);
+    toast.success("تم استنتاج رابط التضمين بنجاح");
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
@@ -86,6 +107,16 @@ export default function VideosEdit() {
             <div><Label>الوصف</Label><Textarea rows={5} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
             <div><Label>رابط الفيديو</Label><Input dir="ltr" className="text-left" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></div>
             <div><Label>رابط التضمين (اختياري)</Label><Input dir="ltr" className="text-left" value={form.embed_url ?? ""} onChange={(e) => setForm({ ...form, embed_url: e.target.value })} placeholder="يتم استنتاجه تلقائيًا من YouTube" /></div>
+            <div className="flex justify-end">
+              <Button type="button" variant="outline" size="sm" onClick={testLink}>
+                <FlaskConical className="h-4 w-4" /> اختبار الرابط
+              </Button>
+            </div>
+            {previewEmbed && (
+              <div className="aspect-video rounded-lg overflow-hidden border bg-black">
+                <iframe src={previewEmbed} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title="معاينة" />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>المنصة</Label>

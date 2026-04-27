@@ -14,6 +14,7 @@ import logoDefault from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
+import { SmartImage } from "@/components/SmartImage";
 
 const iconMap: Record<string, any> = {
   Scale, GitFork, BookOpen, ShieldCheck, Building2, HeartHandshake,
@@ -244,8 +245,8 @@ export default function Home() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {news.map((n) => (
                   <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
-                    <div className="aspect-[16/10] bg-gradient-emerald flex items-center justify-center text-primary-foreground/40 overflow-hidden">
-                      {n.cover_image ? <img src={n.cover_image} alt={n.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <Newspaper className="h-16 w-16" />}
+                    <div className="aspect-[16/10] overflow-hidden">
+                      <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     </div>
                     <div className="p-6 flex flex-col flex-1">
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">

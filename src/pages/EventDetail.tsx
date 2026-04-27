@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, MapPin, Tag, Radio, ExternalLink } from "lucide-react";
-import { formatDateTime, formatDate } from "@/lib/admin-utils";
+import { formatDateTime, formatDate, isValidUrl } from "@/lib/admin-utils";
 
 const STATUS_LABEL: Record<string, string> = {
   upcoming: "قادم",
@@ -27,9 +28,11 @@ export default function EventDetail() {
   useEffect(() => {
     if (!slug) return;
     (async () => {
-      const { data } = await supabase
-        .from("events").select("*").eq("publish_status", "published")
-        .or(`slug.eq.${slug},id.eq.${slug}`).maybeSingle();
+      const isUuid = /^[0-9a-f-]{36}$/i.test(slug);
+      const q = supabase.from("events").select("*").eq("publish_status", "published");
+      const { data } = isUuid
+        ? await q.eq("id", slug).maybeSingle()
+        : await q.eq("slug", slug).maybeSingle();
       if (!data) { setEvent(null); return; }
       setEvent(data);
       document.title = `${data.title} — فعاليات الاتحاد`;
@@ -43,9 +46,11 @@ export default function EventDetail() {
 
   if (event === undefined) return <SiteLayout><div className="p-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div></SiteLayout>;
   if (event === null) return <SiteLayout><div className="container-narrow py-20 text-center">
-    <h1 className="text-2xl font-bold mb-4">الفعالية غير موجودة</h1>
+    <h1 className="text-2xl font-bold mb-4">العنصر غير موجود أو لم يعد متاحًا.</h1>
     <Button asChild><Link to="/events">العودة إلى الفعاليات</Link></Button>
   </div></SiteLayout>;
+
+  const showLink = (u: string | null | undefined) => !!u && isValidUrl(u);
 
   return (
     <SiteLayout>
@@ -54,7 +59,7 @@ export default function EventDetail() {
 
         {event.cover_image && (
           <div className="rounded-2xl overflow-hidden mb-8 aspect-[16/9]">
-            <img src={event.cover_image} alt={event.title} className="w-full h-full object-cover" />
+            <SmartImage src={event.cover_image} alt={event.title} variant="event" className="w-full h-full object-cover" />
           </div>
         )}
 
@@ -98,17 +103,17 @@ export default function EventDetail() {
               </div>
 
               <div className="pt-3 border-t flex flex-col gap-2">
-                {event.status === "upcoming" && event.registration_link && (
-                  <Button asChild className="w-full"><a href={event.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>
+                {event.status === "upcoming" && showLink(event.registration_link) && (
+                  <Button asChild className="w-full"><a href={event.registration_link} target="_blank" rel="noopener noreferrer">التسجيل</a></Button>
                 )}
-                {event.online_link && (
-                  <Button asChild variant="outline" className="w-full"><a href={event.online_link} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> رابط الحضور</a></Button>
+                {showLink(event.online_link) && (
+                  <Button asChild variant="outline" className="w-full"><a href={event.online_link} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /> رابط الحضور</a></Button>
                 )}
-                {event.status === "live" && event.live_link && (
-                  <Button asChild className="w-full"><a href={event.live_link} target="_blank" rel="noreferrer"><Radio className="h-4 w-4" /> مشاهدة البث</a></Button>
+                {event.status === "live" && showLink(event.live_link) && (
+                  <Button asChild className="w-full"><a href={event.live_link} target="_blank" rel="noopener noreferrer"><Radio className="h-4 w-4" /> مشاهدة البث</a></Button>
                 )}
-                {event.status === "completed" && event.replay_link && (
-                  <Button asChild variant="outline" className="w-full"><a href={event.replay_link} target="_blank" rel="noreferrer">مشاهدة التسجيل</a></Button>
+                {event.status === "completed" && showLink(event.replay_link) && (
+                  <Button asChild variant="outline" className="w-full"><a href={event.replay_link} target="_blank" rel="noopener noreferrer">مشاهدة التسجيل</a></Button>
                 )}
               </div>
             </div>

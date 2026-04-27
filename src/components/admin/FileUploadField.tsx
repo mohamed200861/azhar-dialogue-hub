@@ -33,8 +33,13 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
   useEffect(() => setManual(value ?? ""), [value]);
 
   const handleFile = async (file: File) => {
+    const allowed = (accept ?? ACCEPT[bucket]).split(",").map((s) => s.trim());
+    if (allowed.length && !allowed.includes(file.type)) {
+      toast.error("نوع الملف غير مدعوم.");
+      return;
+    }
     if (file.size > 20 * 1024 * 1024) {
-      toast.error("حجم الملف يتجاوز الحد المسموح به (20 م.ب)");
+      toast.error("حجم الملف كبير جدًا. يرجى رفع ملف أصغر.");
       return;
     }
     setUploading(true);
@@ -117,7 +122,14 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
           placeholder="أو ألصق رابط ملف…"
           value={manual}
           onChange={(e) => setManual(e.target.value)}
-          onBlur={() => onChange(manual.trim() || null)}
+          onBlur={() => {
+            const v = manual.trim();
+            if (v && !/^https?:\/\//i.test(v)) {
+              toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
+              return;
+            }
+            onChange(v || null);
+          }}
           className="text-left"
         />
       </div>
