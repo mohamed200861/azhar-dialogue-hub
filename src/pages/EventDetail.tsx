@@ -46,9 +46,11 @@ export default function EventDetail() {
 
   if (event === undefined) return <SiteLayout><div className="p-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div></SiteLayout>;
   if (event === null) return <SiteLayout><div className="container-narrow py-20 text-center">
-    <h1 className="text-2xl font-bold mb-4">الفعالية غير موجودة</h1>
+    <h1 className="text-2xl font-bold mb-4">العنصر غير موجود أو لم يعد متاحًا.</h1>
     <Button asChild><Link to="/events">العودة إلى الفعاليات</Link></Button>
   </div></SiteLayout>;
+
+  const showLink = (u: string | null | undefined) => !!u && isValidUrl(u);
 
   return (
     <SiteLayout>
@@ -57,7 +59,7 @@ export default function EventDetail() {
 
         {event.cover_image && (
           <div className="rounded-2xl overflow-hidden mb-8 aspect-[16/9]">
-            <img src={event.cover_image} alt={event.title} className="w-full h-full object-cover" />
+            <SmartImage src={event.cover_image} alt={event.title} variant="event" className="w-full h-full object-cover" />
           </div>
         )}
 
