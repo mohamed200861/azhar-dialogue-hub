@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, MapPin, Tag, Radio, ExternalLink } from "lucide-react";
-import { formatDateTime, formatDate } from "@/lib/admin-utils";
+import { formatDateTime, formatDate, isValidUrl } from "@/lib/admin-utils";
 
 const STATUS_LABEL: Record<string, string> = {
   upcoming: "قادم",
