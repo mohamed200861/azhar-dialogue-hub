@@ -111,21 +111,18 @@ export default function VideosPage() {
                 <div className="card-elegant p-12 text-center text-muted-foreground">لا توجد مرئيات منشورة بعد.</div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {filtered.map((v) => {
-                    const url = v.embed_url || getYouTubeEmbed(v.video_url || "") || v.video_url;
-                    return (
-                      <a key={v.id} href={url ?? "#"} target="_blank" rel="noreferrer" className="card-elegant overflow-hidden group block">
-                        <div className="aspect-video bg-gradient-emerald relative flex items-center justify-center">
-                          {v.thumbnail ? <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" /> : <PlayCircle className="h-14 w-14 text-white/80 group-hover:scale-110 transition-transform" />}
-                          {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
-                        </div>
-                        <div className="p-5">
-                          <h3 className="font-semibold mb-2 line-clamp-2">{v.title}</h3>
-                          <div className="text-xs text-muted-foreground inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(v.scheduled_at ?? v.created_at)}</div>
-                        </div>
-                      </a>
-                    );
-                  })}
+                  {filtered.map((v) => (
+                    <Link key={v.id} to={`/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
+                      <div className="aspect-video bg-gradient-emerald relative flex items-center justify-center">
+                        {v.thumbnail ? <img src={v.thumbnail} alt={v.title} className="w-full h-full object-cover" /> : <PlayCircle className="h-14 w-14 text-white/80 group-hover:scale-110 transition-transform" />}
+                        {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
+                      </div>
+                      <div className="p-5">
+                        <h3 className="font-semibold mb-2 line-clamp-2">{v.title}</h3>
+                        <div className="text-xs text-muted-foreground inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(v.scheduled_at ?? v.created_at)}</div>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
               )}
             </>
