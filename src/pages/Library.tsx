@@ -96,8 +96,8 @@ export default function LibraryPage() {
               {filtered.map((b) => (
                 <article key={b.id} className="card-elegant overflow-hidden flex flex-col">
                   <Link to={`/library/${b.slug || b.id}`} className="block">
-                    <div className="aspect-[3/4] bg-gradient-to-br from-primary/15 to-primary-glow/10 flex items-center justify-center relative">
-                      {b.cover_image ? <img src={b.cover_image} alt={b.title} className="w-full h-full object-cover" /> : <BookOpen className="h-16 w-16 text-primary/40" />}
+                    <div className="aspect-[3/4] relative overflow-hidden">
+                      <SmartImage src={b.cover_image} alt={b.title} variant="library" className="w-full h-full object-cover" />
                       {b.is_featured && <span className="absolute top-2 start-2 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> مميز</span>}
                     </div>
                   </Link>
