@@ -26,6 +26,7 @@ export default function VideosEdit() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
+  const [previewEmbed, setPreviewEmbed] = useState<string | null>(null);
   const [form, setForm] = useState<any>({
     title: "", slug: "", description: "", thumbnail: null, video_url: "", embed_url: "",
     platform: "YouTube", type: "video", live_status: null, scheduled_at: null,
