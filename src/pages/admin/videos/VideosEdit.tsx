@@ -107,6 +107,16 @@ export default function VideosEdit() {
             <div><Label>الوصف</Label><Textarea rows={5} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
             <div><Label>رابط الفيديو</Label><Input dir="ltr" className="text-left" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></div>
             <div><Label>رابط التضمين (اختياري)</Label><Input dir="ltr" className="text-left" value={form.embed_url ?? ""} onChange={(e) => setForm({ ...form, embed_url: e.target.value })} placeholder="يتم استنتاجه تلقائيًا من YouTube" /></div>
+            <div className="flex justify-end">
+              <Button type="button" variant="outline" size="sm" onClick={testLink}>
+                <FlaskConical className="h-4 w-4" /> اختبار الرابط
+              </Button>
+            </div>
+            {previewEmbed && (
+              <div className="aspect-video rounded-lg overflow-hidden border bg-black">
+                <iframe src={previewEmbed} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen title="معاينة" />
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>المنصة</Label>
