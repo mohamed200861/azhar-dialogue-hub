@@ -14,11 +14,18 @@ import Vision from "./pages/Vision.tsx";
 import News from "./pages/News.tsx";
 import NewsDetail from "./pages/NewsDetail.tsx";
 import Events from "./pages/Events.tsx";
+import EventDetail from "./pages/EventDetail.tsx";
 import Library from "./pages/Library.tsx";
+import LibraryDetail from "./pages/LibraryDetail.tsx";
 import Videos from "./pages/Videos.tsx";
+import VideoDetail from "./pages/VideoDetail.tsx";
 import Partnerships from "./pages/Partnerships.tsx";
 import Contact from "./pages/Contact.tsx";
+import Privacy from "./pages/Privacy.tsx";
+import Terms from "./pages/Terms.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
+import AdminSetup from "./pages/admin/Setup.tsx";
 
 import AdminLogin from "./pages/admin/Login.tsx";
 import Dashboard from "./pages/admin/Dashboard.tsx";
