@@ -128,7 +128,7 @@ export default function AdminUsers() {
       <PageHeader
         title="إدارة المدراء"
         description="إنشاء وإدارة حسابات المدراء وأدوارهم. لا تظهر هذه البيانات في الموقع العام."
-        action={
+        actions={
           <Button onClick={() => setShowForm((s) => !s)}>
             {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {showForm ? "إغلاق" : "إضافة مدير"}
