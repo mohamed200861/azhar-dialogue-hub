@@ -43,13 +43,14 @@ export default function LibraryEdit() {
 
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
+    if (!isValidUrl(form.external_url)) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
       pages_count: form.pages_count ? Number(form.pages_count) : null,
-      external_url: form.external_url || null,
+      external_url: form.external_url?.trim() || null,
     };
     if (publish === true) { payload.status = "published"; payload.published_at = payload.published_at ?? new Date().toISOString(); }
     if (publish === false) payload.status = "draft";
