@@ -76,7 +76,9 @@ export default function EventsPage() {
                         <Tag className="h-3 w-3" /> {e.event_type}
                       </span>
                     </div>
-                    <h3 className="font-bold text-lg mb-2">{e.title}</h3>
+                    <Link to={`/events/${e.slug || e.id}`} className="hover:text-primary">
+                      <h3 className="font-bold text-lg mb-2">{e.title}</h3>
+                    </Link>
                     {e.description && <p className="text-sm text-muted-foreground mb-4 flex-1 line-clamp-3">{e.description}</p>}
                     <div className="text-xs text-muted-foreground space-y-1 mb-1">
                       {e.location && <div className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {e.location}</div>}
