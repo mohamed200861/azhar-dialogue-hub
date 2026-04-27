@@ -62,7 +62,7 @@ export default function EventsPage() {
                 <article key={e.id} className="card-elegant overflow-hidden flex flex-col">
                   {e.cover_image && (
                     <div className="aspect-[16/9] overflow-hidden">
-                      <img src={e.cover_image} alt={e.title} className="w-full h-full object-cover" />
+                      <SmartImage src={e.cover_image} alt={e.title} variant="event" className="w-full h-full object-cover" />
                     </div>
                   )}
                   <div className="p-6 flex flex-col flex-1">
@@ -90,8 +90,10 @@ export default function EventsPage() {
                       <Button size="sm" variant="outline" asChild className="flex-1">
                         <Link to={`/events/${e.slug || e.id}`}>عرض التفاصيل</Link>
                       </Button>
-                      {e.status === "upcoming" && e.registration_link && <Button size="sm" asChild><a href={e.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>}
-                      {e.status === "live" && e.live_link && <Button size="sm" asChild><a href={e.live_link} target="_blank" rel="noreferrer">مشاهدة البث</a></Button>}
+                      {e.status === "upcoming" && isValidUrl(e.registration_link) && e.registration_link && <Button size="sm" asChild><a href={e.registration_link} target="_blank" rel="noopener noreferrer">التسجيل</a></Button>}
+                      {e.status === "live" && isValidUrl(e.live_link) && e.live_link && <Button size="sm" asChild><a href={e.live_link} target="_blank" rel="noopener noreferrer"><Radio className="h-3.5 w-3.5" /> مشاهدة البث</a></Button>}
+                      {e.status === "completed" && isValidUrl(e.replay_link) && e.replay_link && <Button size="sm" variant="outline" asChild><a href={e.replay_link} target="_blank" rel="noopener noreferrer">مشاهدة التسجيل</a></Button>}
+                      {isValidUrl(e.online_link) && e.online_link && e.status !== "completed" && <Button size="sm" variant="outline" asChild><a href={e.online_link} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-3.5 w-3.5" /> رابط الحضور</a></Button>}
                     </div>
                   </div>
                 </article>
