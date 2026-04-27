@@ -2,10 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
+import { SmartImage } from "@/components/SmartImage";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
-import { Calendar, MapPin, Tag, Loader2, Radio } from "lucide-react";
-import { formatDateTime } from "@/lib/admin-utils";
+import { Calendar, MapPin, Tag, Loader2, Radio, ExternalLink } from "lucide-react";
+import { formatDateTime, isValidUrl } from "@/lib/admin-utils";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
 
