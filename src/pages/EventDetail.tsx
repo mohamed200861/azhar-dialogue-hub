@@ -103,17 +103,17 @@ export default function EventDetail() {
               </div>
 
               <div className="pt-3 border-t flex flex-col gap-2">
-                {event.status === "upcoming" && event.registration_link && (
-                  <Button asChild className="w-full"><a href={event.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>
+                {event.status === "upcoming" && showLink(event.registration_link) && (
+                  <Button asChild className="w-full"><a href={event.registration_link} target="_blank" rel="noopener noreferrer">التسجيل</a></Button>
                 )}
-                {event.online_link && (
-                  <Button asChild variant="outline" className="w-full"><a href={event.online_link} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> رابط الحضور</a></Button>
+                {showLink(event.online_link) && (
+                  <Button asChild variant="outline" className="w-full"><a href={event.online_link} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /> رابط الحضور</a></Button>
                 )}
-                {event.status === "live" && event.live_link && (
-                  <Button asChild className="w-full"><a href={event.live_link} target="_blank" rel="noreferrer"><Radio className="h-4 w-4" /> مشاهدة البث</a></Button>
+                {event.status === "live" && showLink(event.live_link) && (
+                  <Button asChild className="w-full"><a href={event.live_link} target="_blank" rel="noopener noreferrer"><Radio className="h-4 w-4" /> مشاهدة البث</a></Button>
                 )}
-                {event.status === "completed" && event.replay_link && (
-                  <Button asChild variant="outline" className="w-full"><a href={event.replay_link} target="_blank" rel="noreferrer">مشاهدة التسجيل</a></Button>
+                {event.status === "completed" && showLink(event.replay_link) && (
+                  <Button asChild variant="outline" className="w-full"><a href={event.replay_link} target="_blank" rel="noopener noreferrer">مشاهدة التسجيل</a></Button>
                 )}
               </div>
             </div>
