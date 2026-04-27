@@ -62,7 +62,7 @@ export default function NewsEdit() {
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
     };
     if (publish === true) {
