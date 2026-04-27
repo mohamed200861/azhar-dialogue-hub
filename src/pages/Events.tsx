@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tag, Loader2, Radio } from "lucide-react";
-import { formatDateTime, formatDate } from "@/lib/admin-utils";
+import { formatDateTime } from "@/lib/admin-utils";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
 
@@ -75,7 +76,9 @@ export default function EventsPage() {
                         <Tag className="h-3 w-3" /> {e.event_type}
                       </span>
                     </div>
-                    <h3 className="font-bold text-lg mb-2">{e.title}</h3>
+                    <Link to={`/events/${e.slug || e.id}`} className="hover:text-primary">
+                      <h3 className="font-bold text-lg mb-2">{e.title}</h3>
+                    </Link>
                     {e.description && <p className="text-sm text-muted-foreground mb-4 flex-1 line-clamp-3">{e.description}</p>}
                     <div className="text-xs text-muted-foreground space-y-1 mb-1">
                       {e.location && <div className="inline-flex items-center gap-1.5"><MapPin className="h-3.5 w-3.5" /> {e.location}</div>}
@@ -83,10 +86,11 @@ export default function EventsPage() {
                     </div>
                     <div className="text-xs text-muted-foreground mb-4">نُظّم بواسطة: <span className="font-medium text-foreground/80">{e.organizer_source}</span></div>
                     <div className="flex flex-wrap gap-2 mt-auto">
-                      {e.status === "upcoming" && e.registration_link && <Button size="sm" asChild className="flex-1"><a href={e.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>}
-                      {e.status === "live" && e.live_link && <Button size="sm" asChild className="flex-1"><a href={e.live_link} target="_blank" rel="noreferrer">مشاهدة البث</a></Button>}
-                      {e.status === "completed" && e.replay_link && <Button size="sm" variant="outline" asChild className="flex-1"><a href={e.replay_link} target="_blank" rel="noreferrer">مشاهدة التسجيل</a></Button>}
-                      {e.online_link && <Button size="sm" variant="outline" asChild><a href={e.online_link} target="_blank" rel="noreferrer">رابط الحضور</a></Button>}
+                      <Button size="sm" variant="outline" asChild className="flex-1">
+                        <Link to={`/events/${e.slug || e.id}`}>عرض التفاصيل</Link>
+                      </Button>
+                      {e.status === "upcoming" && e.registration_link && <Button size="sm" asChild><a href={e.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>}
+                      {e.status === "live" && e.live_link && <Button size="sm" asChild><a href={e.live_link} target="_blank" rel="noreferrer">مشاهدة البث</a></Button>}
                     </div>
                   </div>
                 </article>

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BookOpen, Download, Eye, Search, Loader2, Star } from "lucide-react";
-import { formatDate } from "@/lib/admin-utils";
 import { toast } from "sonner";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
@@ -94,13 +94,17 @@ export default function LibraryPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {filtered.map((b) => (
                 <article key={b.id} className="card-elegant overflow-hidden flex flex-col">
-                  <div className="aspect-[3/4] bg-gradient-to-br from-primary/15 to-primary-glow/10 flex items-center justify-center relative">
-                    {b.cover_image ? <img src={b.cover_image} alt={b.title} className="w-full h-full object-cover" /> : <BookOpen className="h-16 w-16 text-primary/40" />}
-                    {b.is_featured && <span className="absolute top-2 start-2 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> مميز</span>}
-                  </div>
+                  <Link to={`/library/${b.slug || b.id}`} className="block">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-primary/15 to-primary-glow/10 flex items-center justify-center relative">
+                      {b.cover_image ? <img src={b.cover_image} alt={b.title} className="w-full h-full object-cover" /> : <BookOpen className="h-16 w-16 text-primary/40" />}
+                      {b.is_featured && <span className="absolute top-2 start-2 bg-primary text-primary-foreground text-[10px] px-2 py-0.5 rounded-full inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> مميز</span>}
+                    </div>
+                  </Link>
                   <div className="p-5 flex-1 flex flex-col">
                     <span className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-2">{b.category}</span>
-                    <h3 className="font-bold mb-1 line-clamp-2">{b.title}</h3>
+                    <Link to={`/library/${b.slug || b.id}`} className="hover:text-primary">
+                      <h3 className="font-bold mb-1 line-clamp-2">{b.title}</h3>
+                    </Link>
                     <div className="text-xs text-muted-foreground mb-3">{b.publisher_source}</div>
                     {b.description && <p className="text-xs text-muted-foreground line-clamp-3 flex-1 mb-4">{b.description}</p>}
                     <div className="text-[10px] text-muted-foreground mb-3 flex items-center justify-between">
@@ -108,11 +112,9 @@ export default function LibraryPage() {
                       <span>{b.downloads_count ?? 0} تحميل</span>
                     </div>
                     <div className="flex gap-2">
-                      {(b.file_url || b.external_url) && (
-                        <Button size="sm" variant="outline" className="flex-1" asChild>
-                          <a href={b.file_url || b.external_url} target="_blank" rel="noreferrer"><Eye className="h-3.5 w-3.5" /> قراءة</a>
-                        </Button>
-                      )}
+                      <Button size="sm" variant="outline" className="flex-1" asChild>
+                        <Link to={`/library/${b.slug || b.id}`}><Eye className="h-3.5 w-3.5" /> عرض</Link>
+                      </Button>
                       <Button size="sm" className="flex-1" onClick={() => handleDownload(b)}>
                         <Download className="h-3.5 w-3.5" /> تحميل
                       </Button>

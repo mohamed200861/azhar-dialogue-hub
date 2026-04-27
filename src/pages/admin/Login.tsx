@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -15,9 +15,14 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [needsSetup, setNeedsSetup] = useState(false);
 
   useEffect(() => {
     document.title = "تسجيل الدخول — لوحة تحكم اتحاد علماء الأزهر";
+    (async () => {
+      const { data } = await supabase.rpc("public_has_any_super_admin");
+      setNeedsSetup(!data);
+    })();
   }, []);
 
   if (!loading && user && isAdmin) return <Navigate to="/admin" replace />;
@@ -105,6 +110,15 @@ export default function AdminLogin() {
           <p className="text-xs text-muted-foreground text-center">
             بالدخول إلى لوحة التحكم فإنك توافق على سياسة الاستخدام الخاصة بإدارة الموقع.
           </p>
+
+          {needsSetup && (
+            <div className="text-center pt-2 border-t">
+              <p className="text-xs text-muted-foreground mb-2">لم يتم إنشاء المدير العام بعد.</p>
+              <Button asChild variant="outline" size="sm">
+                <Link to="/admin/setup">إعداد المدير العام</Link>
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </div>
