@@ -28,9 +28,11 @@ export default function EventDetail() {
   useEffect(() => {
     if (!slug) return;
     (async () => {
-      const { data } = await supabase
-        .from("events").select("*").eq("publish_status", "published")
-        .or(`slug.eq.${slug},id.eq.${slug}`).maybeSingle();
+      const isUuid = /^[0-9a-f-]{36}$/i.test(slug);
+      const q = supabase.from("events").select("*").eq("publish_status", "published");
+      const { data } = isUuid
+        ? await q.eq("id", slug).maybeSingle()
+        : await q.eq("slug", slug).maybeSingle();
       if (!data) { setEvent(null); return; }
       setEvent(data);
       document.title = `${data.title} — فعاليات الاتحاد`;
