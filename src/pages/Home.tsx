@@ -14,6 +14,7 @@ import logoDefault from "@/assets/logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
+import { SmartImage } from "@/components/SmartImage";
 
 const iconMap: Record<string, any> = {
   Scale, GitFork, BookOpen, ShieldCheck, Building2, HeartHandshake,
