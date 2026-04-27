@@ -86,10 +86,11 @@ export default function EventsPage() {
                     </div>
                     <div className="text-xs text-muted-foreground mb-4">نُظّم بواسطة: <span className="font-medium text-foreground/80">{e.organizer_source}</span></div>
                     <div className="flex flex-wrap gap-2 mt-auto">
-                      {e.status === "upcoming" && e.registration_link && <Button size="sm" asChild className="flex-1"><a href={e.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>}
-                      {e.status === "live" && e.live_link && <Button size="sm" asChild className="flex-1"><a href={e.live_link} target="_blank" rel="noreferrer">مشاهدة البث</a></Button>}
-                      {e.status === "completed" && e.replay_link && <Button size="sm" variant="outline" asChild className="flex-1"><a href={e.replay_link} target="_blank" rel="noreferrer">مشاهدة التسجيل</a></Button>}
-                      {e.online_link && <Button size="sm" variant="outline" asChild><a href={e.online_link} target="_blank" rel="noreferrer">رابط الحضور</a></Button>}
+                      <Button size="sm" variant="outline" asChild className="flex-1">
+                        <Link to={`/events/${e.slug || e.id}`}>عرض التفاصيل</Link>
+                      </Button>
+                      {e.status === "upcoming" && e.registration_link && <Button size="sm" asChild><a href={e.registration_link} target="_blank" rel="noreferrer">التسجيل</a></Button>}
+                      {e.status === "live" && e.live_link && <Button size="sm" asChild><a href={e.live_link} target="_blank" rel="noreferrer">مشاهدة البث</a></Button>}
                     </div>
                   </div>
                 </article>
