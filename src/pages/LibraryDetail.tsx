@@ -3,9 +3,11 @@ import { Link, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowRight, BookOpen, Download, ExternalLink, Eye, Calendar, Star } from "lucide-react";
-import { formatDate } from "@/lib/admin-utils";
+import { Loader2, ArrowRight, Download, ExternalLink, Eye, Calendar, Star } from "lucide-react";
+import { formatDate, isPdfUrl } from "@/lib/admin-utils";
 import { toast } from "sonner";
+import { SmartImage } from "@/components/SmartImage";
+import { PdfViewer } from "@/components/PdfViewer";
 
 export default function LibraryDetail() {
   const { slug } = useParams();
@@ -15,9 +17,11 @@ export default function LibraryDetail() {
   useEffect(() => {
     if (!slug) return;
     (async () => {
-      const { data } = await supabase
-        .from("library_items").select("*").eq("status", "published")
-        .or(`slug.eq.${slug},id.eq.${slug}`).maybeSingle();
+      const isUuid = /^[0-9a-f-]{36}$/i.test(slug);
+      const query = supabase.from("library_items").select("*").eq("status", "published");
+      const { data } = isUuid
+        ? await query.eq("id", slug).maybeSingle()
+        : await query.eq("slug", slug).maybeSingle();
       if (!data) { setItem(null); return; }
       setItem(data);
       document.title = `${data.title} — المكتبة الرقمية`;
@@ -34,16 +38,17 @@ export default function LibraryDetail() {
     if (!url) { toast.error("لا يوجد ملف متاح حاليًا."); return; }
     await supabase.from("library_items").update({ downloads_count: (item.downloads_count ?? 0) + 1 }).eq("id", item.id);
     setItem({ ...item, downloads_count: (item.downloads_count ?? 0) + 1 });
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   if (item === undefined) return <SiteLayout><div className="p-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div></SiteLayout>;
   if (item === null) return <SiteLayout><div className="container-narrow py-20 text-center">
-    <h1 className="text-2xl font-bold mb-4">العنصر غير موجود</h1>
+    <h1 className="text-2xl font-bold mb-4">العنصر غير موجود أو لم يعد متاحًا.</h1>
     <Button asChild><Link to="/library">العودة إلى المكتبة</Link></Button>
   </div></SiteLayout>;
 
   const hasFile = !!(item.file_url || item.external_url);
+  const showPdfPreview = item.file_url && isPdfUrl(item.file_url);
 
   return (
     <SiteLayout>
@@ -53,10 +58,8 @@ export default function LibraryDetail() {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1">
             <div className="card-elegant overflow-hidden">
-              <div className="aspect-[3/4] bg-gradient-to-br from-primary/15 to-primary-glow/10 flex items-center justify-center relative">
-                {item.cover_image
-                  ? <img src={item.cover_image} alt={item.title} className="w-full h-full object-cover" />
-                  : <BookOpen className="h-20 w-20 text-primary/40" />}
+              <div className="aspect-[3/4] relative">
+                <SmartImage src={item.cover_image} alt={item.title} variant="library" className="w-full h-full object-cover" />
                 {item.is_featured && <span className="absolute top-3 start-3 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full inline-flex items-center gap-1"><Star className="h-3 w-3 fill-current" /> مميز</span>}
               </div>
             </div>
@@ -79,13 +82,13 @@ export default function LibraryDetail() {
                 <>
                   {item.file_url && (
                     <Button asChild variant="outline">
-                      <a href={item.file_url} target="_blank" rel="noreferrer"><Eye className="h-4 w-4" /> قراءة</a>
+                      <a href={item.file_url} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /> عرض</a>
                     </Button>
                   )}
                   <Button onClick={handleDownload}><Download className="h-4 w-4" /> تحميل</Button>
                   {item.external_url && (
                     <Button asChild variant="outline">
-                      <a href={item.external_url} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" /> رابط خارجي</a>
+                      <a href={item.external_url} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /> رابط خارجي</a>
                     </Button>
                   )}
                 </>
@@ -94,11 +97,7 @@ export default function LibraryDetail() {
               )}
             </div>
 
-            {item.file_url && /\.pdf($|\?)/i.test(item.file_url) && (
-              <div className="card-elegant overflow-hidden">
-                <iframe src={item.file_url} title={item.title} className="w-full h-[70vh]" />
-              </div>
-            )}
+            {showPdfPreview && <PdfViewer url={item.file_url} title={item.title} />}
           </div>
         </div>
 
