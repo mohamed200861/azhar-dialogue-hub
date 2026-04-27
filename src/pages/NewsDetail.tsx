@@ -59,7 +59,9 @@ export default function NewsDetail() {
         <div className="text-sm text-muted-foreground mb-6">نُشر بواسطة: <span className="text-foreground/80 font-medium">{post.publisher_source}</span></div>
 
         {post.cover_image && (
-          <img src={post.cover_image} alt={post.title} className="w-full rounded-2xl mb-8 aspect-[16/9] object-cover" />
+          <div className="w-full rounded-2xl mb-8 aspect-[16/9] overflow-hidden">
+            <SmartImage src={post.cover_image} alt={post.title} variant="news" className="w-full h-full object-cover" />
+          </div>
         )}
 
         {post.excerpt && <p className="text-lg text-muted-foreground leading-loose mb-6">{post.excerpt}</p>}
@@ -72,14 +74,14 @@ export default function NewsDetail() {
           </div>
         )}
 
-        {post.pdf_attachment && (
-          <a href={post.pdf_attachment} target="_blank" rel="noreferrer" className="card-elegant p-5 mt-8 flex items-center gap-3 hover:bg-muted/30">
-            <FileText className="h-8 w-8 text-crimson" />
-            <div className="flex-1">
+        {post.pdf_attachment && /^https?:\/\//i.test(post.pdf_attachment) && (
+          <a href={post.pdf_attachment} target="_blank" rel="noopener noreferrer" className="card-elegant p-5 mt-8 flex items-center gap-3 hover:bg-muted/30">
+            <FileText className="h-8 w-8 text-crimson shrink-0" />
+            <div className="flex-1 min-w-0">
               <div className="font-semibold">ملف مرفق (PDF)</div>
-              <div className="text-xs text-muted-foreground">انقر للتحميل</div>
+              <div className="text-xs text-muted-foreground truncate" dir="ltr">{fileNameFromUrl(post.pdf_attachment)}</div>
             </div>
-            <Download className="h-5 w-5 text-primary" />
+            <Button size="sm" variant="outline"><Download className="h-4 w-4" /> تحميل الملف</Button>
           </a>
         )}
 
