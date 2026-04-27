@@ -48,12 +48,13 @@ export default function LibraryPage() {
   });
 
   const handleDownload = async (item: any) => {
-    if (!item.file_url && !item.external_url) {
+    const url = item.file_url || item.external_url;
+    if (!url || !/^https?:\/\//i.test(url)) {
       toast.error("لا يوجد ملف متاح للتحميل");
       return;
     }
     await supabase.from("library_items").update({ downloads_count: (item.downloads_count ?? 0) + 1 }).eq("id", item.id);
-    window.open(item.file_url || item.external_url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
