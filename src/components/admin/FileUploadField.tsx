@@ -122,7 +122,14 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
           placeholder="أو ألصق رابط ملف…"
           value={manual}
           onChange={(e) => setManual(e.target.value)}
-          onBlur={() => onChange(manual.trim() || null)}
+          onBlur={() => {
+            const v = manual.trim();
+            if (v && !/^https?:\/\//i.test(v)) {
+              toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
+              return;
+            }
+            onChange(v || null);
+          }}
           className="text-left"
         />
       </div>
