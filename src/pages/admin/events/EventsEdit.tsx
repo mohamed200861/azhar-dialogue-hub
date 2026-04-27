@@ -46,13 +46,20 @@ export default function EventsEdit() {
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     if (!form.start_datetime) return toast.error("تاريخ البداية مطلوب");
+    for (const f of ["registration_link", "online_link", "live_link", "replay_link"]) {
+      if (!isValidUrl(form[f])) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
+    }
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
       start_datetime: new Date(form.start_datetime).toISOString(),
       end_datetime: form.end_datetime ? new Date(form.end_datetime).toISOString() : null,
+      registration_link: form.registration_link?.trim() || null,
+      online_link: form.online_link?.trim() || null,
+      live_link: form.live_link?.trim() || null,
+      replay_link: form.replay_link?.trim() || null,
     };
     if (publish === true) payload.publish_status = "published";
     if (publish === false) payload.publish_status = "draft";
