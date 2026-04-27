@@ -10,9 +10,9 @@ import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FileUploadField } from "@/components/admin/FileUploadField";
-import { Loader2, ArrowRight, Save } from "lucide-react";
+import { Loader2, ArrowRight, Save, FlaskConical } from "lucide-react";
 import { toast } from "sonner";
-import { slugify, getYouTubeEmbed } from "@/lib/admin-utils";
+import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
