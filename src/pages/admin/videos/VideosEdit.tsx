@@ -45,13 +45,19 @@ export default function VideosEdit() {
 
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
+    if (!isValidUrl(form.video_url)) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
+    if (!isValidUrl(form.embed_url)) return toast.error("يرجى إدخال رابط تضمين صحيح يبدأ بـ https://");
+    if (publish === true && !(form.video_url?.trim() || form.embed_url?.trim())) {
+      return toast.error("يجب إضافة رابط فيديو أو تضمين قبل النشر");
+    }
     setSaving(true);
     const embed = form.embed_url?.trim() || (form.video_url ? getYouTubeEmbed(form.video_url) ?? "" : "");
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       created_by: form.created_by ?? user?.id ?? null,
       embed_url: embed || null,
+      video_url: form.video_url?.trim() || null,
       duration_seconds: form.duration_seconds ? Number(form.duration_seconds) : null,
       scheduled_at: form.scheduled_at ? new Date(form.scheduled_at).toISOString() : null,
       live_status: form.type === "live" ? (form.live_status ?? "scheduled") : null,
@@ -68,6 +74,20 @@ export default function VideosEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
+  };
+
+  const testLink = () => {
+    const candidate = form.embed_url?.trim() || form.video_url?.trim();
+    if (!candidate) { toast.error("أضف رابط فيديو أو تضمين أولًا"); return; }
+    if (!isValidUrl(candidate)) { toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://"); return; }
+    const embed = form.embed_url?.trim() || getYouTubeEmbed(form.video_url);
+    if (!embed) {
+      setPreviewEmbed(null);
+      toast.warning("لا يمكن تضمين هذا الرابط داخل الموقع، لكن يمكن فتحه كرابط خارجي.");
+      return;
+    }
+    setPreviewEmbed(embed);
+    toast.success("تم استنتاج رابط التضمين بنجاح");
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
