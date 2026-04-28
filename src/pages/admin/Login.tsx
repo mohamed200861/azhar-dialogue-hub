@@ -31,21 +31,29 @@ export default function AdminLogin() {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     if (error) {
       toast.error("بيانات الدخول غير صحيحة أو لا تملك صلاحية الوصول.");
       setSubmitting(false);
       return;
     }
-    // Verify role
-    const { data: sess } = await supabase.auth.getSession();
-    const uid = sess.session?.user.id;
+
+    const uid = signInData.user?.id ?? signInData.session?.user?.id;
     if (!uid) {
+      await supabase.auth.signOut();
       toast.error("بيانات الدخول غير صحيحة أو لا تملك صلاحية الوصول.");
       setSubmitting(false);
       return;
     }
-    const { data: rolesData } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+
+    const { data: rolesData, error: rolesError } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+    if (rolesError) {
+      await supabase.auth.signOut();
+      toast.error("بيانات الدخول غير صحيحة أو لا تملك صلاحية الوصول.");
+      setSubmitting(false);
+      return;
+    }
+
     const roles = (rolesData ?? []).map((r: any) => r.role);
     const ok = roles.some((r: string) => ["super_admin", "admin", "editor", "media_manager"].includes(r));
     if (!ok) {

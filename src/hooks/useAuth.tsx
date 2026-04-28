@@ -30,16 +30,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setRoles([]);
       return;
     }
-    const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+    const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+    if (error) {
+      setRoles([]);
+      return;
+    }
     setRoles(((data ?? []) as { role: AppRole }[]).map((r) => r.role));
   };
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, sess) => {
+      setLoading(true);
       setSession(sess);
       setUser(sess?.user ?? null);
-      // defer DB call out of the auth callback
-      setTimeout(() => loadRoles(sess?.user?.id), 0);
+
+      setTimeout(async () => {
+        await loadRoles(sess?.user?.id);
+        setLoading(false);
+      }, 0);
     });
 
     supabase.auth.getSession().then(({ data }) => {
