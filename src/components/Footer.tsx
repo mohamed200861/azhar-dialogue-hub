@@ -164,9 +164,15 @@ export function Footer() {
         <div className="container-wide py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/70">
           <div>© {year} — {settings.footer_text || ui.copyright}</div>
           <div className="flex items-center gap-4">
-            <Link to="/contact" className="hover:text-primary-foreground">تواصل معنا</Link>
-            <Link to="/privacy" className="hover:text-primary-foreground">سياسة الخصوصية</Link>
-            <Link to="/terms" className="hover:text-primary-foreground">الأحكام والشروط</Link>
+            {visibility.find((v) => v.key === "page:contact")?.show_in_footer !== false && (
+              <Link to="/contact" className="hover:text-primary-foreground">تواصل معنا</Link>
+            )}
+            {visibility.find((v) => v.key === "page:privacy")?.show_in_footer !== false && (
+              <Link to="/privacy" className="hover:text-primary-foreground">سياسة الخصوصية</Link>
+            )}
+            {visibility.find((v) => v.key === "page:terms")?.show_in_footer !== false && (
+              <Link to="/terms" className="hover:text-primary-foreground">الأحكام والشروط</Link>
+            )}
           </div>
         </div>
       </div>
