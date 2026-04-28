@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Download, ExternalLink, Eye, Calendar, Star } from "lucide-react";
-import { formatDate, isPdfUrl } from "@/lib/admin-utils";
+import { formatDate, isPdfUrl, resolveStorageUrl } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
 import { PdfViewer } from "@/components/PdfViewer";
@@ -13,6 +13,7 @@ export default function LibraryDetail() {
   const { slug } = useParams();
   const [item, setItem] = useState<any | null | undefined>(undefined);
   const [related, setRelated] = useState<any[]>([]);
+  const [signedFileUrl, setSignedFileUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -25,6 +26,10 @@ export default function LibraryDetail() {
       if (!data) { setItem(null); return; }
       setItem(data);
       document.title = `${data.title} — المكتبة الرقمية`;
+      if (data.file_url) {
+        const signed = await resolveStorageUrl(data.file_url, 3600);
+        setSignedFileUrl(signed);
+      }
       const { data: rel } = await supabase
         .from("library_items").select("id,slug,title,cover_image,category,publisher_source,published_at,created_at")
         .eq("status", "published").eq("category", data.category).neq("id", data.id).limit(3);
@@ -34,11 +39,11 @@ export default function LibraryDetail() {
 
   const handleDownload = async () => {
     if (!item) return;
-    const url = item.file_url || item.external_url;
-    if (!url) { toast.error("لا يوجد ملف متاح حاليًا."); return; }
+    const direct = signedFileUrl || item.file_url || item.external_url;
+    if (!direct) { toast.error("لا يوجد ملف متاح حاليًا."); return; }
     await supabase.from("library_items").update({ downloads_count: (item.downloads_count ?? 0) + 1 }).eq("id", item.id);
     setItem({ ...item, downloads_count: (item.downloads_count ?? 0) + 1 });
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(direct, "_blank", "noopener,noreferrer");
   };
 
   if (item === undefined) return <SiteLayout><div className="p-20 text-center"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" /></div></SiteLayout>;
@@ -48,7 +53,8 @@ export default function LibraryDetail() {
   </div></SiteLayout>;
 
   const hasFile = !!(item.file_url || item.external_url);
-  const showPdfPreview = item.file_url && isPdfUrl(item.file_url);
+  const fileHref = signedFileUrl || item.file_url;
+  const showPdfPreview = fileHref && isPdfUrl(item.file_url);
 
   return (
     <SiteLayout>
@@ -80,9 +86,9 @@ export default function LibraryDetail() {
             <div className="flex flex-wrap gap-2 mb-8">
               {hasFile ? (
                 <>
-                  {item.file_url && (
+                  {fileHref && (
                     <Button asChild variant="outline">
-                      <a href={item.file_url} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /> عرض</a>
+                      <a href={fileHref} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /> عرض</a>
                     </Button>
                   )}
                   <Button onClick={handleDownload}><Download className="h-4 w-4" /> تحميل</Button>
@@ -97,7 +103,7 @@ export default function LibraryDetail() {
               )}
             </div>
 
-            {showPdfPreview && <PdfViewer url={item.file_url} title={item.title} />}
+            {showPdfPreview && <PdfViewer url={fileHref!} title={item.title} />}
           </div>
         </div>
 
