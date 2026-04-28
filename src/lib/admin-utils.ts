@@ -131,3 +131,34 @@ export function isPdfUrl(url: string | null | undefined): boolean {
   if (!url) return false;
   return /\.pdf(\?|#|$)/i.test(url);
 }
+
+/**
+ * If `url` points to an object in a private storage bucket
+ * (documents/attachments), convert it to a short-lived signed URL.
+ * Public-bucket URLs and external URLs are returned unchanged.
+ */
+import { supabase } from "@/integrations/supabase/client";
+
+const PRIVATE_BUCKETS = ["documents", "attachments"];
+
+export async function resolveStorageUrl(
+  url: string | null | undefined,
+  expiresInSec = 3600
+): Promise<string | null> {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    // Supabase public URL pattern: /storage/v1/object/public/<bucket>/<path>
+    const m = u.pathname.match(/\/storage\/v1\/object\/(?:public|sign)\/([^/]+)\/(.+)$/);
+    if (!m) return url;
+    const [, bucket, objectPath] = m;
+    if (!PRIVATE_BUCKETS.includes(bucket)) return url;
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(decodeURIComponent(objectPath), expiresInSec);
+    if (error || !data?.signedUrl) return null;
+    return data.signedUrl;
+  } catch {
+    return url;
+  }
+}
