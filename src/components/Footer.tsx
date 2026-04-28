@@ -8,9 +8,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useVisibility } from "@/hooks/useDynamicPages";
 
 export function Footer() {
   const { settings } = useSiteSettings();
+  const { rows: visibility } = useVisibility();
+  const visibleNav = nav.filter((item) => {
+    const key = `page:${item.key === "partners" ? "partnerships" : item.key}`;
+    const v = visibility.find((x) => x.key === key);
+    if (!v) return true;
+    return v.is_visible && v.show_in_footer;
+  });
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
 

@@ -5,12 +5,21 @@ import { nav } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useVisibility } from "@/hooks/useDynamicPages";
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { settings } = useSiteSettings();
+  const { rows: visibility } = useVisibility();
+
+  const visibleNav = nav.filter((item) => {
+    const key = `page:${item.key === "partners" ? "partnerships" : item.key}`;
+    const v = visibility.find((x) => x.key === key);
+    if (!v) return true;
+    return v.is_visible && v.show_in_header;
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
