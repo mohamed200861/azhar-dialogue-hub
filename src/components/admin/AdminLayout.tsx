@@ -2,6 +2,7 @@ import { NavLink, useLocation, Outlet, Link } from "react-router-dom";
 import {
   LayoutDashboard, Newspaper, BookOpen, PlayCircle, Calendar,
   FolderOpen, MessageSquare, Mail, Settings, Users2, LogOut, ExternalLink,
+  Radio, FileText, Eye,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -17,8 +18,11 @@ const items = [
   { url: "/admin", icon: LayoutDashboard, label: "لوحة التحكم", end: true },
   { url: "/admin/news", icon: Newspaper, label: "الأخبار والبيانات" },
   { url: "/admin/library", icon: BookOpen, label: "المكتبة" },
-  { url: "/admin/videos", icon: PlayCircle, label: "المرئيات والبث المباشر" },
+  { url: "/admin/videos", icon: PlayCircle, label: "المرئيات" },
+  { url: "/admin/live", icon: Radio, label: "استوديو البث المباشر" },
   { url: "/admin/events", icon: Calendar, label: "الفعاليات" },
+  { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات" },
+  { url: "/admin/visibility", icon: Eye, label: "إظهار وإخفاء الصفحات" },
   { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات" },
   { url: "/admin/messages", icon: MessageSquare, label: "رسائل التواصل" },
   { url: "/admin/newsletter", icon: Mail, label: "النشرة البريدية" },
