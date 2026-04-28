@@ -23,7 +23,14 @@ import Partnerships from "./pages/Partnerships.tsx";
 import Contact from "./pages/Contact.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Terms from "./pages/Terms.tsx";
+import LiveDetail from "./pages/LiveDetail.tsx";
 import NotFound from "./pages/NotFound.tsx";
+
+import PagesList from "./pages/admin/pages/PagesList.tsx";
+import PagesEdit from "./pages/admin/pages/PagesEdit.tsx";
+import Visibility from "./pages/admin/Visibility.tsx";
+import LiveList from "./pages/admin/live/LiveList.tsx";
+import LiveEdit from "./pages/admin/live/LiveEdit.tsx";
 
 import AdminSetup from "./pages/admin/Setup.tsx";
 
@@ -70,6 +77,7 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
+              <Route path="/live/:slug" element={<LiveDetail />} />
 
               {/* Admin */}
               <Route path="/admin/setup" element={<AdminSetup />} />
@@ -84,6 +92,11 @@ const App = () => (
                 <Route path="videos/:id" element={<VideosEdit />} />
                 <Route path="events" element={<EventsList />} />
                 <Route path="events/:id" element={<EventsEdit />} />
+                <Route path="live" element={<LiveList />} />
+                <Route path="live/:id" element={<LiveEdit />} />
+                <Route path="pages" element={<PagesList />} />
+                <Route path="pages/:id" element={<PagesEdit />} />
+                <Route path="visibility" element={<Visibility />} />
                 <Route path="media" element={<MediaManager />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />

@@ -239,6 +239,81 @@ export type Database = {
         }
         Relationships: []
       }
+      live_streams: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          embed_url: string | null
+          ended_at: string | null
+          id: string
+          internal_notes: string | null
+          live_url: string | null
+          notify_admin: boolean
+          notify_subscribers: boolean
+          platform: string
+          publisher_source: string
+          replay_url: string | null
+          scheduled_at: string | null
+          show_on_homepage: boolean
+          show_on_videos_page: boolean
+          slug: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["live_stream_status"]
+          thumbnail: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          embed_url?: string | null
+          ended_at?: string | null
+          id?: string
+          internal_notes?: string | null
+          live_url?: string | null
+          notify_admin?: boolean
+          notify_subscribers?: boolean
+          platform?: string
+          publisher_source?: string
+          replay_url?: string | null
+          scheduled_at?: string | null
+          show_on_homepage?: boolean
+          show_on_videos_page?: boolean
+          slug: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["live_stream_status"]
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          embed_url?: string | null
+          ended_at?: string | null
+          id?: string
+          internal_notes?: string | null
+          live_url?: string | null
+          notify_admin?: boolean
+          notify_subscribers?: boolean
+          platform?: string
+          publisher_source?: string
+          replay_url?: string | null
+          scheduled_at?: string | null
+          show_on_homepage?: boolean
+          show_on_videos_page?: boolean
+          slug?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["live_stream_status"]
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media_files: {
         Row: {
           created_at: string
@@ -356,6 +431,54 @@ export type Database = {
         }
         Relationships: []
       }
+      site_pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          display_order: number
+          id: string
+          page_key: string
+          seo_description: string | null
+          seo_title: string | null
+          show_in_footer: boolean
+          show_in_header: boolean
+          slug: string
+          status: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          page_key: string
+          seo_description?: string | null
+          seo_title?: string | null
+          show_in_footer?: boolean
+          show_in_header?: boolean
+          slug: string
+          status?: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          page_key?: string
+          seo_description?: string | null
+          seo_title?: string | null
+          show_in_footer?: boolean
+          show_in_header?: boolean
+          slug?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           id: string
@@ -374,6 +497,42 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json | null
+        }
+        Relationships: []
+      }
+      site_visibility: {
+        Row: {
+          display_order: number
+          id: string
+          is_visible: boolean
+          key: string
+          label: string
+          show_in_footer: boolean
+          show_in_header: boolean
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          key: string
+          label: string
+          show_in_footer?: boolean
+          show_in_header?: boolean
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          display_order?: number
+          id?: string
+          is_visible?: boolean
+          key?: string
+          label?: string
+          show_in_footer?: boolean
+          show_in_header?: boolean
+          type?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -489,6 +648,12 @@ export type Database = {
       content_status: "draft" | "published" | "archived"
       event_status: "upcoming" | "live" | "completed" | "cancelled"
       live_status: "scheduled" | "live" | "completed" | "cancelled"
+      live_stream_status:
+        | "draft"
+        | "scheduled"
+        | "live"
+        | "completed"
+        | "cancelled"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
       video_type: "video" | "live" | "recording"
     }
@@ -622,6 +787,13 @@ export const Constants = {
       content_status: ["draft", "published", "archived"],
       event_status: ["upcoming", "live", "completed", "cancelled"],
       live_status: ["scheduled", "live", "completed", "cancelled"],
+      live_stream_status: [
+        "draft",
+        "scheduled",
+        "live",
+        "completed",
+        "cancelled",
+      ],
       message_status: ["new", "read", "replied", "archived", "spam"],
       video_type: ["video", "live", "recording"],
     },
