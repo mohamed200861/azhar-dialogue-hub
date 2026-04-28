@@ -5,12 +5,13 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react";
-import { formatDate, fileNameFromUrl } from "@/lib/admin-utils";
+import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-utils";
 
 export default function NewsDetail() {
   const { slug } = useParams();
   const [post, setPost] = useState<any | null | undefined>(undefined);
   const [related, setRelated] = useState<any[]>([]);
+  const [signedPdf, setSignedPdf] = useState<string | null>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -26,6 +27,9 @@ export default function NewsDetail() {
       }
       setPost(data);
       document.title = `${data.title} — اتحاد علماء الأزهر`;
+      if (data.pdf_attachment) {
+        setSignedPdf(await resolveStorageUrl(data.pdf_attachment, 3600));
+      }
       const { data: rel } = await supabase
         .from("news_posts")
         .select("id,slug,title,cover_image,category,published_at,created_at")
@@ -75,7 +79,7 @@ export default function NewsDetail() {
         )}
 
         {post.pdf_attachment && /^https?:\/\//i.test(post.pdf_attachment) && (
-          <a href={post.pdf_attachment} target="_blank" rel="noopener noreferrer" className="card-elegant p-5 mt-8 flex items-center gap-3 hover:bg-muted/30">
+          <a href={signedPdf || post.pdf_attachment} target="_blank" rel="noopener noreferrer" className="card-elegant p-5 mt-8 flex items-center gap-3 hover:bg-muted/30">
             <FileText className="h-8 w-8 text-crimson shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="font-semibold">ملف مرفق (PDF)</div>
