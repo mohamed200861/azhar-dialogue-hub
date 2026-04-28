@@ -50,9 +50,14 @@ export default function AdminUsers() {
   };
 
   const toggleActive = async (u: any) => {
+    const willDeactivate = u.is_active;
     const { error } = await supabase.from("admin_users").update({ is_active: !u.is_active }).eq("id", u.id);
     if (error) return toast.error(error.message);
-    toast.success(u.is_active ? "تم إيقاف الحساب" : "تم تفعيل الحساب");
+    // When deactivating, also remove all roles to actually revoke access.
+    if (willDeactivate) {
+      await supabase.from("user_roles").delete().eq("user_id", u.user_id);
+    }
+    toast.success(willDeactivate ? "تم إيقاف الحساب وإزالة صلاحياته" : "تم تفعيل الحساب (أعد تعيين الدور)");
     load();
   };
 
