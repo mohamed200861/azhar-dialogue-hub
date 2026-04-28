@@ -54,6 +54,18 @@ export default function AdminLogin() {
       setSubmitting(false);
       return;
     }
+    // Block deactivated admins
+    const { data: adminRec } = await supabase
+      .from("admin_users")
+      .select("is_active")
+      .eq("user_id", uid)
+      .maybeSingle();
+    if (adminRec && adminRec.is_active === false) {
+      await supabase.auth.signOut();
+      toast.error("تم إيقاف هذا الحساب. يرجى التواصل مع المدير العام.");
+      setSubmitting(false);
+      return;
+    }
     toast.success("تم تسجيل الدخول بنجاح");
     navigate("/admin", { replace: true });
   };
