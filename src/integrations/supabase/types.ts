@@ -241,11 +241,15 @@ export type Database = {
       }
       live_streams: {
         Row: {
+          auto_archive: boolean
           created_at: string
           created_by: string | null
           description: string | null
           embed_url: string | null
           ended_at: string | null
+          expires_at: string | null
+          hide_from_homepage: boolean
+          hide_from_videos: boolean
           id: string
           internal_notes: string | null
           live_url: string | null
@@ -265,11 +269,15 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_archive?: boolean
           created_at?: string
           created_by?: string | null
           description?: string | null
           embed_url?: string | null
           ended_at?: string | null
+          expires_at?: string | null
+          hide_from_homepage?: boolean
+          hide_from_videos?: boolean
           id?: string
           internal_notes?: string | null
           live_url?: string | null
@@ -289,11 +297,15 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_archive?: boolean
           created_at?: string
           created_by?: string | null
           description?: string | null
           embed_url?: string | null
           ended_at?: string | null
+          expires_at?: string | null
+          hide_from_homepage?: boolean
+          hide_from_videos?: boolean
           id?: string
           internal_notes?: string | null
           live_url?: string | null
@@ -434,46 +446,58 @@ export type Database = {
       site_pages: {
         Row: {
           content: string | null
+          cover_image: string | null
           created_at: string
           display_order: number
           id: string
+          intro: string | null
           page_key: string
+          sections: Json
           seo_description: string | null
           seo_title: string | null
           show_in_footer: boolean
           show_in_header: boolean
           slug: string
           status: Database["public"]["Enums"]["content_status"]
+          subtitle: string | null
           title: string
           updated_at: string
         }
         Insert: {
           content?: string | null
+          cover_image?: string | null
           created_at?: string
           display_order?: number
           id?: string
+          intro?: string | null
           page_key: string
+          sections?: Json
           seo_description?: string | null
           seo_title?: string | null
           show_in_footer?: boolean
           show_in_header?: boolean
           slug: string
           status?: Database["public"]["Enums"]["content_status"]
+          subtitle?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           content?: string | null
+          cover_image?: string | null
           created_at?: string
           display_order?: number
           id?: string
+          intro?: string | null
           page_key?: string
+          sections?: Json
           seo_description?: string | null
           seo_title?: string | null
           show_in_footer?: boolean
           show_in_header?: boolean
           slug?: string
           status?: Database["public"]["Enums"]["content_status"]
+          subtitle?: string | null
           title?: string
           updated_at?: string
         }
@@ -497,42 +521,6 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: Json | null
-        }
-        Relationships: []
-      }
-      site_visibility: {
-        Row: {
-          display_order: number
-          id: string
-          is_visible: boolean
-          key: string
-          label: string
-          show_in_footer: boolean
-          show_in_header: boolean
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          display_order?: number
-          id?: string
-          is_visible?: boolean
-          key: string
-          label: string
-          show_in_footer?: boolean
-          show_in_header?: boolean
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          display_order?: number
-          id?: string
-          is_visible?: boolean
-          key?: string
-          label?: string
-          show_in_footer?: boolean
-          show_in_header?: boolean
-          type?: string
-          updated_at?: string
         }
         Relationships: []
       }
