@@ -29,8 +29,9 @@ export default function LiveEdit() {
   const [form, setForm] = useState<any>({
     title: "", slug: "", description: "", platform: "YouTube",
     live_url: "", embed_url: "", thumbnail: null,
-    scheduled_at: null, status: "draft", replay_url: "",
+    scheduled_at: null, expires_at: null, status: "draft", replay_url: "",
     show_on_homepage: true, show_on_videos_page: true,
+    hide_from_homepage: false, hide_from_videos: false, auto_archive: true,
     notify_subscribers: false, notify_admin: false,
     publisher_source: PUBLISHERS[1], internal_notes: "",
   });
@@ -40,7 +41,11 @@ export default function LiveEdit() {
     (async () => {
       const { data, error } = await supabase.from("live_streams").select("*").eq("id", id!).maybeSingle();
       if (error || !data) { toast.error("لم يتم العثور على البث"); navigate("/admin/live"); return; }
-      setForm({ ...data, scheduled_at: data.scheduled_at ? new Date(data.scheduled_at).toISOString().slice(0, 16) : null });
+      setForm({
+        ...data,
+        scheduled_at: data.scheduled_at ? new Date(data.scheduled_at).toISOString().slice(0, 16) : null,
+        expires_at: (data as any).expires_at ? new Date((data as any).expires_at).toISOString().slice(0, 16) : null,
+      });
       setLoading(false);
     })();
   }, [id]);
@@ -56,10 +61,14 @@ export default function LiveEdit() {
       embed_url: embed || null,
       thumbnail: form.thumbnail ?? null,
       scheduled_at: form.scheduled_at ? new Date(form.scheduled_at).toISOString() : null,
+      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
       status: form.status,
       replay_url: form.replay_url?.trim() || null,
       show_on_homepage: !!form.show_on_homepage,
       show_on_videos_page: !!form.show_on_videos_page,
+      hide_from_homepage: !!form.hide_from_homepage,
+      hide_from_videos: !!form.hide_from_videos,
+      auto_archive: !!form.auto_archive,
       notify_subscribers: !!form.notify_subscribers,
       notify_admin: !!form.notify_admin,
       publisher_source: form.publisher_source,
@@ -179,6 +188,7 @@ export default function LiveEdit() {
               </Select>
             </div>
             <div><Label>تاريخ ووقت البث</Label><Input type="datetime-local" value={form.scheduled_at ?? ""} onChange={(e) => setForm({ ...form, scheduled_at: e.target.value })} /></div>
+            <div><Label>تاريخ انتهاء الظهور (اختياري)</Label><Input type="datetime-local" value={form.expires_at ?? ""} onChange={(e) => setForm({ ...form, expires_at: e.target.value })} /><p className="text-[11px] text-muted-foreground mt-1">إذا تُرك فارغًا يبقى البث ظاهرًا حتى يغيّر المدير حالته أو يخفيه.</p></div>
             <div>
               <Label>جهة النشر</Label>
               <Select value={form.publisher_source} onValueChange={(v) => setForm({ ...form, publisher_source: v })}>
@@ -186,8 +196,9 @@ export default function LiveEdit() {
                 <SelectContent>{PUBLISHERS.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="flex items-center justify-between"><Label>إظهار في الصفحة الرئيسية</Label><Switch checked={form.show_on_homepage} onCheckedChange={(v) => setForm({ ...form, show_on_homepage: v })} /></div>
-            <div className="flex items-center justify-between"><Label>إظهار في صفحة المرئيات</Label><Switch checked={form.show_on_videos_page} onCheckedChange={(v) => setForm({ ...form, show_on_videos_page: v })} /></div>
+            <div className="flex items-center justify-between"><Label>إخفاء من الصفحة الرئيسية</Label><Switch checked={!!form.hide_from_homepage} onCheckedChange={(v) => setForm({ ...form, hide_from_homepage: v })} /></div>
+            <div className="flex items-center justify-between"><Label>إخفاء من صفحة المرئيات</Label><Switch checked={!!form.hide_from_videos} onCheckedChange={(v) => setForm({ ...form, hide_from_videos: v })} /></div>
+            <div className="flex items-center justify-between"><Label>أرشفة تلقائية بعد الانتهاء</Label><Switch checked={!!form.auto_archive} onCheckedChange={(v) => setForm({ ...form, auto_archive: v })} /></div>
             <div className="flex items-center justify-between"><Label>إشعار المشتركين</Label><Switch checked={form.notify_subscribers} onCheckedChange={(v) => setForm({ ...form, notify_subscribers: v })} /></div>
             <div className="flex items-center justify-between"><Label>إشعار المدير</Label><Switch checked={form.notify_admin} onCheckedChange={(v) => setForm({ ...form, notify_admin: v })} /></div>
           </Card>
