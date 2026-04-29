@@ -134,7 +134,7 @@ export default function LiveEdit() {
         actions={<>
           <Button variant="outline" onClick={() => save({ status: "draft" })} disabled={saving}><Save className="h-4 w-4" /> مسودة</Button>
           <Button variant="outline" onClick={() => save({ status: "scheduled" })} disabled={saving}><Calendar className="h-4 w-4" /> جدولة</Button>
-          <Button onClick={() => save({ status: "live", started_at: new Date().toISOString() })} disabled={saving} className="bg-red-600 hover:bg-red-700"><Radio className="h-4 w-4" /> بدء البث الآن</Button>
+          <Button onClick={async () => { const r = await save({ status: "live", started_at: new Date().toISOString() }); if (r) toast.success("تم بدء البث بنجاح، وسيظهر الآن في الصفحة الرئيسية."); }} disabled={saving} className="bg-red-600 hover:bg-red-700"><Radio className="h-4 w-4" /> بدء البث الآن</Button>
           {form.status === "live" && (
             <Button variant="outline" onClick={() => save({ status: "completed", ended_at: new Date().toISOString() })} disabled={saving}><StopCircle className="h-4 w-4" /> إنهاء البث</Button>
           )}

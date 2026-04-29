@@ -30,12 +30,28 @@ export default function Home() {
   const [library, setLibrary] = useState<any[] | null>(null);
   const [videos, setVideos] = useState<any[] | null>(null);
   const [liveNow, setLiveNow] = useState<any | null>(null);
+  const [liveScheduled, setLiveScheduled] = useState<any | null>(null);
 
   useEffect(() => {
     document.title = `${settings.seo_title || site.name.ar} — ${settings.site_slogan || site.slogan.ar}`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta && settings.seo_description) meta.setAttribute("content", settings.seo_description);
   }, [settings]);
+
+  const loadLive = async () => {
+    const { data } = await supabase
+      .from("live_streams")
+      .select("*")
+      .in("status", ["live", "scheduled"])
+      .eq("hide_from_homepage", false)
+      .order("scheduled_at", { ascending: true, nullsFirst: false });
+    const now = Date.now();
+    const valid = (data ?? []).filter((s: any) => !s.expires_at || new Date(s.expires_at).getTime() > now);
+    const live = valid.find((s: any) => s.status === "live") ?? null;
+    const scheduled = !live ? valid.find((s: any) => s.status === "scheduled") ?? null : null;
+    setLiveNow(live);
+    setLiveScheduled(scheduled);
+  };
 
   useEffect(() => {
     (async () => {
@@ -54,11 +70,15 @@ export default function Home() {
       setNews(newsR.data ?? []);
       setEvents(eventsR.data ?? []);
       setLibrary(libR.data ?? []);
-      const vids = vidsR.data ?? [];
-      const live = vids.find((v: any) => v.type === "live" && v.live_status === "live");
-      setLiveNow(live ?? null);
-      setVideos(vids.filter((v: any) => v !== live));
+      setVideos(vidsR.data ?? []);
+      await loadLive();
     })();
+
+    const channel = supabase
+      .channel("home_live_realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "live_streams" }, () => { loadLive(); })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
   return (
