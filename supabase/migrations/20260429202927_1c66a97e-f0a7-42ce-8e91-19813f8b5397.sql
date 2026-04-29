@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Public read storage" ON storage.objects;
