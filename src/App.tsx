@@ -28,7 +28,6 @@ import NotFound from "./pages/NotFound.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
 import PagesEdit from "./pages/admin/pages/PagesEdit.tsx";
-import Visibility from "./pages/admin/Visibility.tsx";
 import LiveList from "./pages/admin/live/LiveList.tsx";
 import LiveEdit from "./pages/admin/live/LiveEdit.tsx";
 
@@ -96,7 +95,6 @@ const App = () => (
                 <Route path="live/:id" element={<LiveEdit />} />
                 <Route path="pages" element={<PagesList />} />
                 <Route path="pages/:id" element={<PagesEdit />} />
-                <Route path="visibility" element={<Visibility />} />
                 <Route path="media" element={<MediaManager />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />

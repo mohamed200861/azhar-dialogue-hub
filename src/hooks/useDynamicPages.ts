@@ -5,6 +5,9 @@ export type DynamicPage = {
   id: string;
   page_key: string;
   title: string;
+  subtitle: string | null;
+  intro: string | null;
+  cover_image: string | null;
   slug: string;
   content: string;
   seo_title: string;
@@ -13,54 +16,63 @@ export type DynamicPage = {
   show_in_header: boolean;
   show_in_footer: boolean;
   display_order: number;
+  sections: Record<string, any> | null;
 };
 
-export type VisibilityRow = {
-  key: string;
-  label: string;
-  type: "page" | "section";
-  is_visible: boolean;
-  show_in_header: boolean;
-  show_in_footer: boolean;
-  display_order: number;
-};
+const pagesCache = new Map<string, DynamicPage | null>();
+const subscribers = new Map<string, Set<(p: DynamicPage | null) => void>>();
+let realtimeSetup = false;
 
-let pagesCache: DynamicPage[] | null = null;
-let visibilityCache: VisibilityRow[] | null = null;
+function notify(pageKey: string, page: DynamicPage | null) {
+  pagesCache.set(pageKey, page);
+  subscribers.get(pageKey)?.forEach((cb) => cb(page));
+}
+
+function ensureRealtime() {
+  if (realtimeSetup) return;
+  realtimeSetup = true;
+  supabase
+    .channel("site_pages_realtime")
+    .on("postgres_changes", { event: "*", schema: "public", table: "site_pages" }, async (payload: any) => {
+      const row = (payload.new ?? payload.old) as DynamicPage | undefined;
+      if (!row?.page_key) return;
+      // re-fetch fresh to ensure consistent shape
+      const { data } = await supabase.from("site_pages").select("*").eq("page_key", row.page_key).maybeSingle();
+      notify(row.page_key, (data as DynamicPage) ?? null);
+    })
+    .subscribe();
+}
 
 export function useDynamicPage(pageKey: string) {
-  const [page, setPage] = useState<DynamicPage | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [page, setPage] = useState<DynamicPage | null>(pagesCache.get(pageKey) ?? null);
+  const [loaded, setLoaded] = useState(pagesCache.has(pageKey));
+
   useEffect(() => {
+    ensureRealtime();
+    let alive = true;
+    if (!subscribers.has(pageKey)) subscribers.set(pageKey, new Set());
+    const cb = (p: DynamicPage | null) => {
+      if (!alive) return;
+      setPage(p);
+      setLoaded(true);
+    };
+    subscribers.get(pageKey)!.add(cb);
+
     (async () => {
       const { data } = await supabase.from("site_pages").select("*").eq("page_key", pageKey).maybeSingle();
-      setPage((data as DynamicPage) ?? null);
-      setLoaded(true);
+      if (!alive) return;
+      notify(pageKey, (data as DynamicPage) ?? null);
     })();
+
+    return () => {
+      alive = false;
+      subscribers.get(pageKey)?.delete(cb);
+    };
   }, [pageKey]);
+
   return { page, loaded };
 }
 
-export function useVisibility() {
-  const [rows, setRows] = useState<VisibilityRow[]>(visibilityCache ?? []);
-  const [loaded, setLoaded] = useState(!!visibilityCache);
-  useEffect(() => {
-    if (visibilityCache) return;
-    (async () => {
-      const { data } = await supabase.from("site_visibility").select("*").order("display_order");
-      visibilityCache = (data as VisibilityRow[]) ?? [];
-      setRows(visibilityCache);
-      setLoaded(true);
-    })();
-  }, []);
-  const isVisible = (key: string) => {
-    const r = rows.find((x) => x.key === key);
-    return r ? r.is_visible : true;
-  };
-  return { rows, loaded, isVisible };
-}
-
-export function clearVisibilityCache() {
-  visibilityCache = null;
-  pagesCache = null;
+export function clearPagesCache() {
+  pagesCache.clear();
 }

@@ -8,17 +8,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { useVisibility } from "@/hooks/useDynamicPages";
 
 export function Footer() {
   const { settings } = useSiteSettings();
-  const { rows: visibility } = useVisibility();
-  const visibleNav = nav.filter((item) => {
-    const key = `page:${item.key === "partners" ? "partnerships" : item.key}`;
-    const v = visibility.find((x) => x.key === key);
-    if (!v) return true;
-    return v.is_visible && v.show_in_footer;
-  });
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -164,15 +156,9 @@ export function Footer() {
         <div className="container-wide py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/70">
           <div>© {year} — {settings.footer_text || ui.copyright}</div>
           <div className="flex items-center gap-4">
-            {visibility.find((v) => v.key === "page:contact")?.show_in_footer !== false && (
-              <Link to="/contact" className="hover:text-primary-foreground">تواصل معنا</Link>
-            )}
-            {visibility.find((v) => v.key === "page:privacy")?.show_in_footer !== false && (
-              <Link to="/privacy" className="hover:text-primary-foreground">سياسة الخصوصية</Link>
-            )}
-            {visibility.find((v) => v.key === "page:terms")?.show_in_footer !== false && (
-              <Link to="/terms" className="hover:text-primary-foreground">الأحكام والشروط</Link>
-            )}
+            <Link to="/contact" className="hover:text-primary-foreground">تواصل معنا</Link>
+            <Link to="/privacy" className="hover:text-primary-foreground">سياسة الخصوصية</Link>
+            <Link to="/terms" className="hover:text-primary-foreground">الأحكام والشروط</Link>
           </div>
         </div>
       </div>

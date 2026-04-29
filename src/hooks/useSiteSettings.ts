@@ -40,25 +40,71 @@ const DEFAULTS: SiteSettings = {
 };
 
 let cache: SiteSettings | null = null;
+const subscribers = new Set<(s: SiteSettings) => void>();
+let realtimeSetup = false;
+
+async function fetchAll(): Promise<SiteSettings> {
+  const { data } = await supabase.from("site_settings").select("key,value");
+  const obj: any = { ...DEFAULTS };
+  (data ?? []).forEach((r: any) => {
+    const v = r.value?.value !== undefined ? r.value.value : r.value;
+    if (v !== undefined && v !== null) obj[r.key] = v;
+  });
+  return obj as SiteSettings;
+}
+
+function notify(s: SiteSettings) {
+  cache = s;
+  subscribers.forEach((cb) => cb(s));
+}
+
+function ensureRealtime() {
+  if (realtimeSetup) return;
+  realtimeSetup = true;
+  supabase
+    .channel("site_settings_realtime")
+    .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, async () => {
+      const fresh = await fetchAll();
+      notify(fresh);
+    })
+    .subscribe();
+}
 
 export function useSiteSettings() {
   const [settings, setSettings] = useState<SiteSettings>(cache ?? DEFAULTS);
   const [loaded, setLoaded] = useState(!!cache);
 
   useEffect(() => {
-    if (cache) return;
-    (async () => {
-      const { data } = await supabase.from("site_settings").select("key,value");
-      const obj: any = { ...DEFAULTS };
-      (data ?? []).forEach((r: any) => {
-        const v = r.value?.value;
-        if (v !== undefined && v !== null) obj[r.key] = v;
-      });
-      cache = obj;
-      setSettings(obj);
+    ensureRealtime();
+    let alive = true;
+    const cb = (s: SiteSettings) => {
+      if (!alive) return;
+      setSettings(s);
       setLoaded(true);
-    })();
+    };
+    subscribers.add(cb);
+
+    if (!cache) {
+      fetchAll().then((s) => alive && notify(s));
+    } else {
+      setLoaded(true);
+    }
+
+    return () => {
+      alive = false;
+      subscribers.delete(cb);
+    };
   }, []);
 
   return { settings, loaded };
+}
+
+export async function refreshSiteSettings() {
+  const fresh = await fetchAll();
+  notify(fresh);
+  return fresh;
+}
+
+export function clearSettingsCache() {
+  cache = null;
 }
