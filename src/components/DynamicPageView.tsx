@@ -4,10 +4,6 @@ import { PageHero } from "@/components/PageHero";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 import { Loader2 } from "lucide-react";
 
-/**
- * Renders a CMS-managed page. Falls back to a placeholder when content is empty.
- * Hides the page (shows "not available" message) when status != published.
- */
 export function DynamicPageView({
   pageKey,
   eyebrow,
@@ -26,7 +22,10 @@ export function DynamicPageView({
   useEffect(() => {
     const title = page?.seo_title || page?.title || fallbackTitle;
     document.title = `${title} — اتحاد علماء الأزهر`;
-  }, [page, fallbackTitle]);
+    const meta = document.querySelector('meta[name="description"]');
+    const desc = page?.seo_description || page?.intro || fallbackDescription;
+    if (meta && desc) meta.setAttribute("content", desc);
+  }, [page, fallbackTitle, fallbackDescription]);
 
   if (!loaded) {
     return (
@@ -36,7 +35,6 @@ export function DynamicPageView({
     );
   }
 
-  // Page hidden / draft / archived
   if (page && page.status !== "published") {
     return (
       <SiteLayout>
@@ -51,12 +49,17 @@ export function DynamicPageView({
   }
 
   const title = page?.title || fallbackTitle;
-  const description = page?.seo_description || fallbackDescription || "";
+  const description = page?.intro || page?.seo_description || fallbackDescription || "";
   const content = page?.content?.trim() || "";
 
   return (
     <SiteLayout>
-      <PageHero eyebrow={eyebrow} title={title} description={description} />
+      <PageHero eyebrow={page?.subtitle || eyebrow} title={title} description={description} />
+      {page?.cover_image && (
+        <section className="container-narrow -mt-8 mb-8">
+          <img src={page.cover_image} alt={title} loading="lazy" className="w-full h-auto rounded-2xl object-cover max-h-[420px]" />
+        </section>
+      )}
       <section className="section-padding">
         <div className="container-narrow">
           {content ? (

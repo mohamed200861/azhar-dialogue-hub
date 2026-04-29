@@ -8,12 +8,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { FileUploadField } from "@/components/admin/FileUploadField";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { refreshSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function Settings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [s, setS] = useState<any>({
     site_name: "اتحاد علماء الأزهر",
     site_slogan: "منهج أزهري… ورسالة عالمية",
@@ -33,33 +35,58 @@ export default function Settings() {
     show_videos_section: true,
   });
 
+  const reload = async () => {
+    const { data } = await supabase.from("site_settings").select("key,value");
+    const obj: any = { ...s };
+    (data ?? []).forEach((r: any) => {
+      const v = r.value?.value !== undefined ? r.value.value : r.value;
+      if (v !== undefined && v !== null) obj[r.key] = v;
+    });
+    setS(obj);
+  };
+
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.from("site_settings").select("key,value");
-      const obj: any = { ...s };
-      (data ?? []).forEach((r: any) => {
-        obj[r.key] = r.value?.value ?? r.value;
-      });
-      setS(obj);
-      setLoading(false);
-    })();
+    (async () => { await reload(); setLoading(false); })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const save = async () => {
     setSaving(true);
     const upserts = Object.entries(s).map(([key, value]) => ({ key, value: { value } as any }));
     const { error } = await supabase.from("site_settings").upsert(upserts as any, { onConflict: "key" });
+    if (error) { setSaving(false); return toast.error(error.message); }
+    await refreshSiteSettings();
     setSaving(false);
-    if (error) return toast.error(error.message);
-    toast.success("تم حفظ الإعدادات");
+    toast.success("تم حفظ الإعدادات. سيظهر التحديث على الموقع فورًا.");
+  };
+
+  const forceRefresh = async () => {
+    setRefreshing(true);
+    await reload();
+    await refreshSiteSettings();
+    setRefreshing(false);
+    toast.success("تم تحديث البيانات.");
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
 
   return (
     <div>
-      <PageHeader title="إعدادات الموقع" description="هذه الإعدادات تظهر مباشرة على الموقع العام."
-        actions={<Button onClick={save} disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ</Button>} />
+      <PageHeader
+        title="إعدادات الموقع"
+        description="هذه الإعدادات تظهر مباشرة على الموقع العام."
+        actions={
+          <>
+            <Button variant="outline" onClick={forceRefresh} disabled={refreshing}>
+              {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+              تحديث البيانات الآن
+            </Button>
+            <Button onClick={save} disabled={saving}>
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ
+            </Button>
+          </>
+        }
+      />
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-5 space-y-4">
@@ -82,6 +109,7 @@ export default function Settings() {
           <h3 className="font-semibold">الشعار و Favicon</h3>
           <FileUploadField bucket="images" label="الشعار" value={s.logo_url} onChange={(v) => setS({ ...s, logo_url: v })} />
           <FileUploadField bucket="images" label="Favicon" value={s.favicon_url} onChange={(v) => setS({ ...s, favicon_url: v })} />
+          <p className="text-xs text-muted-foreground">بعد الحفظ يتم تحديث الشعار في الموقع تلقائيًا.</p>
         </Card>
 
         <Card className="p-5 space-y-4">
@@ -96,7 +124,7 @@ export default function Settings() {
             ["show_news_section", "قسم الأخبار"],
             ["show_events_section", "قسم الفعاليات"],
             ["show_library_section", "قسم المكتبة"],
-            ["show_videos_section", "قسم المرئيات"],
+            ["show_videos_section", "قسم المرئيات والبث المباشر"],
           ].map(([k, label]) => (
             <div key={k} className="flex items-center justify-between">
               <Label>{label}</Label>
