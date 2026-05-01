@@ -16,6 +16,23 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 import { SmartImage } from "@/components/SmartImage";
 
+function LiveCountdown({ to }: { to: string }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const diff = Math.max(0, new Date(to).getTime() - now);
+  const d = Math.floor(diff / 86400000), h = Math.floor((diff / 3600000) % 24), m = Math.floor((diff / 60000) % 60), s = Math.floor((diff / 1000) % 60);
+  return (
+    <div className="flex gap-2 mt-3">
+      {[[d, "يوم"], [h, "س"], [m, "د"], [s, "ث"]].map(([v, l], i) => (
+        <div key={i} className="bg-white/15 rounded-lg px-3 py-1.5 min-w-[56px] text-center text-primary-foreground">
+          <div className="text-lg font-bold leading-none">{v}</div>
+          <div className="text-[10px] mt-0.5">{l}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const iconMap: Record<string, any> = {
   Scale, GitFork, BookOpen, ShieldCheck, Building2, HeartHandshake,
   Megaphone, GraduationCap, Users, Tv,
