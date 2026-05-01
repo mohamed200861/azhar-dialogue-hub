@@ -149,10 +149,11 @@ export default function VideosPage() {
                 <div className="card-elegant p-12 text-center text-muted-foreground">لا توجد مرئيات منشورة بعد.</div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {filtered.map((v) => (
-                    <Link key={v.id} to={`/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
+                  {filtered.map((v: any) => (
+                    <Link key={v.id} to={v._isLive ? `/live/${v.slug || v.id.replace(/^live-/, "")}` : `/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
                       <div className="aspect-video relative">
                         <SmartImage src={v.thumbnail} alt={v.title} variant="video" className="w-full h-full object-cover" fallbackClassName="bg-gradient-emerald" />
+                        {v._isLive && <span className="absolute top-2 start-2 text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">تسجيل بث</span>}
                         {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
                       </div>
                       <div className="p-5">
