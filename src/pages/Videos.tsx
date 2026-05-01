@@ -98,8 +98,8 @@ export default function VideosPage() {
               <div className="card-elegant overflow-hidden grid lg:grid-cols-2 mb-12">
                 {liveNow ? (
                   <div className="aspect-video lg:aspect-auto bg-black">
-                    {liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") ? (
-                      <iframe src={liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") || ""} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
+                    {liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "") ? (
+                      <iframe src={liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "") || ""} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white"><Radio className="h-16 w-16" /></div>
                     )}
