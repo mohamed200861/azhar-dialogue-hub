@@ -146,7 +146,73 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ABOUT PREVIEW */}
+      {/* LIVE BANNER */}
+      {(liveNow || liveScheduled) && (
+        <section className="bg-gradient-to-l from-red-700 via-red-600 to-red-700 text-white border-y-4 border-red-800">
+          <div className="container-wide py-8">
+            {liveNow ? (
+              <div className="grid lg:grid-cols-[1.1fr,1fr] gap-6 items-center">
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-3">
+                    <Radio className="h-3.5 w-3.5 animate-pulse" /> مباشر الآن
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">البث المباشر الآن</h2>
+                  <p className="text-base md:text-lg text-white/90 mb-1">{liveNow.title}</p>
+                  {liveNow.description && <p className="text-sm text-white/80 line-clamp-2 mb-4">{liveNow.description}</p>}
+                  <div className="flex flex-wrap gap-2">
+                    <Button asChild size="lg" className="bg-white text-red-700 hover:bg-white/90 font-bold">
+                      <Link to={`/live/${liveNow.slug || liveNow.id}`}>
+                        <PlayCircle className="h-5 w-5" /> مشاهدة البث
+                      </Link>
+                    </Button>
+                    {liveNow.live_url && (
+                      <Button asChild size="lg" variant="outline" className="border-white/40 bg-white/5 text-white hover:bg-white/15 hover:text-white">
+                        <a href={liveNow.live_url} target="_blank" rel="noreferrer">فتح في {liveNow.platform}</a>
+                      </Button>
+                    )}
+                  </div>
+                </div>
+                <div className="aspect-video rounded-xl overflow-hidden bg-black border-2 border-white/20 shadow-2xl">
+                  {(liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "")) ? (
+                    <iframe
+                      src={liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "") || ""}
+                      className="w-full h-full"
+                      allow="autoplay; encrypted-media"
+                      allowFullScreen
+                      title={liveNow.title}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+                      <Radio className="h-12 w-12" />
+                      <Button asChild className="bg-white text-red-700 hover:bg-white/90">
+                        <Link to={`/live/${liveNow.slug || liveNow.id}`}>مشاهدة البث</Link>
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : liveScheduled ? (
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-xs font-bold mb-2">
+                    <Calendar className="h-3.5 w-3.5" /> بث مباشر قادم
+                  </div>
+                  <h2 className="text-xl md:text-2xl font-bold mb-1">{liveScheduled.title}</h2>
+                  <p className="text-sm text-white/80">{liveScheduled.scheduled_at ? formatDateTime(liveScheduled.scheduled_at) : ""}</p>
+                  {liveScheduled.scheduled_at && <LiveCountdown to={liveScheduled.scheduled_at} />}
+                </div>
+                <Button asChild size="lg" className="bg-white text-red-700 hover:bg-white/90 font-bold">
+                  <Link to={`/live/${liveScheduled.slug || liveScheduled.id}`}>
+                    <PlayCircle className="h-5 w-5" /> تفاصيل البث
+                  </Link>
+                </Button>
+              </div>
+            ) : null}
+          </div>
+        </section>
+      )}
+
+
       <section className="section-padding">
         <div className="container-narrow grid lg:grid-cols-2 gap-12 items-center">
           <div>
