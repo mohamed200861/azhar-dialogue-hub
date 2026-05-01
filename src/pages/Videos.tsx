@@ -78,6 +78,11 @@ export default function VideosPage() {
     })),
     [liveItems]
   );
+  const replays = useMemo(() => {
+    const v = (list ?? []).filter((x) => !(x.type === "live" && (x.live_status === "live" || x.live_status === "scheduled")));
+    return [...liveReplays, ...v];
+  }, [list, liveReplays]);
+  const filtered = replays.filter((v: any) => !cat || v.category === cat);
 
   return (
     <SiteLayout>
