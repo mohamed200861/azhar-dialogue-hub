@@ -29,23 +29,55 @@ function Countdown({ to }: { to: string }) {
 
 export default function VideosPage() {
   const [list, setList] = useState<any[] | null>(null);
+  const [liveItems, setLiveItems] = useState<any[]>([]);
   const [cat, setCat] = useState<string | null>(null);
+
+  const loadAll = async () => {
+    const [vidsR, liveR] = await Promise.all([
+      supabase.from("videos").select("*").eq("status", "published")
+        .order("scheduled_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false }),
+      supabase.from("live_streams").select("*")
+        .in("status", ["scheduled", "live", "completed"])
+        .eq("hide_from_videos", false)
+        .order("scheduled_at", { ascending: false, nullsFirst: false }),
+    ]);
+    setList(vidsR.data ?? []);
+    const now = Date.now();
+    const valid = (liveR.data ?? []).filter((s: any) => !s.expires_at || new Date(s.expires_at).getTime() > now);
+    setLiveItems(valid);
+  };
 
   useEffect(() => {
     document.title = "المرئيات والبث المباشر — اتحاد علماء الأزهر";
-    (async () => {
-      const { data } = await supabase
-        .from("videos").select("*").eq("status", "published")
-        .order("scheduled_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { ascending: false });
-      setList(data ?? []);
-    })();
+    loadAll();
+    const channel = supabase
+      .channel("videos_live_realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "live_streams" }, () => loadAll())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const liveNow = useMemo(() => (list ?? []).find((v) => v.type === "live" && v.live_status === "live"), [list]);
-  const scheduled = useMemo(() => (list ?? []).filter((v) => v.type === "live" && v.live_status === "scheduled" && v.scheduled_at && new Date(v.scheduled_at) > new Date()).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0], [list]);
-  const replays = (list ?? []).filter((v) => !(v.type === "live" && (v.live_status === "live" || v.live_status === "scheduled")));
-  const filtered = replays.filter((v) => !cat || v.category === cat);
+  const liveNow = useMemo(() => liveItems.find((s) => s.status === "live"), [liveItems]);
+  const scheduled = useMemo(
+    () => liveItems
+      .filter((s) => s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at) > new Date())
+      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0],
+    [liveItems]
+  );
+  const liveReplays = useMemo(
+    () => liveItems.filter((s) => s.status === "completed" && s.replay_url).map((s) => ({
+      id: `live-${s.id}`,
+      slug: s.slug,
+      title: s.title,
+      thumbnail: s.thumbnail,
+      category: "بث مباشر",
+      scheduled_at: s.ended_at ?? s.scheduled_at,
+      created_at: s.created_at,
+      _isLive: true,
+    })),
+    [liveItems]
+  );
 
   return (
     <SiteLayout>
