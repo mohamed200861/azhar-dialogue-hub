@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Loader2, Edit, Trash2, Radio, Search } from "lucide-react";
+import { Plus, Loader2, Edit, Trash2, Radio, Search, RefreshCw } from "lucide-react";
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import {
@@ -56,7 +56,12 @@ export default function LiveList() {
         title="استوديو البث المباشر"
         description="إدارة البثوث المباشرة عبر يوتيوب وفيسبوك وزوم وغيرها."
         actions={
-          <Button asChild><Link to="/admin/live/new"><Plus className="h-4 w-4" /> بث جديد</Link></Button>
+          <>
+            <Button variant="outline" onClick={() => { load(); toast.success("تم تحديث حالة البث في الموقع"); }}>
+              <RefreshCw className="h-4 w-4" /> تحديث حالة البث في الموقع
+            </Button>
+            <Button asChild><Link to="/admin/live/new"><Plus className="h-4 w-4" /> بث جديد</Link></Button>
+          </>
         }
       />
 

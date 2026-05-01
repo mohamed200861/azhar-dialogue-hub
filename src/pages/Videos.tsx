@@ -29,23 +29,60 @@ function Countdown({ to }: { to: string }) {
 
 export default function VideosPage() {
   const [list, setList] = useState<any[] | null>(null);
+  const [liveItems, setLiveItems] = useState<any[]>([]);
   const [cat, setCat] = useState<string | null>(null);
+
+  const loadAll = async () => {
+    const [vidsR, liveR] = await Promise.all([
+      supabase.from("videos").select("*").eq("status", "published")
+        .order("scheduled_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false }),
+      supabase.from("live_streams").select("*")
+        .in("status", ["scheduled", "live", "completed"])
+        .eq("hide_from_videos", false)
+        .order("scheduled_at", { ascending: false, nullsFirst: false }),
+    ]);
+    setList(vidsR.data ?? []);
+    const now = Date.now();
+    const valid = (liveR.data ?? []).filter((s: any) => !s.expires_at || new Date(s.expires_at).getTime() > now);
+    setLiveItems(valid);
+  };
 
   useEffect(() => {
     document.title = "المرئيات والبث المباشر — اتحاد علماء الأزهر";
-    (async () => {
-      const { data } = await supabase
-        .from("videos").select("*").eq("status", "published")
-        .order("scheduled_at", { ascending: false, nullsFirst: false })
-        .order("created_at", { ascending: false });
-      setList(data ?? []);
-    })();
+    loadAll();
+    const channel = supabase
+      .channel("videos_live_realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "live_streams" }, () => loadAll())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const liveNow = useMemo(() => (list ?? []).find((v) => v.type === "live" && v.live_status === "live"), [list]);
-  const scheduled = useMemo(() => (list ?? []).filter((v) => v.type === "live" && v.live_status === "scheduled" && v.scheduled_at && new Date(v.scheduled_at) > new Date()).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0], [list]);
-  const replays = (list ?? []).filter((v) => !(v.type === "live" && (v.live_status === "live" || v.live_status === "scheduled")));
-  const filtered = replays.filter((v) => !cat || v.category === cat);
+  const liveNow = useMemo(() => liveItems.find((s) => s.status === "live"), [liveItems]);
+  const scheduled = useMemo(
+    () => liveItems
+      .filter((s) => s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at) > new Date())
+      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())[0],
+    [liveItems]
+  );
+  const liveReplays = useMemo(
+    () => liveItems.filter((s) => s.status === "completed" && s.replay_url).map((s) => ({
+      id: `live-${s.id}`,
+      slug: s.slug,
+      title: s.title,
+      thumbnail: s.thumbnail,
+      category: "بث مباشر",
+      scheduled_at: s.ended_at ?? s.scheduled_at,
+      created_at: s.created_at,
+      _isLive: true,
+    })),
+    [liveItems]
+  );
+  const replays = useMemo(() => {
+    const v = (list ?? []).filter((x) => !(x.type === "live" && (x.live_status === "live" || x.live_status === "scheduled")));
+    return [...liveReplays, ...v];
+  }, [list, liveReplays]);
+  const filtered = replays.filter((v: any) => !cat || v.category === cat);
 
   return (
     <SiteLayout>
@@ -61,8 +98,8 @@ export default function VideosPage() {
               <div className="card-elegant overflow-hidden grid lg:grid-cols-2 mb-12">
                 {liveNow ? (
                   <div className="aspect-video lg:aspect-auto bg-black">
-                    {liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") ? (
-                      <iframe src={liveNow.embed_url || getYouTubeEmbed(liveNow.video_url || "") || ""} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
+                    {liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "") ? (
+                      <iframe src={liveNow.embed_url || getYouTubeEmbed(liveNow.live_url || "") || ""} className="w-full h-full" allow="autoplay; encrypted-media" allowFullScreen />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white"><Radio className="h-16 w-16" /></div>
                     )}
@@ -112,10 +149,11 @@ export default function VideosPage() {
                 <div className="card-elegant p-12 text-center text-muted-foreground">لا توجد مرئيات منشورة بعد.</div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {filtered.map((v) => (
-                    <Link key={v.id} to={`/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
+                  {filtered.map((v: any) => (
+                    <Link key={v.id} to={v._isLive ? `/live/${v.slug || v.id.replace(/^live-/, "")}` : `/videos/${v.slug || v.id}`} className="card-elegant overflow-hidden group block">
                       <div className="aspect-video relative">
                         <SmartImage src={v.thumbnail} alt={v.title} variant="video" className="w-full h-full object-cover" fallbackClassName="bg-gradient-emerald" />
+                        {v._isLive && <span className="absolute top-2 start-2 text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">تسجيل بث</span>}
                         {v.duration_seconds ? <span className="absolute bottom-2 end-2 text-xs bg-black/60 text-white px-2 py-0.5 rounded inline-flex items-center gap-1"><Clock className="h-3 w-3" /> {Math.floor(v.duration_seconds/60)}:{String(v.duration_seconds%60).padStart(2,"0")}</span> : null}
                       </div>
                       <div className="p-5">
