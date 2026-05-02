@@ -4,6 +4,7 @@ import {
   ArrowLeft, Calendar, BookOpen, Newspaper, PlayCircle, Radio,
   Scale, GitFork, ShieldCheck, Building2, HeartHandshake, Megaphone,
   GraduationCap, Tv, Users, Sparkles, MapPin, Mail, Facebook, Loader2,
+  Gavel,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import {
@@ -64,11 +65,23 @@ export default function Home() {
       .order("scheduled_at", { ascending: true, nullsFirst: false });
     const now = Date.now();
     const valid = (data ?? []).filter((s: any) => !s.expires_at || new Date(s.expires_at).getTime() > now);
-    const live = valid.find((s: any) => s.status === "live") ?? null;
-    const scheduled = !live ? valid.find((s: any) => s.status === "scheduled") ?? null : null;
+    // Auto-promote: scheduled streams whose scheduled_at has passed are treated as live
+    const isEffectivelyLive = (s: any) =>
+      s.status === "live" ||
+      (s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at).getTime() <= now);
+    const live = valid.find(isEffectivelyLive) ?? null;
+    const scheduled = !live
+      ? valid.find((s: any) => s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at).getTime() > now) ?? null
+      : null;
     setLiveNow(live);
     setLiveScheduled(scheduled);
   };
+
+  // Re-evaluate live/scheduled state every 30s so a scheduled stream auto-promotes when its time arrives
+  useEffect(() => {
+    const t = setInterval(() => loadLive(), 30000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -321,6 +334,30 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* FATWA & ARBITRATION */}
+      <section className="section-padding">
+        <div className="container-narrow">
+          <div className="card-elegant overflow-hidden grid md:grid-cols-[auto,1fr,auto] gap-6 items-center p-8 md:p-10 bg-gradient-to-l from-primary/5 via-background to-background border-primary/20">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-emerald text-primary-foreground shadow-elegant">
+              <Gavel className="h-8 w-8" />
+            </div>
+            <div>
+              <span className="eyebrow">خدمات شرعية</span>
+              <h3 className="text-2xl md:text-3xl font-bold mt-2 mb-2">الفتوى والتحكيم الشرعي</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                قسم يقدّم الفتاوى والتحكيم في النزاعات الأسرية والمالية وفق الشريعة الإسلامية بمنهج وسطي، سعيًا للإصلاح وتحقيق العدالة.
+              </p>
+            </div>
+            <Button asChild size="lg" className="shrink-0">
+              <Link to="/fatwa-arbitration">
+                اطلب الفتوى أو التحكيم
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

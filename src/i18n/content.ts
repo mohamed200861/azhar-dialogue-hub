@@ -22,6 +22,7 @@ export const nav: { key: string; href: string; label: string }[] = [
   { key: "events", href: "/events", label: "الفعاليات" },
   { key: "library", href: "/library", label: "المكتبة" },
   { key: "videos", href: "/videos", label: "المرئيات والبث المباشر" },
+  { key: "fatwa", href: "/fatwa-arbitration", label: "الفتوى والتحكيم الشرعي" },
   { key: "partners", href: "/partnerships", label: "الشراكات" },
   { key: "contact", href: "/contact", label: "تواصل معنا" },
 ];
