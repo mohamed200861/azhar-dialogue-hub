@@ -103,6 +103,7 @@ const App = () => (
                 <Route path="media" element={<MediaManager />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />
+                <Route path="fatwa-arbitration" element={<FatwaRequests />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
               </Route>
