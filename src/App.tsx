@@ -50,6 +50,7 @@ import Messages from "./pages/admin/Messages.tsx";
 import Newsletter from "./pages/admin/Newsletter.tsx";
 import Settings from "./pages/admin/Settings.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
+import FatwaRequests from "./pages/admin/FatwaRequests.tsx";
 
 const queryClient = new QueryClient();
 
