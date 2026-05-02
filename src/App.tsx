@@ -25,6 +25,7 @@ import Privacy from "./pages/Privacy.tsx";
 import Terms from "./pages/Terms.tsx";
 import LiveDetail from "./pages/LiveDetail.tsx";
 import FatwaArbitration from "./pages/FatwaArbitration.tsx";
+import NewsletterPublic from "./pages/NewsletterPublic.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
@@ -49,6 +50,7 @@ import Messages from "./pages/admin/Messages.tsx";
 import Newsletter from "./pages/admin/Newsletter.tsx";
 import Settings from "./pages/admin/Settings.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
+import FatwaRequests from "./pages/admin/FatwaRequests.tsx";
 
 const queryClient = new QueryClient();
 
@@ -79,6 +81,7 @@ const App = () => (
               <Route path="/terms" element={<Terms />} />
               <Route path="/live/:slug" element={<LiveDetail />} />
               <Route path="/fatwa-arbitration" element={<FatwaArbitration />} />
+              <Route path="/newsletter" element={<NewsletterPublic />} />
 
               {/* Admin */}
               <Route path="/admin/setup" element={<AdminSetup />} />
@@ -100,6 +103,7 @@ const App = () => (
                 <Route path="media" element={<MediaManager />} />
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />
+                <Route path="fatwa-arbitration" element={<FatwaRequests />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
               </Route>

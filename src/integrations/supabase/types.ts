@@ -176,6 +176,60 @@ export type Database = {
         }
         Relationships: []
       }
+      fatwa_arbitration_requests: {
+        Row: {
+          admin_notes: string | null
+          attachment_url: string | null
+          country: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          is_urgent: boolean
+          message: string
+          phone: string | null
+          request_type: Database["public"]["Enums"]["fatwa_request_type"]
+          response_text: string | null
+          status: Database["public"]["Enums"]["fatwa_request_status"]
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          attachment_url?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          is_urgent?: boolean
+          message: string
+          phone?: string | null
+          request_type?: Database["public"]["Enums"]["fatwa_request_type"]
+          response_text?: string | null
+          status?: Database["public"]["Enums"]["fatwa_request_status"]
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          attachment_url?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          is_urgent?: boolean
+          message?: string
+          phone?: string | null
+          request_type?: Database["public"]["Enums"]["fatwa_request_type"]
+          response_text?: string | null
+          status?: Database["public"]["Enums"]["fatwa_request_status"]
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       library_items: {
         Row: {
           category: string
@@ -425,20 +479,62 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_campaigns: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          id: string
+          status: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          type: Database["public"]["Enums"]["campaign_type"]
+          updated_at: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title: string
+          type?: Database["public"]["Enums"]["campaign_type"]
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          title?: string
+          type?: Database["public"]["Enums"]["campaign_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
+          created_at: string
           email: string
           id: string
+          source: string | null
+          status: Database["public"]["Enums"]["subscriber_status"]
           subscribed_at: string
         }
         Insert: {
+          created_at?: string
           email: string
           id?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["subscriber_status"]
           subscribed_at?: string
         }
         Update: {
+          created_at?: string
           email?: string
           id?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["subscriber_status"]
           subscribed_at?: string
         }
         Relationships: []
@@ -633,8 +729,22 @@ export type Database = {
     }
     Enums: {
       app_role: "super_admin" | "admin" | "editor" | "media_manager"
+      campaign_status: "draft" | "ready" | "sent"
+      campaign_type: "news" | "event" | "library" | "live" | "general"
       content_status: "draft" | "published" | "archived"
       event_status: "upcoming" | "live" | "completed" | "cancelled"
+      fatwa_request_status:
+        | "new"
+        | "under_review"
+        | "answered"
+        | "closed"
+        | "rejected"
+      fatwa_request_type:
+        | "fatwa"
+        | "arbitration"
+        | "family_consult"
+        | "financial_consult"
+        | "other"
       live_status: "scheduled" | "live" | "completed" | "cancelled"
       live_stream_status:
         | "draft"
@@ -643,6 +753,7 @@ export type Database = {
         | "completed"
         | "cancelled"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
+      subscriber_status: "active" | "unsubscribed"
       video_type: "video" | "live" | "recording"
     }
     CompositeTypes: {
@@ -772,8 +883,24 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["super_admin", "admin", "editor", "media_manager"],
+      campaign_status: ["draft", "ready", "sent"],
+      campaign_type: ["news", "event", "library", "live", "general"],
       content_status: ["draft", "published", "archived"],
       event_status: ["upcoming", "live", "completed", "cancelled"],
+      fatwa_request_status: [
+        "new",
+        "under_review",
+        "answered",
+        "closed",
+        "rejected",
+      ],
+      fatwa_request_type: [
+        "fatwa",
+        "arbitration",
+        "family_consult",
+        "financial_consult",
+        "other",
+      ],
       live_status: ["scheduled", "live", "completed", "cancelled"],
       live_stream_status: [
         "draft",
@@ -783,6 +910,7 @@ export const Constants = {
         "cancelled",
       ],
       message_status: ["new", "read", "replied", "archived", "spam"],
+      subscriber_status: ["active", "unsubscribed"],
       video_type: ["video", "live", "recording"],
     },
   },

@@ -351,6 +351,9 @@ export default function Home() {
               <p className="text-muted-foreground leading-relaxed">
                 قسم يقدّم الفتاوى والتحكيم في النزاعات الأسرية والمالية وفق الشريعة الإسلامية بمنهج وسطي، سعيًا للإصلاح وتحقيق العدالة.
               </p>
+              <p className="text-sm text-primary mt-2 font-medium">
+                يمكنكم إرسال طلب فتوى أو تحكيم مباشرةً عبر النموذج المخصص.
+              </p>
             </div>
             <Button asChild size="lg" className="shrink-0">
               <Link to="/fatwa-arbitration">
