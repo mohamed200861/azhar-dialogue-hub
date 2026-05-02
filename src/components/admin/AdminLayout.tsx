@@ -23,6 +23,7 @@ const items = [
   { url: "/admin/events", icon: Calendar, label: "الفعاليات" },
   { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات" },
   { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات" },
+  { url: "/admin/fatwa-arbitration", icon: Scale, label: "الفتوى والتحكيم الشرعي" },
   { url: "/admin/messages", icon: MessageSquare, label: "رسائل التواصل" },
   { url: "/admin/newsletter", icon: Mail, label: "النشرة البريدية" },
   { url: "/admin/settings", icon: Settings, label: "إعدادات الموقع" },
