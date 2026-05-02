@@ -4,6 +4,7 @@ import {
   ArrowLeft, Calendar, BookOpen, Newspaper, PlayCircle, Radio,
   Scale, GitFork, ShieldCheck, Building2, HeartHandshake, Megaphone,
   GraduationCap, Tv, Users, Sparkles, MapPin, Mail, Facebook, Loader2,
+  Gavel,
 } from "lucide-react";
 import { SiteLayout } from "@/components/SiteLayout";
 import {
