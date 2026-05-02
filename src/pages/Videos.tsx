@@ -58,7 +58,13 @@ export default function VideosPage() {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
-  const liveNow = useMemo(() => liveItems.find((s) => s.status === "live"), [liveItems]);
+  const liveNow = useMemo(
+    () => liveItems.find((s) =>
+      s.status === "live" ||
+      (s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at).getTime() <= Date.now())
+    ),
+    [liveItems]
+  );
   const scheduled = useMemo(
     () => liveItems
       .filter((s) => s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at) > new Date())

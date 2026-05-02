@@ -65,11 +65,23 @@ export default function Home() {
       .order("scheduled_at", { ascending: true, nullsFirst: false });
     const now = Date.now();
     const valid = (data ?? []).filter((s: any) => !s.expires_at || new Date(s.expires_at).getTime() > now);
-    const live = valid.find((s: any) => s.status === "live") ?? null;
-    const scheduled = !live ? valid.find((s: any) => s.status === "scheduled") ?? null : null;
+    // Auto-promote: scheduled streams whose scheduled_at has passed are treated as live
+    const isEffectivelyLive = (s: any) =>
+      s.status === "live" ||
+      (s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at).getTime() <= now);
+    const live = valid.find(isEffectivelyLive) ?? null;
+    const scheduled = !live
+      ? valid.find((s: any) => s.status === "scheduled" && s.scheduled_at && new Date(s.scheduled_at).getTime() > now) ?? null
+      : null;
     setLiveNow(live);
     setLiveScheduled(scheduled);
   };
+
+  // Re-evaluate live/scheduled state every 30s so a scheduled stream auto-promotes when its time arrives
+  useEffect(() => {
+    const t = setInterval(() => loadLive(), 30000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     (async () => {
