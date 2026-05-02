@@ -81,7 +81,7 @@ VITE_SUPABASE_PROJECT_ID=<project-ref>
 - كل مسار `/admin/*` محمي بـ `RequireAdmin` على الواجهة.
 - الحماية الفعلية على الـ backend عبر RLS + الدوال `is_admin`, `has_role`, `can_publish`.
 - تسجيل الدخول فقط عبر Supabase Auth في `/admin/login`.
-- **لا تستخدم** `mohamed2009` ككلمة مرور إنتاجية — غيّرها فورًا بعد النشر.
+- **لا تستخدم** كلمة المرور الافتراضية في الإنتاج — غيّرها فورًا بعد النشر إلى كلمة مرور قوية وفريدة.
 
 خطوات تأمين حساب super_admin:
 1. ادخل على `/admin/login`.

@@ -24,6 +24,7 @@ import Contact from "./pages/Contact.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Terms from "./pages/Terms.tsx";
 import LiveDetail from "./pages/LiveDetail.tsx";
+import FatwaArbitration from "./pages/FatwaArbitration.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
@@ -77,6 +78,7 @@ const App = () => (
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/live/:slug" element={<LiveDetail />} />
+              <Route path="/fatwa-arbitration" element={<FatwaArbitration />} />
 
               {/* Admin */}
               <Route path="/admin/setup" element={<AdminSetup />} />
