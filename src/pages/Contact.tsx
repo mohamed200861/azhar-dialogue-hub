@@ -75,8 +75,8 @@ export default function ContactPage() {
             <div className="card-elegant p-6 flex items-start gap-4">
               <MapPin className="h-6 w-6 text-primary mt-1 shrink-0" />
               <div>
-                <div className="text-xs text-muted-foreground">المقر</div>
-                <div className="font-semibold mt-1">إنجلترا</div>
+                <div className="text-xs text-muted-foreground">الجهة</div>
+                <div className="font-semibold mt-1">الأمانة العامة للاتحاد</div>
               </div>
             </div>
             {settings.facebook_url && (
