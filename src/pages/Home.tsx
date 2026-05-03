@@ -53,9 +53,10 @@ export default function Home() {
   const [liveScheduled, setLiveScheduled] = useState<any | null>(null);
 
   useEffect(() => {
-    document.title = `${settings.seo_title || site.name.ar} — ${settings.site_slogan || site.slogan.ar}`;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta && settings.seo_description) meta.setAttribute("content", settings.seo_description);
+    applySeo({
+      title: settings.seo_title || `${settings.site_name || site.name.ar} — ${settings.site_slogan || site.slogan.ar}`,
+      description: settings.seo_description || hero.description,
+    });
   }, [settings]);
 
   const loadLive = async () => {
