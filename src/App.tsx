@@ -85,6 +85,10 @@ const App = () => (
               <Route path="/live/:slug" element={<LiveDetail />} />
               <Route path="/fatwa-arbitration" element={<FatwaArbitration />} />
               <Route path="/newsletter" element={<NewsletterPublic />} />
+              <Route path="/sharia-academy" element={<ShariaAcademy />} />
+              <Route path="/civilizational-dialogue" element={<CivilizationalDialogue />} />
+              <Route path="/research-studies" element={<ResearchStudies />} />
+
 
               {/* Admin */}
               <Route path="/admin/setup" element={<AdminSetup />} />
