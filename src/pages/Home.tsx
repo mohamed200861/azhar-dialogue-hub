@@ -16,6 +16,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 import { SmartImage } from "@/components/SmartImage";
+import { NewsTicker } from "@/components/NewsTicker";
+import { applySeo } from "@/lib/seo";
 
 function LiveCountdown({ to }: { to: string }) {
   const [now, setNow] = useState(Date.now());
