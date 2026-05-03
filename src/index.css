@@ -159,3 +159,21 @@
     transform: translateY(-2px);
   }
 }
+
+/* News ticker (RTL marquee) */
+@layer components {
+  .news-ticker-mask {
+    -webkit-mask-image: linear-gradient(to left, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+            mask-image: linear-gradient(to left, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  }
+  .news-ticker-track {
+    animation: news-ticker-scroll 60s linear infinite;
+  }
+  .news-ticker-mask:hover .news-ticker-track {
+    animation-play-state: paused;
+  }
+  @keyframes news-ticker-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(50%); }
+  }
+}
