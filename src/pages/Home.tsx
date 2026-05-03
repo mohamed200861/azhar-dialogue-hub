@@ -344,32 +344,56 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FATWA & ARBITRATION */}
+      {/* SPECIALIZED SECTIONS */}
       <section className="section-padding">
-        <div className="container-narrow">
-          <div className="card-elegant overflow-hidden grid md:grid-cols-[auto,1fr,auto] gap-6 items-center p-8 md:p-10 bg-gradient-to-l from-primary/5 via-background to-background border-primary/20">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-emerald text-primary-foreground shadow-elegant">
-              <Gavel className="h-8 w-8" />
-            </div>
-            <div>
-              <span className="eyebrow">خدمات شرعية</span>
-              <h3 className="text-2xl md:text-3xl font-bold mt-2 mb-2">الفتوى والتحكيم الشرعي</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                قسم يقدّم الفتاوى والتحكيم في النزاعات الأسرية والمالية وفق الشريعة الإسلامية بمنهج وسطي، سعيًا للإصلاح وتحقيق العدالة.
-              </p>
-              <p className="text-sm text-primary mt-2 font-medium">
-                يمكنكم إرسال طلب فتوى أو تحكيم مباشرةً عبر النموذج المخصص.
-              </p>
-            </div>
-            <Button asChild size="lg" className="shrink-0">
-              <Link to="/fatwa-arbitration">
-                اطلب الفتوى أو التحكيم
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
-            </Button>
+        <div className="container-wide">
+          <div className="text-center mb-10">
+            <span className="eyebrow">أقسام متخصصة</span>
+            <h2 className="heading-section mt-3">خدمات وأقسام الاتحاد</h2>
+            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+              أقسام علمية ودعوية ومجتمعية متخصصة، تخدم رسالة الاتحاد في نشر العلم وتقديم الخدمات الشرعية.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                icon: Gavel, title: "الفتوى والتحكيم الشرعي",
+                desc: "قسم يقدّم الفتاوى والتحكيم في النزاعات الأسرية والمالية وفق الشريعة الإسلامية بمنهج وسطي، سعيًا للإصلاح وتحقيق العدالة.",
+                cta: "اطلب الفتوى أو التحكيم", href: "/fatwa-arbitration",
+              },
+              {
+                icon: GraduationCap, title: "أكاديمية العلوم الشرعية",
+                desc: "برامج تعليمية متخصصة في العلوم الشرعية: دورات ودبلومات وإجازات علمية، وفق منهج رصين لتأهيل كوادر علمية متميزة.",
+                cta: "تعرّف على البرامج", href: "/sharia-academy",
+              },
+              {
+                icon: MessageCircle, title: "الحوار والتواصل الحضاري",
+                desc: "تعزيز الحوار بين الأديان والثقافات، وترسيخ قيم التفاهم والتعايش وفق رؤية إسلامية وسطية.",
+                cta: "اقرأ المزيد", href: "/civilizational-dialogue",
+              },
+              {
+                icon: FileText, title: "البحوث والدراسات",
+                desc: "إنتاج ونشر البحوث والدراسات الشرعية والفكرية المتخصصة، وتحليل القضايا المعاصرة بمنهج علمي رصين.",
+                cta: "استكشف البحوث", href: "/research-studies",
+              },
+            ].map((s, i) => (
+              <div key={i} className="card-elegant p-6 flex flex-col">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-emerald text-primary-foreground mb-4 shadow-elegant">
+                  <s.icon className="h-7 w-7" />
+                </div>
+                <h3 className="font-bold text-lg mb-2 leading-snug">{s.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{s.desc}</p>
+                <Button asChild variant="outline" className="mt-4 self-start">
+                  <Link to={s.href}>
+                    {s.cta} <ArrowLeft className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
 
       {/* LATEST NEWS */}
       {settings.show_news_section !== false && (
