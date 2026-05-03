@@ -10,7 +10,7 @@ export const site = {
   email: "alazharscholarunion@gmail.com",
   facebook: "https://www.facebook.com/share/1ECiSRM9VT/",
   founded: "2017",
-  hq: a("إنجلترا"),
+  hq: a("الأمانة العامة"),
 };
 
 // Public navigation — Arabic only.

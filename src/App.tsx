@@ -26,6 +26,9 @@ import Terms from "./pages/Terms.tsx";
 import LiveDetail from "./pages/LiveDetail.tsx";
 import FatwaArbitration from "./pages/FatwaArbitration.tsx";
 import NewsletterPublic from "./pages/NewsletterPublic.tsx";
+import ShariaAcademy from "./pages/ShariaAcademy.tsx";
+import CivilizationalDialogue from "./pages/CivilizationalDialogue.tsx";
+import ResearchStudies from "./pages/ResearchStudies.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
@@ -82,6 +85,10 @@ const App = () => (
               <Route path="/live/:slug" element={<LiveDetail />} />
               <Route path="/fatwa-arbitration" element={<FatwaArbitration />} />
               <Route path="/newsletter" element={<NewsletterPublic />} />
+              <Route path="/sharia-academy" element={<ShariaAcademy />} />
+              <Route path="/civilizational-dialogue" element={<CivilizationalDialogue />} />
+              <Route path="/research-studies" element={<ResearchStudies />} />
+
 
               {/* Admin */}
               <Route path="/admin/setup" element={<AdminSetup />} />
