@@ -42,12 +42,12 @@ export function Footer() {
     { label: "قضايا معاصرة", href: "/news" },
     { label: "إصدارات الاتحاد", href: "/library" },
   ];
-  const libraryCol = [
-    { label: "كتب", href: "/library" },
-    { label: "ملفات PDF", href: "/library" },
-    { label: "بحوث علمية", href: "/library" },
-    { label: "مجلات", href: "/library" },
-    { label: "مواد تدريبية", href: "/library" },
+  const specializedCol = [
+    { label: "الفتوى والتحكيم الشرعي", href: "/fatwa-arbitration" },
+    { label: "أكاديمية العلوم الشرعية", href: "/sharia-academy" },
+    { label: "الحوار والتواصل الحضاري", href: "/civilizational-dialogue" },
+    { label: "البحوث والدراسات", href: "/research-studies" },
+    { label: "نشرة الأخبار", href: "/newsletter" },
   ];
 
   const socials = [
