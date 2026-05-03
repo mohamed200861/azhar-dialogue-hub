@@ -139,9 +139,9 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="font-semibold mb-4">المكتبة</h4>
+          <h4 className="font-semibold mb-4">أقسام متخصصة</h4>
           <ul className="space-y-2.5 text-sm">
-            {libraryCol.map((item, i) => (
+            {specializedCol.map((item, i) => (
               <li key={i}>
                 <Link to={item.href} className="text-primary-foreground/75 hover:text-primary-foreground">
                   {item.label}
