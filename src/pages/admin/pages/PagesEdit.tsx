@@ -71,13 +71,13 @@ export default function PagesEdit() {
   if (loading || !form) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
 
   const isHome = form.page_key === "home";
-  const publicHref =
-    form.page_key === "home" ? "/" :
-    form.page_key === "about" ? "/about" :
-    form.page_key === "vision" ? "/vision" :
-    form.page_key === "partnerships" ? "/partnerships" :
-    form.page_key === "privacy" ? "/privacy" :
-    form.page_key === "terms" ? "/terms" : `/${form.slug}`;
+  const PUBLIC_HREF: Record<string, string> = {
+    home: "/", about: "/about", vision: "/vision", partnerships: "/partnerships",
+    privacy: "/privacy", terms: "/terms", "fatwa-arbitration": "/fatwa-arbitration",
+    "sharia-academy": "/sharia-academy", "civilizational-dialogue": "/civilizational-dialogue",
+    "research-studies": "/research-studies",
+  };
+  const publicHref = PUBLIC_HREF[form.page_key] ?? `/${form.slug}`;
 
   const setSection = (k: string, v: string) =>
     setForm({ ...form, sections: { ...(form.sections ?? {}), [k]: v } });
