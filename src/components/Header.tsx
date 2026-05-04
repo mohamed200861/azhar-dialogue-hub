@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
-import { Menu, X, Mail } from "lucide-react";
-import { nav } from "@/i18n/content";
+import { NavLink, useLocation, Link } from "react-router-dom";
+import { Menu, X, Mail, ChevronDown } from "lucide-react";
+import { nav, specializedSections } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -19,9 +22,9 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
-    setOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setOpen(false); }, [location.pathname]);
+
+  const isInSections = specializedSections.some((s) => location.pathname.startsWith(s.href));
 
   return (
     <header
@@ -51,6 +54,29 @@ export function Header() {
               {item.label}
             </NavLink>
           ))}
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={`px-3 py-2 rounded-md inline-flex items-center gap-1 transition-colors ${
+                  isInSections ? "text-primary bg-primary/5" : "text-foreground/80 hover:text-primary hover:bg-muted"
+                }`}
+              >
+                الأقسام
+                <ChevronDown className="h-3.5 w-3.5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-72">
+              {specializedSections.map((s) => (
+                <DropdownMenuItem key={s.href} asChild>
+                  <Link to={s.href} className="flex flex-col items-end gap-0.5 py-2 cursor-pointer">
+                    <span className="font-semibold text-sm">{s.label}</span>
+                    <span className="text-[11px] text-muted-foreground">{s.desc}</span>
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
@@ -88,6 +114,22 @@ export function Header() {
                 {item.label}
               </NavLink>
             ))}
+            <div className="mt-2 pt-2 border-t border-border">
+              <div className="px-3 py-1.5 text-xs font-bold text-muted-foreground">الأقسام المتخصصة</div>
+              {specializedSections.map((s) => (
+                <NavLink
+                  key={s.href}
+                  to={s.href}
+                  className={({ isActive }) =>
+                    `block px-3 py-2 rounded-md text-sm ${
+                      isActive ? "text-primary bg-primary/5" : "text-foreground/80 hover:bg-muted"
+                    }`
+                  }
+                >
+                  {s.label}
+                </NavLink>
+              ))}
+            </div>
             <div className="flex items-center justify-end pt-3 mt-2 border-t border-border">
               <Button asChild size="sm">
                 <a href={`mailto:${settings.contact_email}`}>
