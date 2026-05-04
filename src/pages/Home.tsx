@@ -248,7 +248,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-4">
             {[
               { icon: Calendar, label: "التأسيس", value: site.founded },
-              { icon: MapPin, label: "المقر", value: site.hq.ar },
+              { icon: MapPin, label: "مجال العمل", value: "خدمة علمية ودعوية عالمية" },
               { icon: Building2, label: "الكيان", value: "غير ربحية" },
               { icon: Sparkles, label: "المنهج", value: "أزهري وسطي" },
             ].map((item, i) => (

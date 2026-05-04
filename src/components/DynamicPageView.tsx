@@ -3,6 +3,7 @@ import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 import { Loader2 } from "lucide-react";
+import { applySeo } from "@/lib/seo";
 
 export function DynamicPageView({
   pageKey,
@@ -21,10 +22,8 @@ export function DynamicPageView({
 
   useEffect(() => {
     const title = page?.seo_title || page?.title || fallbackTitle;
-    document.title = `${title} — اتحاد علماء الأزهر`;
-    const meta = document.querySelector('meta[name="description"]');
-    const desc = page?.seo_description || page?.intro || fallbackDescription;
-    if (meta && desc) meta.setAttribute("content", desc);
+    const description = page?.seo_description || page?.intro || fallbackDescription;
+    applySeo({ title, description, image: page?.cover_image || undefined });
   }, [page, fallbackTitle, fallbackDescription]);
 
   if (!loaded) {
