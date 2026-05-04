@@ -14,6 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
+      academy_applications: {
+        Row: {
+          admin_notes: string | null
+          country: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          program_id: string | null
+          program_title: string | null
+          qualification: string | null
+          status: Database["public"]["Enums"]["academy_application_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          program_id?: string | null
+          program_title?: string | null
+          qualification?: string | null
+          status?: Database["public"]["Enums"]["academy_application_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          program_id?: string | null
+          program_title?: string | null
+          qualification?: string | null
+          status?: Database["public"]["Enums"]["academy_application_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "academy_applications_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "academy_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      academy_programs: {
+        Row: {
+          category: Database["public"]["Enums"]["academy_program_category"]
+          created_at: string
+          created_by: string | null
+          description: string | null
+          display_order: number
+          duration: string | null
+          id: string
+          level: Database["public"]["Enums"]["academy_program_level"]
+          publish_status: Database["public"]["Enums"]["content_status"]
+          status: Database["public"]["Enums"]["academy_program_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["academy_program_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          duration?: string | null
+          id?: string
+          level?: Database["public"]["Enums"]["academy_program_level"]
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          status?: Database["public"]["Enums"]["academy_program_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["academy_program_category"]
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          duration?: string | null
+          id?: string
+          level?: Database["public"]["Enums"]["academy_program_level"]
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          status?: Database["public"]["Enums"]["academy_program_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -104,6 +205,87 @@ export type Database = {
           name?: string
           status?: Database["public"]["Enums"]["message_status"]
           subject?: string | null
+        }
+        Relationships: []
+      }
+      dialogue_initiatives: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          display_order: number
+          id: string
+          initiative_date: string | null
+          initiative_type: Database["public"]["Enums"]["dialogue_initiative_type"]
+          publish_status: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          id?: string
+          initiative_date?: string | null
+          initiative_type?: Database["public"]["Enums"]["dialogue_initiative_type"]
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          id?: string
+          initiative_date?: string | null
+          initiative_type?: Database["public"]["Enums"]["dialogue_initiative_type"]
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      dialogue_requests: {
+        Row: {
+          admin_notes: string | null
+          country: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          message: string
+          organization: string | null
+          request_kind: string
+          status: Database["public"]["Enums"]["dialogue_request_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          message: string
+          organization?: string | null
+          request_kind?: string
+          status?: Database["public"]["Enums"]["dialogue_request_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          message?: string
+          organization?: string | null
+          request_kind?: string
+          status?: Database["public"]["Enums"]["dialogue_request_status"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -539,6 +721,96 @@ export type Database = {
         }
         Relationships: []
       }
+      research_items: {
+        Row: {
+          abstract: string | null
+          author: string | null
+          category: Database["public"]["Enums"]["research_category"]
+          created_at: string
+          created_by: string | null
+          display_order: number
+          external_url: string | null
+          file_url: string | null
+          id: string
+          publish_status: Database["public"]["Enums"]["content_status"]
+          published_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          abstract?: string | null
+          author?: string | null
+          category?: Database["public"]["Enums"]["research_category"]
+          created_at?: string
+          created_by?: string | null
+          display_order?: number
+          external_url?: string | null
+          file_url?: string | null
+          id?: string
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          published_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          abstract?: string | null
+          author?: string | null
+          category?: Database["public"]["Enums"]["research_category"]
+          created_at?: string
+          created_by?: string | null
+          display_order?: number
+          external_url?: string | null
+          file_url?: string | null
+          id?: string
+          publish_status?: Database["public"]["Enums"]["content_status"]
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      research_submissions: {
+        Row: {
+          abstract: string
+          admin_notes: string | null
+          attachment_url: string | null
+          category: Database["public"]["Enums"]["research_category"]
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          status: Database["public"]["Enums"]["research_submission_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          abstract: string
+          admin_notes?: string | null
+          attachment_url?: string | null
+          category?: Database["public"]["Enums"]["research_category"]
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          status?: Database["public"]["Enums"]["research_submission_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          abstract?: string
+          admin_notes?: string | null
+          attachment_url?: string | null
+          category?: Database["public"]["Enums"]["research_category"]
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          status?: Database["public"]["Enums"]["research_submission_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_pages: {
         Row: {
           content: string | null
@@ -728,10 +1000,20 @@ export type Database = {
       public_has_any_super_admin: { Args: never; Returns: boolean }
     }
     Enums: {
+      academy_application_status: "new" | "reviewing" | "accepted" | "rejected"
+      academy_program_category: "course" | "diploma" | "ijaza"
+      academy_program_level: "beginner" | "intermediate" | "advanced"
+      academy_program_status: "available" | "soon" | "closed"
       app_role: "super_admin" | "admin" | "editor" | "media_manager"
       campaign_status: "draft" | "ready" | "sent"
       campaign_type: "news" | "event" | "library" | "live" | "general"
       content_status: "draft" | "published" | "archived"
+      dialogue_initiative_type:
+        | "meeting"
+        | "conference"
+        | "seminar"
+        | "initiative"
+      dialogue_request_status: "new" | "reviewing" | "contacted" | "closed"
       event_status: "upcoming" | "live" | "completed" | "cancelled"
       fatwa_request_status:
         | "new"
@@ -753,6 +1035,8 @@ export type Database = {
         | "completed"
         | "cancelled"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
+      research_category: "sharia" | "intellectual" | "contemporary" | "reports"
+      research_submission_status: "new" | "reviewing" | "approved" | "rejected"
       subscriber_status: "active" | "unsubscribed"
       video_type: "video" | "live" | "recording"
     }
@@ -882,10 +1166,21 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      academy_application_status: ["new", "reviewing", "accepted", "rejected"],
+      academy_program_category: ["course", "diploma", "ijaza"],
+      academy_program_level: ["beginner", "intermediate", "advanced"],
+      academy_program_status: ["available", "soon", "closed"],
       app_role: ["super_admin", "admin", "editor", "media_manager"],
       campaign_status: ["draft", "ready", "sent"],
       campaign_type: ["news", "event", "library", "live", "general"],
       content_status: ["draft", "published", "archived"],
+      dialogue_initiative_type: [
+        "meeting",
+        "conference",
+        "seminar",
+        "initiative",
+      ],
+      dialogue_request_status: ["new", "reviewing", "contacted", "closed"],
       event_status: ["upcoming", "live", "completed", "cancelled"],
       fatwa_request_status: [
         "new",
@@ -910,6 +1205,8 @@ export const Constants = {
         "cancelled",
       ],
       message_status: ["new", "read", "replied", "archived", "spam"],
+      research_category: ["sharia", "intellectual", "contemporary", "reports"],
+      research_submission_status: ["new", "reviewing", "approved", "rejected"],
       subscriber_status: ["active", "unsubscribed"],
       video_type: ["video", "live", "recording"],
     },
