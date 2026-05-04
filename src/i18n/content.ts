@@ -10,7 +10,8 @@ export const site = {
   email: "alazharscholarunion@gmail.com",
   facebook: "https://www.facebook.com/share/1ECiSRM9VT/",
   founded: "2017",
-  hq: a("الأمانة العامة"),
+  scope: a("خدمة علمية ودعوية عالمية"),
+  hq: a("خدمة علمية ودعوية عالمية"),
 };
 
 // Public navigation — Arabic only.
@@ -22,9 +23,17 @@ export const nav: { key: string; href: string; label: string }[] = [
   { key: "events", href: "/events", label: "الفعاليات" },
   { key: "library", href: "/library", label: "المكتبة" },
   { key: "videos", href: "/videos", label: "المرئيات والبث المباشر" },
-  { key: "fatwa", href: "/fatwa-arbitration", label: "الفتوى والتحكيم الشرعي" },
   { key: "partners", href: "/partnerships", label: "الشراكات" },
   { key: "contact", href: "/contact", label: "تواصل معنا" },
+];
+
+// Specialized sections — shown as dropdown "الأقسام" in header and as a footer column.
+export const specializedSections: { href: string; label: string; desc: string }[] = [
+  { href: "/fatwa-arbitration", label: "الفتوى والتحكيم الشرعي", desc: "فتاوى وتحكيم شرعي بمنهج وسطي." },
+  { href: "/sharia-academy", label: "أكاديمية العلوم الشرعية", desc: "دورات ودبلومات وإجازات علمية." },
+  { href: "/civilizational-dialogue", label: "الحوار والتواصل الحضاري", desc: "حوار بين الأديان والثقافات." },
+  { href: "/research-studies", label: "البحوث والدراسات", desc: "بحوث ودراسات شرعية وفكرية." },
+  { href: "/newsletter", label: "نشرة الأخبار", desc: "اشترك ليصلك كل جديد." },
 ];
 
 // Institutional publisher sources (no personal names).

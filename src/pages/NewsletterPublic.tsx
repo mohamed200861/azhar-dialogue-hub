@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Mail, Loader2, CheckCircle2, Newspaper, Calendar, BookOpen, PlayCircle, Radio, Scale } from "lucide-react";
+import { applySeo } from "@/lib/seo";
 
 const emailSchema = z.string().trim().email("البريد الإلكتروني غير صحيح").max(320);
 
