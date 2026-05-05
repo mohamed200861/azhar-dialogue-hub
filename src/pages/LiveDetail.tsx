@@ -6,6 +6,7 @@ import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Loader2, Radio, ExternalLink, Calendar } from "lucide-react";
 import { formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 export default function LiveDetail() {
   const { slug } = useParams();
@@ -21,7 +22,14 @@ export default function LiveDetail() {
         data = r.data;
       }
       setItem(data ?? null);
-      if (data?.title) document.title = `${data.title} — اتحاد علماء الأزهر`;
+      if (data) {
+        applySeo({
+          title: data.title,
+          description: data.description,
+          image: data.thumbnail || undefined,
+          type: "article",
+        });
+      }
       setLoading(false);
     })();
   }, [slug]);

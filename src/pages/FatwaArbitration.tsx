@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
+import { applySeo } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
@@ -38,6 +39,12 @@ export default function FatwaArbitration() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  useEffect(() => {
+    applySeo({
+      title: "الفتوى والتحكيم الشرعي",
+      description: "قسم يقدّم الفتاوى والتحكيم في النزاعات الأسرية والمالية وفق الشريعة الإسلامية بمنهج وسطي.",
+    });
+  }, []);
   const [form, setForm] = useState({
     full_name: "",
     email: "",

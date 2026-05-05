@@ -8,6 +8,7 @@ import { formatDate, isPdfUrl, resolveStorageUrl } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
 import { PdfViewer } from "@/components/PdfViewer";
+import { applySeo } from "@/lib/seo";
 
 export default function LibraryDetail() {
   const { slug } = useParams();
@@ -25,7 +26,12 @@ export default function LibraryDetail() {
         : await query.eq("slug", slug).maybeSingle();
       if (!data) { setItem(null); return; }
       setItem(data);
-      document.title = `${data.title} — المكتبة الرقمية`;
+      applySeo({
+        title: data.title,
+        description: data.description,
+        image: data.cover_image || undefined,
+        type: "article",
+      });
       if (data.file_url) {
         const signed = await resolveStorageUrl(data.file_url, 3600);
         setSignedFileUrl(signed);

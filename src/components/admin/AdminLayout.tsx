@@ -2,7 +2,7 @@ import { NavLink, useLocation, Outlet, Link } from "react-router-dom";
 import {
   LayoutDashboard, Newspaper, BookOpen, PlayCircle, Calendar,
   FolderOpen, MessageSquare, Mail, Settings, Users2, LogOut, ExternalLink,
-  Radio, FileText, Scale,
+  Radio, FileText, Scale, GraduationCap, MessageCircle, FileSearch,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -24,6 +24,9 @@ const items = [
   { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات" },
   { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات" },
   { url: "/admin/fatwa-arbitration", icon: Scale, label: "الفتوى والتحكيم الشرعي" },
+  { url: "/admin/sharia-academy", icon: GraduationCap, label: "أكاديمية العلوم الشرعية" },
+  { url: "/admin/civilizational-dialogue", icon: MessageCircle, label: "الحوار والتواصل الحضاري" },
+  { url: "/admin/research-studies", icon: FileSearch, label: "البحوث والدراسات" },
   { url: "/admin/messages", icon: MessageSquare, label: "رسائل التواصل" },
   { url: "/admin/newsletter", icon: Mail, label: "النشرة البريدية" },
   { url: "/admin/settings", icon: Settings, label: "إعدادات الموقع" },

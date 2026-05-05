@@ -54,6 +54,9 @@ import Newsletter from "./pages/admin/Newsletter.tsx";
 import Settings from "./pages/admin/Settings.tsx";
 import AdminUsers from "./pages/admin/AdminUsers.tsx";
 import FatwaRequests from "./pages/admin/FatwaRequests.tsx";
+import ShariaAcademyAdmin from "./pages/admin/ShariaAcademyAdmin.tsx";
+import CivilizationalDialogueAdmin from "./pages/admin/CivilizationalDialogueAdmin.tsx";
+import ResearchStudiesAdmin from "./pages/admin/ResearchStudiesAdmin.tsx";
 
 const queryClient = new QueryClient();
 
@@ -111,6 +114,9 @@ const App = () => (
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />
                 <Route path="fatwa-arbitration" element={<FatwaRequests />} />
+                <Route path="sharia-academy" element={<ShariaAcademyAdmin />} />
+                <Route path="civilizational-dialogue" element={<CivilizationalDialogueAdmin />} />
+                <Route path="research-studies" element={<ResearchStudiesAdmin />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
               </Route>

@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, PlayCircle, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const TYPE_LABEL: Record<string, string> = { video: "فيديو مسجل", live: "بث مباشر", recording: "تسجيل" };
 const LIVE_LABEL: Record<string, string> = { scheduled: "بث قادم", live: "مباشر الآن", completed: "تسجيل سابق", cancelled: "ملغي" };
@@ -25,7 +26,12 @@ export default function VideoDetail() {
         : await q.eq("slug", slug).maybeSingle();
       if (!data) { setVideo(null); return; }
       setVideo(data);
-      document.title = `${data.title} — مرئيات الاتحاد`;
+      applySeo({
+        title: data.title,
+        description: data.description,
+        image: data.thumbnail || undefined,
+        type: "article",
+      });
       const { data: rel } = await supabase
         .from("videos").select("id,slug,title,thumbnail,category,scheduled_at,created_at")
         .eq("status", "published").eq("category", data.category).neq("id", data.id).limit(3);
