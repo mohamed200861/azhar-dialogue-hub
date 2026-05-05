@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react";
 import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 export default function NewsDetail() {
   const { slug } = useParams();
@@ -26,7 +27,12 @@ export default function NewsDetail() {
         return;
       }
       setPost(data);
-      document.title = `${data.title} — اتحاد علماء الأزهر`;
+      applySeo({
+        title: data.seo_title || data.title,
+        description: data.seo_description || data.excerpt,
+        image: data.cover_image || undefined,
+        type: "article",
+      });
       if (data.pdf_attachment) {
         setSignedPdf(await resolveStorageUrl(data.pdf_attachment, 3600));
       }

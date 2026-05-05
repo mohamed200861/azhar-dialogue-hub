@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, MapPin, Tag, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, formatDate, isValidUrl } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const STATUS_LABEL: Record<string, string> = {
   upcoming: "قادم",
@@ -35,7 +36,12 @@ export default function EventDetail() {
         : await q.eq("slug", slug).maybeSingle();
       if (!data) { setEvent(null); return; }
       setEvent(data);
-      document.title = `${data.title} — فعاليات الاتحاد`;
+      applySeo({
+        title: data.title,
+        description: data.description,
+        image: data.cover_image || undefined,
+        type: "article",
+      });
       const { data: rel } = await supabase
         .from("events").select("id,slug,title,cover_image,event_type,start_datetime,location,status")
         .eq("publish_status", "published").neq("id", data.id)
