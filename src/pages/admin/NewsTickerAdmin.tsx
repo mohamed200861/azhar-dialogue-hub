@@ -114,11 +114,7 @@ export default function NewsTickerAdmin() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>إلغاء</Button>
-                <Button onClick={() => {
-                  // normalize "__none__" sentinel back to empty
-                  if (editing.badge === "__none__") editing.badge = "";
-                  save();
-                }}><Save className="h-4 w-4" /> حفظ</Button>
+                <Button onClick={save}><Save className="h-4 w-4" /> حفظ</Button>
               </DialogFooter>
             </DialogContent>
           )}
