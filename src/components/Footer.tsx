@@ -97,9 +97,12 @@ export function Footer() {
               <Mail className="h-4 w-4 shrink-0" />
               <span className="break-all">{settings.contact_email}</span>
             </a>
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 shrink-0" />
-              {site.hq.ar}
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-primary-foreground/90">مجال العمل</div>
+                <div className="text-primary-foreground/75">خدمة علمية ودعوية عالمية</div>
+              </div>
             </div>
             <div className="flex items-center gap-3 pt-1">
               {socials.map(({ url, Icon, label }) => (
