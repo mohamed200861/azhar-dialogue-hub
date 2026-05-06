@@ -16,7 +16,7 @@ import { slugify, sanitizeSlug, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
-const ORGANIZERS = ["إدارة الاتحاد","قسم التدريب","القسم العلمي","القسم الإعلامي","الأمانة العامة"];
+const ORGANIZERS = ["إدارة الاتحاد","قسم التدريب","القسم العلمي","القسم الإعلامي"];
 
 export default function EventsEdit() {
   const { id } = useParams();

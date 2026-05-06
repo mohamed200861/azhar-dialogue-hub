@@ -16,7 +16,7 @@ import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
-const PUBLISHERS = ["إدارة الاتحاد","الأمانة العامة","فريق التحرير","إدارة الموقع"];
+const PUBLISHERS = ["إدارة الاتحاد","فريق التحرير","إدارة الموقع"];
 
 export default function NewsEdit() {
   const { id } = useParams();

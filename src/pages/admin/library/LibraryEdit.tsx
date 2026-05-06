@@ -16,7 +16,7 @@ import { slugify, sanitizeSlug, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
-const PUBLISHERS = ["إدارة الاتحاد","الأمانة العامة","قسم النشر","المكتبة العلمية","فريق التحرير"];
+const PUBLISHERS = ["إدارة الاتحاد","قسم النشر","المكتبة العلمية","فريق التحرير"];
 const LANGS = ["العربية","الإنجليزية","الفرنسية","الإيطالية","لغات أخرى"];
 
 export default function LibraryEdit() {
