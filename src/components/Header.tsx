@@ -81,10 +81,10 @@ export function Header() {
 
         <div className="hidden lg:flex items-center gap-3">
           <Button asChild variant="default" size="sm" className="bg-primary hover:bg-primary-deep">
-            <a href={`mailto:${settings.contact_email}`}>
+            <Link to="/contact">
               <Mail className="h-4 w-4" />
-              تواصل
-            </a>
+              تواصل معنا
+            </Link>
           </Button>
         </div>
 
