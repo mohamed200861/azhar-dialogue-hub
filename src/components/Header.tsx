@@ -132,10 +132,10 @@ export function Header() {
             </div>
             <div className="flex items-center justify-end pt-3 mt-2 border-t border-border">
               <Button asChild size="sm">
-                <a href={`mailto:${settings.contact_email}`}>
+                <Link to="/contact">
                   <Mail className="h-4 w-4" />
-                  تواصل
-                </a>
+                  تواصل معنا
+                </Link>
               </Button>
             </div>
           </div>
