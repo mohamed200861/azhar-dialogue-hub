@@ -142,7 +142,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="font-semibold mb-4">أقسام متخصصة</h4>
+          <h4 className="font-semibold mb-4">الأقسام المتخصصة</h4>
           <ul className="space-y-2.5 text-sm">
             {specializedCol.map((item, i) => (
               <li key={i}>
