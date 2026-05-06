@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Facebook, MapPin, Twitter, Youtube, Instagram } from "lucide-react";
-import { nav, ui, site } from "@/i18n/content";
+import { nav, ui } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,9 +97,12 @@ export function Footer() {
               <Mail className="h-4 w-4 shrink-0" />
               <span className="break-all">{settings.contact_email}</span>
             </a>
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 shrink-0" />
-              {site.hq.ar}
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+              <div>
+                <div className="font-semibold text-primary-foreground/90">مجال العمل</div>
+                <div className="text-primary-foreground/75">خدمة علمية ودعوية عالمية</div>
+              </div>
             </div>
             <div className="flex items-center gap-3 pt-1">
               {socials.map(({ url, Icon, label }) => (
@@ -139,7 +142,7 @@ export function Footer() {
         </div>
 
         <div>
-          <h4 className="font-semibold mb-4">أقسام متخصصة</h4>
+          <h4 className="font-semibold mb-4">الأقسام المتخصصة</h4>
           <ul className="space-y-2.5 text-sm">
             {specializedCol.map((item, i) => (
               <li key={i}>

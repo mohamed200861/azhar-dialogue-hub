@@ -60,9 +60,9 @@ export default function ResearchStudiesAdmin() {
     try {
       const ext = file.name.split(".").pop() || "pdf";
       const path = `research/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const up = await supabase.storage.from("documents").upload(path, file, { contentType: file.type, upsert: false });
+      const up = await supabase.storage.from("research-public").upload(path, file, { contentType: file.type, upsert: false });
       if (up.error) throw up.error;
-      const { data } = supabase.storage.from("documents").getPublicUrl(up.data.path);
+      const { data } = supabase.storage.from("research-public").getPublicUrl(up.data.path);
       setEditing((e: any) => ({ ...e, file_url: data.publicUrl }));
       toast.success("تم رفع الملف");
     } catch (e: any) { toast.error(e.message); } finally { setUploading(false); }

@@ -661,6 +661,42 @@ export type Database = {
         }
         Relationships: []
       }
+      news_ticker_items: {
+        Row: {
+          badge: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_active: boolean
+          link_url: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_campaigns: {
         Row: {
           content: string
