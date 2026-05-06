@@ -118,6 +118,7 @@ const App = () => (
                 <Route path="sharia-academy" element={<ShariaAcademyAdmin />} />
                 <Route path="civilizational-dialogue" element={<CivilizationalDialogueAdmin />} />
                 <Route path="research-studies" element={<ResearchStudiesAdmin />} />
+                <Route path="news-ticker" element={<NewsTickerAdmin />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
               </Route>
