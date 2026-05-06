@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Facebook, MapPin, Twitter, Youtube, Instagram } from "lucide-react";
-import { nav, ui, site } from "@/i18n/content";
+import { nav, ui } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
