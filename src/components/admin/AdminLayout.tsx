@@ -2,7 +2,7 @@ import { NavLink, useLocation, Outlet, Link } from "react-router-dom";
 import {
   LayoutDashboard, Newspaper, BookOpen, PlayCircle, Calendar,
   FolderOpen, MessageSquare, Mail, Settings, Users2, LogOut, ExternalLink,
-  Radio, FileText, Scale, GraduationCap, MessageCircle, FileSearch,
+  Radio, FileText, Scale, GraduationCap, MessageCircle, FileSearch, Megaphone,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
