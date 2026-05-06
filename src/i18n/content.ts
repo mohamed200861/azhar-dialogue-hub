@@ -38,14 +38,14 @@ export const specializedSections: { href: string; label: string; desc: string }[
 // Institutional publisher sources (no personal names).
 export const PUBLISHER_SOURCES = [
   "إدارة الاتحاد",
-  "الأمانة العامة",
-  "فريق التحرير",
   "إدارة الموقع",
+  "اللجنة العلمية",
   "القسم الإعلامي",
   "القسم العلمي",
   "قسم التدريب",
   "قسم النشر",
   "المكتبة العلمية",
+  "خدمة علمية ودعوية عالمية",
 ] as const;
 
 export const hero = {
