@@ -57,6 +57,7 @@ import FatwaRequests from "./pages/admin/FatwaRequests.tsx";
 import ShariaAcademyAdmin from "./pages/admin/ShariaAcademyAdmin.tsx";
 import CivilizationalDialogueAdmin from "./pages/admin/CivilizationalDialogueAdmin.tsx";
 import ResearchStudiesAdmin from "./pages/admin/ResearchStudiesAdmin.tsx";
+import NewsTickerAdmin from "./pages/admin/NewsTickerAdmin.tsx";
 
 const queryClient = new QueryClient();
 
