@@ -88,10 +88,11 @@ export default function NewsTickerAdmin() {
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label>الشارة</Label>
-                    <Select value={editing.badge ?? ""} onValueChange={(v) => setEditing({ ...editing, badge: v })}>
-                      <SelectTrigger><SelectValue placeholder="بدون" /></SelectTrigger>
+                    <Select value={editing.badge || "__none__"} onValueChange={(v) => setEditing({ ...editing, badge: v === "__none__" ? "" : v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {BADGES.map((b) => <SelectItem key={b || "none"} value={b || "__none__"}>{b || "بدون"}</SelectItem>)}
+                        <SelectItem value="__none__">بدون</SelectItem>
+                        {BADGES.filter(Boolean).map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
                       </SelectContent>
                     </Select>
                   </div>
