@@ -23,7 +23,6 @@ export const nav: { key: string; href: string; label: string }[] = [
   { key: "events", href: "/events", label: "الفعاليات" },
   { key: "library", href: "/library", label: "المكتبة" },
   { key: "videos", href: "/videos", label: "المرئيات والبث المباشر" },
-  { key: "contact", href: "/contact", label: "تواصل معنا" },
 ];
 
 // Specialized sections — shown as dropdown "الأقسام" in header and as a footer column.
