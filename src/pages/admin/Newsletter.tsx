@@ -213,6 +213,8 @@ export default function Newsletter() {
         <TabsList>
           <TabsTrigger value="subscribers">المشتركون</TabsTrigger>
           <TabsTrigger value="campaigns">الحملات</TabsTrigger>
+          <TabsTrigger value="events">الأحداث التلقائية</TabsTrigger>
+          <TabsTrigger value="logs">سجل الإرسال</TabsTrigger>
         </TabsList>
 
         <TabsContent value="subscribers" className="mt-4">
