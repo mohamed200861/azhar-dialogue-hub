@@ -28,7 +28,6 @@ const cards = [
 ] as const;
 
 export default function Dashboard() {
-  const { } = useAuth();
   const [counts, setCounts] = useState<Counts | null>(null);
   const [latestNews, setLatestNews] = useState<any[]>([]);
   const [upcomingLive, setUpcomingLive] = useState<any[]>([]);
