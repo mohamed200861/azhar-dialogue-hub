@@ -18,26 +18,23 @@ interface RecoveryEmailProps {
   confirmationUrl: string
 }
 
-export const RecoveryEmail = ({
-  siteName,
-  confirmationUrl,
-}: RecoveryEmailProps) => (
-  <Html lang="en" dir="ltr">
+export const RecoveryEmail = ({ siteName, confirmationUrl }: RecoveryEmailProps) => (
+  <Html lang="it" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Reimposta la password per {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Reset your password</Heading>
+        <Heading style={h1}>Reimposta la tua password</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
-          the button below to choose a new password.
+          Abbiamo ricevuto una richiesta di reimpostazione della password per {siteName}.
+          Clicca il pulsante qui sotto per scegliere una nuova password.
         </Text>
         <Button style={button} href={confirmationUrl}>
-          Reset Password
+          Reimposta password
         </Button>
         <Text style={footer}>
-          If you didn't request a password reset, you can safely ignore this
-          email. Your password will not be changed.
+          Se non hai richiesto la reimpostazione, puoi ignorare questa email.
+          La tua password non verrà modificata.
         </Text>
       </Container>
     </Body>
@@ -46,26 +43,17 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
+const main = { backgroundColor: '#ffffff', fontFamily: 'Georgia, "Times New Roman", serif' }
+const container = { padding: '24px 28px', maxWidth: '560px' }
+const h1 = { fontSize: '22px', fontWeight: 'bold' as const, color: 'hsl(120, 50%, 22%)', margin: '0 0 20px' }
+const text = { fontSize: '15px', color: '#555555', lineHeight: '1.6', margin: '0 0 20px' }
 const button = {
-  backgroundColor: '#000000',
+  backgroundColor: 'hsl(115, 45%, 33%)',
   color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 20px',
+  fontSize: '15px',
+  borderRadius: '14px',
+  padding: '12px 22px',
   textDecoration: 'none',
+  fontWeight: 'bold' as const,
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
