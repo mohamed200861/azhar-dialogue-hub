@@ -86,7 +86,8 @@ export default function ResearchStudies() {
       setFile(null);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
-      toast.error(err?.message ?? "تعذّر إرسال البحث");
+      console.error(err);
+      toast.error("تعذّر إرسال البحث. يرجى المحاولة لاحقًا.");
     } finally {
       setSubmitting(false);
     }
