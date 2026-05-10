@@ -426,6 +426,14 @@ export default function Newsletter() {
             </div>
           )}
         </TabsContent>
+
+        <TabsContent value="events" className="mt-4">
+          <NotificationEventsPanel />
+        </TabsContent>
+
+        <TabsContent value="logs" className="mt-4">
+          <EmailLogsPanel />
+        </TabsContent>
       </Tabs>
     </div>
   );
