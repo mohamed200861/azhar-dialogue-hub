@@ -50,7 +50,8 @@ export default function Newsletter() {
       toast.success("تم الاشتراك في نشرة الأخبار بنجاح.");
       setDone(true);
     } catch (err: any) {
-      toast.error(err?.message ?? "تعذّر إتمام الاشتراك");
+      console.error(err);
+      toast.error("تعذّر إتمام الاشتراك. يرجى المحاولة لاحقًا.");
     } finally {
       setLoading(false);
     }
