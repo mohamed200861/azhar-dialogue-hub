@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { PageHeader } from "@/components/admin/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Newspaper, BookOpen, PlayCircle, Calendar, MessageSquare, Mail, Radio, Loader2,
+  Newspaper, BookOpen, PlayCircle, Calendar, MessageSquare, Mail, Radio, Loader2, KeyRound,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "@/lib/admin-utils";
@@ -27,6 +28,10 @@ const cards = [
 ] as const;
 
 export default function Dashboard() {
+  const { user, isSuperAdmin } = useAuth();
+  const showTempPwdNotice =
+    !!user?.email &&
+    (user.email.toLowerCase() === "ashmawi.2009@gmail.com" || isSuperAdmin);
   const [counts, setCounts] = useState<Counts | null>(null);
   const [latestNews, setLatestNews] = useState<any[]>([]);
   const [upcomingLive, setUpcomingLive] = useState<any[]>([]);
