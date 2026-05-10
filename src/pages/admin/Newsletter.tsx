@@ -382,10 +382,27 @@ export default function Newsletter() {
                         <Badge variant="outline">{CAMPAIGN_TYPES[c.type]}</Badge>
                         <Badge>{CAMPAIGN_STATUS[c.status]}</Badge>
                         <span className="text-xs text-muted-foreground">{formatDateTime(c.created_at)}</span>
+                        {c.status === "sent" && c.sent_at && (
+                          <span className="text-xs text-muted-foreground">
+                            • Inviata il {formatDateTime(c.sent_at)} • ✉ {c.sent_count ?? 0} • ⚠ {c.error_count ?? 0}
+                          </span>
+                        )}
                       </div>
                       {c.content && <p className="text-sm text-muted-foreground mt-2 line-clamp-2 whitespace-pre-wrap">{c.content}</p>}
                     </div>
-                    <div className="flex gap-1">
+                    <div className="flex gap-1 flex-wrap">
+                      {c.status !== "sent" && (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => sendTest(c)}
+                          disabled={testingId === c.id || !testEmail.trim()}
+                          title="Invia un test all'email indicata sopra"
+                        >
+                          {testingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                          Test
+                        </Button>
+                      )}
                       {c.status === "ready" && (
                         <Button
                           size="sm"
