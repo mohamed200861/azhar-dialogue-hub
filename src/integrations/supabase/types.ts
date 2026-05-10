@@ -789,7 +789,10 @@ export type Database = {
           content: string
           created_at: string
           created_by: string | null
+          error_count: number
           id: string
+          sent_at: string | null
+          sent_count: number
           status: Database["public"]["Enums"]["campaign_status"]
           title: string
           type: Database["public"]["Enums"]["campaign_type"]
@@ -799,7 +802,10 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string | null
+          error_count?: number
           id?: string
+          sent_at?: string | null
+          sent_count?: number
           status?: Database["public"]["Enums"]["campaign_status"]
           title: string
           type?: Database["public"]["Enums"]["campaign_type"]
@@ -809,7 +815,10 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string | null
+          error_count?: number
           id?: string
+          sent_at?: string | null
+          sent_count?: number
           status?: Database["public"]["Enums"]["campaign_status"]
           title?: string
           type?: Database["public"]["Enums"]["campaign_type"]
