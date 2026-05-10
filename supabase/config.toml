@@ -9,3 +9,5 @@ project_id = "jqyioadvwldtiszmpmlt"
     verify_jwt = true
   [functions.send-newsletter-campaign]
     verify_jwt = true
+  [functions.send-newsletter-test]
+    verify_jwt = true
