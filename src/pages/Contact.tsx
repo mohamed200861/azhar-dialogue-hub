@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Mail, MapPin, Facebook, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { fireFormConfirmation } from "@/lib/form-notify";
 
 const REASONS = [
   "استفسار عام",
