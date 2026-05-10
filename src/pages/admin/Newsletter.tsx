@@ -14,6 +14,7 @@ import { Loader2, Trash2, Download, UserX, Plus, AlertCircle, Send } from "lucid
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { NotificationEventsPanel, EmailLogsPanel } from "./NewsletterPanels";
 
 const CAMPAIGN_TYPES: Record<string, string> = {
   news: "أخبار", event: "فعالية", library: "مكتبة", live: "بث مباشر", general: "عام",
