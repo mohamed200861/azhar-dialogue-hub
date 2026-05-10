@@ -5,3 +5,7 @@ project_id = "jqyioadvwldtiszmpmlt"
     verify_jwt = false
   [functions.process-email-queue]
     verify_jwt = true
+  [functions.create-admin-user]
+    verify_jwt = true
+  [functions.send-newsletter-campaign]
+    verify_jwt = true
