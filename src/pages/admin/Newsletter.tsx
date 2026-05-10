@@ -98,10 +98,44 @@ export default function Newsletter() {
     toast.success("تم الحذف"); loadCampaigns();
   };
 
+
   const [sendingId, setSendingId] = useState<string | null>(null);
+  const [serviceConfigured, setServiceConfigured] = useState<boolean | null>(null);
+  const [testEmail, setTestEmail] = useState("");
+  const [testingId, setTestingId] = useState<string | null>(null);
+
+  // Detect if RESEND is configured by pinging the function with a fake id.
+  // 503 => not configured. 400/404 => configured but bad input (means service is up).
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("send-newsletter-test", {
+          body: { campaign_id: "00000000-0000-0000-0000-000000000000", test_email: "probe@example.com" },
+        });
+        if (error) {
+          let status = 0;
+          let msg = "";
+          try {
+            const ctx: any = (error as any).context;
+            status = ctx?.status ?? 0;
+            if (ctx?.json) {
+              const j = await ctx.json();
+              msg = j?.error || j?.message || "";
+            }
+          } catch (_e) { /* noop */ }
+          setServiceConfigured(!(status === 503 || /not configured/i.test(msg)));
+        } else {
+          setServiceConfigured(true);
+          void data;
+        }
+      } catch {
+        setServiceConfigured(null);
+      }
+    })();
+  }, []);
+
   const sendCampaign = async (c: any) => {
     if (c.status !== "ready") return toast.error("الحملة ليست جاهزة للإرسال.");
-    if (c.status === "sent") return toast.error("Campagna già inviata.");
     const word = prompt(
       `Stai per inviare "${c.title}" a tutti gli iscritti attivi.\nScrivi INVIA per confermare.`,
     );
@@ -133,7 +167,35 @@ export default function Newsletter() {
     }
   };
 
+  const sendTest = async (c: any) => {
+    if (!testEmail.trim()) return toast.error("Inserisci un'email di test.");
+    setTestingId(c.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-newsletter-test", {
+        body: { campaign_id: c.id, test_email: testEmail.trim() },
+      });
+      if (error) {
+        let msg = error.message;
+        try {
+          const ctx: any = (error as any).context;
+          if (ctx?.json) {
+            const j = await ctx.json();
+            if (j?.message) msg = j.message;
+            else if (j?.error) msg = j.error;
+          }
+        } catch (_e) { /* noop */ }
+        throw new Error(msg);
+      }
+      toast.success(`Test inviato a ${(data as any)?.to ?? testEmail}`);
+    } catch (err: any) {
+      toast.error(err?.message || "Invio test fallito");
+    } finally {
+      setTestingId(null);
+    }
+  };
+
   const activeCount = rows?.filter((r) => (r.status ?? "active") === "active").length ?? 0;
+  const unsubCount = rows?.filter((r) => r.status === "unsubscribed").length ?? 0;
 
   return (
     <div>
