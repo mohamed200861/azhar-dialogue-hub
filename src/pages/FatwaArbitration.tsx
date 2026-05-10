@@ -104,7 +104,8 @@ export default function FatwaArbitration() {
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
-      toast.error(err?.message ?? "تعذّر إرسال الطلب");
+      console.error(err);
+      toast.error("تعذّر إرسال الطلب. يرجى المحاولة لاحقًا.");
     } finally {
       setSubmitting(false);
     }
