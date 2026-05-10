@@ -187,9 +187,9 @@ export default function Newsletter() {
           <Card className="p-4 border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
             <div className="text-sm space-y-1">
-              <div><strong>إرسال البريد غير مفعّل بعد.</strong> يرجى إعداد خدمة البريد (Resend / SMTP) لتفعيل الإرسال الفعلي.</div>
+              <div><strong>Servizio email non ancora configurato.</strong> Aggiungi <code>RESEND_API_KEY</code> per attivare l'invio reale.</div>
               <div className="text-muted-foreground text-xs">
-                المرسِل المُهيّأ: <span dir="ltr">{(settings as any).newsletter_sender_email || "newsletter@alazharscholarunion.it"}</span>
+                المرسِل: <span dir="ltr">{(settings as any).newsletter_sender_email || "newsletter@alazharscholarunion.it"}</span>
                 {" • "}إشعارات الأخطاء: <span dir="ltr">{(settings as any).admin_notification_email || "info@alazharscholarunion.it"}</span>
               </div>
             </div>
