@@ -75,7 +75,7 @@ export default function ShariaAcademy() {
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     const programObj = (programs ?? []).find((p) => p.id === selectedProgram) || null;
     setSubmitting(true);
-    const { error } = await supabase.from("academy_applications").insert({
+    const { data: inserted, error } = await supabase.from("academy_applications").insert({
       full_name: parsed.data.full_name,
       email: parsed.data.email,
       phone: parsed.data.phone || null,
@@ -84,9 +84,10 @@ export default function ShariaAcademy() {
       program_title: programObj?.title || null,
       qualification: parsed.data.qualification || null,
       notes: parsed.data.notes || null,
-    });
+    }).select("id").maybeSingle();
     setSubmitting(false);
     if (error) return toast.error("تعذّر إرسال الطلب. حاول لاحقًا.");
+    fireFormConfirmation("academy", inserted?.id);
     setSuccess(true);
     setForm({ full_name: "", email: "", phone: "", country: "", qualification: "", notes: "" });
     window.scrollTo({ top: 0, behavior: "smooth" });
