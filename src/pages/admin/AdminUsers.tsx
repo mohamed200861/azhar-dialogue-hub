@@ -115,40 +115,32 @@ export default function AdminUsers() {
       return;
     }
     setCreating(true);
-
-    // Preserve current super-admin session
-    const { data: currentSess } = await supabase.auth.getSession();
-    const accessToken = currentSess.session?.access_token ?? null;
-    const refreshToken = currentSess.session?.refresh_token ?? null;
-
     try {
-      const { data: signUp, error: signErr } = await supabase.auth.signUp({
-        email: newEmail.trim(),
-        password: newPassword,
-        options: { emailRedirectTo: `${window.location.origin}/admin` },
+      const { data, error } = await supabase.functions.invoke("create-admin-user", {
+        body: {
+          email: newEmail.trim().toLowerCase(),
+          password: newPassword,
+          role: newRole,
+        },
       });
-      if (signErr) throw signErr;
-      const newUid = signUp.user?.id;
-      if (!newUid) throw new Error("لم يتم إنشاء المستخدم");
-
-      // Restore current session immediately so RLS uses super_admin context
-      if (accessToken && refreshToken) {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+      if (error) {
+        // Try to extract server error message
+        let serverMsg = error.message;
+        try {
+          const ctx: any = (error as any).context;
+          if (ctx?.json) {
+            const j = await ctx.json();
+            if (j?.error) serverMsg = j.error;
+          }
+        } catch (_e) { /* noop */ }
+        throw new Error(serverMsg);
       }
-
-      // Assign role
-      const { error: rErr } = await supabase.from("user_roles").insert({ user_id: newUid, role: newRole as any });
-      if (rErr) throw rErr;
-
-      toast.success("تم إنشاء المدير بنجاح");
+      if ((data as any)?.error) throw new Error((data as any).error);
+      toast.success("Admin creato correttamente");
       setNewEmail(""); setNewPassword(""); setNewRole("editor"); setShowForm(false);
       load();
     } catch (err: any) {
       toast.error(err?.message || "تعذر إنشاء المدير");
-      // Restore session on failure too
-      if (accessToken && refreshToken) {
-        await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-      }
     } finally {
       setCreating(false);
     }
