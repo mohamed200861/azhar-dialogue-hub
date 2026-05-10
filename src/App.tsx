@@ -93,6 +93,7 @@ const App = () => (
               <Route path="/sharia-academy" element={<ShariaAcademy />} />
               <Route path="/civilizational-dialogue" element={<CivilizationalDialogue />} />
               <Route path="/research-studies" element={<ResearchStudies />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
 
 
               {/* Admin */}
