@@ -201,7 +201,7 @@ export default function Newsletter() {
     <div>
       <PageHeader
         title="النشرة البريدية"
-        description={`الإجمالي: ${rows?.length ?? "—"} • النشطون: ${activeCount}`}
+        description={`الإجمالي: ${rows?.length ?? "—"} • النشطون: ${activeCount} • الملغون: ${unsubCount}`}
         actions={
           <Button variant="outline" onClick={exportCsv} disabled={!rows?.length}>
             <Download className="h-4 w-4" /> تصدير CSV
