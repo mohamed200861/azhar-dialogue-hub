@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, MessageCircle, Users, CheckCircle2, Send, Calendar } from "lucide-react";
 import { applySeo } from "@/lib/seo";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
@@ -56,16 +57,17 @@ export default function CivilizationalDialogue() {
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setSubmitting(true);
-    const { error } = await supabase.from("dialogue_requests").insert({
+    const { data: inserted, error } = await supabase.from("dialogue_requests").insert({
       full_name: parsed.data.full_name,
       email: parsed.data.email,
       organization: parsed.data.organization || null,
       country: parsed.data.country || null,
       request_kind: parsed.data.request_kind,
       message: parsed.data.message,
-    });
+    }).select("id").maybeSingle();
     setSubmitting(false);
     if (error) return toast.error("تعذّر إرسال الطلب. حاول لاحقًا.");
+    fireFormConfirmation("dialogue", inserted?.id);
     setSuccess(true);
     setForm({ full_name: "", email: "", organization: "", country: "", request_kind: REQ_KINDS[0], message: "" });
     window.scrollTo({ top: 0, behavior: "smooth" });

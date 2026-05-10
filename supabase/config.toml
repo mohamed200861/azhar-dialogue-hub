@@ -11,3 +11,15 @@ project_id = "jqyioadvwldtiszmpmlt"
     verify_jwt = true
   [functions.send-newsletter-test]
     verify_jwt = true
+  [functions.process-notification-events]
+    verify_jwt = true
+  [functions.live-stream-scheduler]
+    verify_jwt = true
+  [functions.live-stream-archiver]
+    verify_jwt = true
+  [functions.daily-email-health-report]
+    verify_jwt = true
+  [functions.send-form-confirmation]
+    verify_jwt = false
+  [functions.unsubscribe-confirm]
+    verify_jwt = false

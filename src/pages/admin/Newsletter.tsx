@@ -14,6 +14,7 @@ import { Loader2, Trash2, Download, UserX, Plus, AlertCircle, Send } from "lucid
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { NotificationEventsPanel, EmailLogsPanel } from "./NewsletterPanels";
 
 const CAMPAIGN_TYPES: Record<string, string> = {
   news: "أخبار", event: "فعالية", library: "مكتبة", live: "بث مباشر", general: "عام",
@@ -213,6 +214,8 @@ export default function Newsletter() {
         <TabsList>
           <TabsTrigger value="subscribers">المشتركون</TabsTrigger>
           <TabsTrigger value="campaigns">الحملات</TabsTrigger>
+          <TabsTrigger value="events">الأحداث التلقائية</TabsTrigger>
+          <TabsTrigger value="logs">سجل الإرسال</TabsTrigger>
         </TabsList>
 
         <TabsContent value="subscribers" className="mt-4">
@@ -423,6 +426,14 @@ export default function Newsletter() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="events" className="mt-4">
+          <NotificationEventsPanel />
+        </TabsContent>
+
+        <TabsContent value="logs" className="mt-4">
+          <EmailLogsPanel />
         </TabsContent>
       </Tabs>
     </div>

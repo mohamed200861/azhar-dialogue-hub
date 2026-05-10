@@ -29,6 +29,7 @@ import NewsletterPublic from "./pages/NewsletterPublic.tsx";
 import ShariaAcademy from "./pages/ShariaAcademy.tsx";
 import CivilizationalDialogue from "./pages/CivilizationalDialogue.tsx";
 import ResearchStudies from "./pages/ResearchStudies.tsx";
+import Unsubscribe from "./pages/Unsubscribe.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
@@ -92,6 +93,7 @@ const App = () => (
               <Route path="/sharia-academy" element={<ShariaAcademy />} />
               <Route path="/civilizational-dialogue" element={<CivilizationalDialogue />} />
               <Route path="/research-studies" element={<ResearchStudies />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
 
 
               {/* Admin */}

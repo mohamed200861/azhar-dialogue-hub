@@ -289,6 +289,27 @@ export type Database = {
         }
         Relationships: []
       }
+      email_alert_log: {
+        Row: {
+          alert_kind: string
+          id: string
+          metadata: Json
+          sent_at: string
+        }
+        Insert: {
+          alert_kind: string
+          id?: string
+          metadata?: Json
+          sent_at?: string
+        }
+        Update: {
+          alert_kind?: string
+          id?: string
+          metadata?: Json
+          sent_at?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -853,6 +874,54 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_events: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          error_message: string | null
+          event_kind: string
+          id: string
+          metadata: Json
+          processed_at: string | null
+          status: Database["public"]["Enums"]["notification_event_status"]
+          summary: string | null
+          title: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          error_message?: string | null
+          event_kind: string
+          id?: string
+          metadata?: Json
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["notification_event_status"]
+          summary?: string | null
+          title: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          error_message?: string | null
+          event_kind?: string
+          id?: string
+          metadata?: Json
+          processed_at?: string | null
+          status?: Database["public"]["Enums"]["notification_event_status"]
+          summary?: string | null
+          title?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       research_items: {
         Row: {
           abstract: string | null
@@ -1216,6 +1285,12 @@ export type Database = {
         | "completed"
         | "cancelled"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
+      notification_event_status:
+        | "pending"
+        | "processing"
+        | "processed"
+        | "failed"
+        | "skipped"
       research_category: "sharia" | "intellectual" | "contemporary" | "reports"
       research_submission_status: "new" | "reviewing" | "approved" | "rejected"
       subscriber_status: "active" | "unsubscribed"
@@ -1386,6 +1461,13 @@ export const Constants = {
         "cancelled",
       ],
       message_status: ["new", "read", "replied", "archived", "spam"],
+      notification_event_status: [
+        "pending",
+        "processing",
+        "processed",
+        "failed",
+        "skipped",
+      ],
       research_category: ["sharia", "intellectual", "contemporary", "reports"],
       research_submission_status: ["new", "reviewing", "approved", "rejected"],
       subscriber_status: ["active", "unsubscribed"],

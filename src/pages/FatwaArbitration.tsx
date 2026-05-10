@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, Send, CheckCircle2, Scale, Gavel, ShieldCheck } from "lucide-react";
 
 const REQUEST_TYPES = [
@@ -89,7 +90,7 @@ export default function FatwaArbitration() {
         attachment_url = up.data.path;
       }
 
-      const { error } = await supabase.from("fatwa_arbitration_requests").insert({
+      const { data: inserted, error } = await supabase.from("fatwa_arbitration_requests").insert({
         full_name: form.full_name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,
@@ -99,8 +100,9 @@ export default function FatwaArbitration() {
         message: form.message.trim(),
         is_urgent: form.is_urgent,
         attachment_url,
-      });
+      }).select("id").maybeSingle();
       if (error) throw error;
+      fireFormConfirmation("fatwa", inserted?.id);
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {
