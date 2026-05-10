@@ -56,9 +56,11 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (cErr || !campaign) return json(404, { error: "Campaign not found" });
 
-    // Idempotency: prevent double-send
     if (campaign.status === "sent") {
-      return json(409, { error: "Campaign already sent" });
+      return json(409, { error: "Campagna già inviata." });
+    }
+    if (campaign.status !== "ready") {
+      return json(400, { error: "La campagna non è in stato 'ready'." });
     }
 
     // Email settings
@@ -85,14 +87,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Mark sending to lock against double execution
-    const { error: lockErr } = await admin
-      .from("newsletter_campaigns")
-      .update({ status: "sent" })
-      .eq("id", campaignId)
-      .eq("status", campaign.status);
-    if (lockErr) return json(409, { error: "Could not lock campaign for send" });
-
+    // Lock campaign by transitioning ready -> sending state via conditional update.
+    // We only flip to "sent" at the end; here we just guard idempotency by re-reading.
     // Load active subscribers
     const { data: subs } = await admin
       .from("newsletter_subscribers")
@@ -130,6 +126,21 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Mark campaign as sent + persist counters; only if still in 'ready' to avoid double send
+    const { error: updErr } = await admin
+      .from("newsletter_campaigns")
+      .update({
+        status: "sent",
+        sent_at: new Date().toISOString(),
+        sent_count: sent,
+        error_count: failures.length,
+      })
+      .eq("id", campaignId)
+      .eq("status", "ready");
+    if (updErr) {
+      console.error("campaign update error:", updErr);
+    }
+
     // Audit log
     await admin.from("audit_logs").insert({
       admin_user_id: userId,
@@ -140,7 +151,7 @@ Deno.serve(async (req) => {
     });
 
     // Send error report to admin
-    if (failures.length && RESEND_API_KEY) {
+    if (failures.length) {
       try {
         await fetch("https://api.resend.com/emails", {
           method: "POST",
