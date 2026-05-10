@@ -20,6 +20,9 @@ export default function Settings() {
     site_name: "اتحاد علماء الأزهر",
     site_slogan: "منهج أزهري… ورسالة عالمية",
     contact_email: "alazharscholarunion@gmail.com",
+    public_contact_email: "alazharscholarunion@gmail.com",
+    admin_notification_email: "info@alazharscholarunion.it",
+    newsletter_sender_email: "newsletter@alazharscholarunion.it",
     facebook_url: "https://www.facebook.com/share/1ECiSRM9VT/",
     twitter_url: "",
     youtube_url: "",
@@ -93,7 +96,21 @@ export default function Settings() {
           <h3 className="font-semibold">المعلومات الأساسية</h3>
           <div><Label>اسم الموقع</Label><Input value={s.site_name ?? ""} onChange={(e) => setS({ ...s, site_name: e.target.value })} /></div>
           <div><Label>الشعار النصي</Label><Input value={s.site_slogan ?? ""} onChange={(e) => setS({ ...s, site_slogan: e.target.value })} /></div>
-          <div><Label>البريد الإلكتروني</Label><Input dir="ltr" className="text-left" value={s.contact_email ?? ""} onChange={(e) => setS({ ...s, contact_email: e.target.value })} /></div>
+          <div>
+            <Label>البريد العام (يظهر في الموقع)</Label>
+            <Input dir="ltr" className="text-left" value={s.contact_email ?? ""} onChange={(e) => setS({ ...s, contact_email: e.target.value, public_contact_email: e.target.value })} />
+            <p className="text-xs text-muted-foreground mt-1">يُعرض في الفوتر وصفحة التواصل.</p>
+          </div>
+          <div>
+            <Label>بريد إشعارات الإدارة (داخلي)</Label>
+            <Input dir="ltr" className="text-left" value={s.admin_notification_email ?? ""} onChange={(e) => setS({ ...s, admin_notification_email: e.target.value })} />
+            <p className="text-xs text-muted-foreground mt-1">يُستخدم لإرسال نسخة من الطلبات والإشعارات الإدارية.</p>
+          </div>
+          <div>
+            <Label>بريد مرسِل النشرة</Label>
+            <Input dir="ltr" className="text-left" value={s.newsletter_sender_email ?? ""} onChange={(e) => setS({ ...s, newsletter_sender_email: e.target.value })} />
+            <p className="text-xs text-muted-foreground mt-1">يُستخدم كمرسِل ورد على رسائل النشرة عند تفعيل خدمة البريد.</p>
+          </div>
           <div><Label>نص الفوتر</Label><Input value={s.footer_text ?? ""} onChange={(e) => setS({ ...s, footer_text: e.target.value })} /></div>
         </Card>
 

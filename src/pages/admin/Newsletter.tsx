@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Trash2, Download, UserX, Plus, AlertCircle } from "lucide-react";
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const CAMPAIGN_TYPES: Record<string, string> = {
   news: "أخبار", event: "فعالية", library: "مكتبة", live: "بث مباشر", general: "عام",
@@ -21,6 +22,7 @@ const CAMPAIGN_STATUS: Record<string, string> = { draft: "مسودة", ready: "�
 
 export default function Newsletter() {
   const { isSuperAdmin } = useAuth();
+  const { settings } = useSiteSettings();
   const [rows, setRows] = useState<any[] | null>(null);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -184,9 +186,12 @@ export default function Newsletter() {
         <TabsContent value="campaigns" className="mt-4 space-y-4">
           <Card className="p-4 border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 flex items-start gap-2">
             <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
-            <div className="text-sm">
-              <strong>إرسال البريد غير مفعّل بعد.</strong> يرجى إعداد خدمة البريد أولًا.
-              يمكنك تجهيز الحملات الآن وحفظها كمسودات أو جاهزة، ليتم إرسالها لاحقًا عند تفعيل الخدمة.
+            <div className="text-sm space-y-1">
+              <div><strong>إرسال البريد غير مفعّل بعد.</strong> يرجى إعداد خدمة البريد (Resend / SMTP) لتفعيل الإرسال الفعلي.</div>
+              <div className="text-muted-foreground text-xs">
+                المرسِل المُهيّأ: <span dir="ltr">{(settings as any).newsletter_sender_email || "newsletter@alazharscholarunion.it"}</span>
+                {" • "}إشعارات الأخطاء: <span dir="ltr">{(settings as any).admin_notification_email || "info@alazharscholarunion.it"}</span>
+              </div>
             </div>
           </Card>
 

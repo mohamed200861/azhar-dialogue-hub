@@ -49,11 +49,19 @@ export default function AdminUsers() {
     load();
   };
 
+  const countSuperAdmins = async () => {
+    const { data } = await supabase.from("user_roles").select("user_id").eq("role", "super_admin");
+    return (data ?? []).length;
+  };
+
   const toggleActive = async (u: any) => {
     const willDeactivate = u.is_active;
+    if (willDeactivate && u.roles?.includes("super_admin")) {
+      const n = await countSuperAdmins();
+      if (n <= 1) return toast.error("لا يمكن إيقاف آخر مدير عام في النظام.");
+    }
     const { error } = await supabase.from("admin_users").update({ is_active: !u.is_active }).eq("id", u.id);
     if (error) return toast.error(error.message);
-    // When deactivating, also remove all roles to actually revoke access.
     if (willDeactivate) {
       await supabase.from("user_roles").delete().eq("user_id", u.user_id);
     }
@@ -61,17 +69,35 @@ export default function AdminUsers() {
     load();
   };
 
-  const removeRoles = async (userId: string) => {
-    if (!confirm("هل تريد إزالة جميع أدوار هذا المستخدم؟")) return;
+  const removeRoles = async (userId: string, u: any) => {
+    const { data: sess } = await supabase.auth.getSession();
+    if (sess.session?.user?.id === userId) {
+      return toast.error("لا يمكنك إزالة دورك بنفسك.");
+    }
+    if (u.roles?.includes("super_admin")) {
+      const n = await countSuperAdmins();
+      if (n <= 1) return toast.error("لا يمكن إزالة آخر مدير عام في النظام.");
+    }
+    const word = prompt(`لتأكيد إزالة جميع أدوار "${u.email}" اكتب: ELIMINA`);
+    if (word !== "ELIMINA") return;
     const { error } = await supabase.from("user_roles").delete().eq("user_id", userId);
     if (error) return toast.error(error.message);
     toast.success("تم إزالة جميع الأدوار");
     load();
   };
 
-  const deleteAdminRecord = async (id: string) => {
-    if (!confirm("هل تريد حذف سجل هذا المدير من القائمة؟ (لن يتم حذف حساب المصادقة).")) return;
-    const { error } = await supabase.from("admin_users").delete().eq("id", id);
+  const deleteAdminRecord = async (u: any) => {
+    const { data: sess } = await supabase.auth.getSession();
+    if (sess.session?.user?.id === u.user_id) {
+      return toast.error("لا يمكنك حذف حسابك الخاص.");
+    }
+    if (u.roles?.includes("super_admin")) {
+      const n = await countSuperAdmins();
+      if (n <= 1) return toast.error("لا يمكن حذف آخر مدير عام في النظام.");
+    }
+    const word = prompt(`لتأكيد حذف سجل "${u.email}" اكتب: ELIMINA`);
+    if (word !== "ELIMINA") return;
+    const { error } = await supabase.from("admin_users").delete().eq("id", u.id);
     if (error) return toast.error(error.message);
     toast.success("تم حذف السجل");
     load();
@@ -209,8 +235,8 @@ export default function AdminUsers() {
                   <td className="p-3">
                     <div className="flex gap-1 flex-wrap">
                       <Button size="sm" variant="outline" onClick={() => toggleActive(u)}>{u.is_active ? "إيقاف" : "تفعيل"}</Button>
-                      <Button size="sm" variant="ghost" onClick={() => removeRoles(u.user_id)}>إزالة الدور</Button>
-                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteAdminRecord(u.id)}>
+                      <Button size="sm" variant="ghost" onClick={() => removeRoles(u.user_id, u)}>إزالة الدور</Button>
+                      <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteAdminRecord(u)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>

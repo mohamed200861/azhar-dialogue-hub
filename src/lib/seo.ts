@@ -17,11 +17,18 @@ const SITE_NAME = "اتحاد علماء الأزهر";
 const DEFAULT_DESC = "اتحاد علماء الأزهر — مؤسسة إسلامية دعوية علمية غير ربحية تنشر المنهج الأزهري الوسطي وتخدم قضايا الأمة.";
 const DEFAULT_OG = "/og-image.png";
 
+const DEFAULT_SITE_URL = "https://alazharscholarunion.it";
+
 function siteOrigin(): string {
   const env = (import.meta as any).env?.VITE_SITE_URL as string | undefined;
   if (env) return env.replace(/\/+$/, "");
-  if (typeof window !== "undefined") return window.location.origin;
-  return "";
+  if (typeof window !== "undefined") {
+    const o = window.location.origin;
+    // Use the canonical production domain when running on the temporary preview/Pages domain
+    if (/lovable\.app$|pages\.dev$/i.test(o)) return DEFAULT_SITE_URL;
+    return o;
+  }
+  return DEFAULT_SITE_URL;
 }
 
 function absoluteUrl(pathOrUrl: string): string {
