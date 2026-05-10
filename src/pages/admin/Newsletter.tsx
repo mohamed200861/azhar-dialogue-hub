@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Trash2, Download, UserX, Plus, AlertCircle } from "lucide-react";
+import { Loader2, Trash2, Download, UserX, Plus, AlertCircle, Send } from "lucide-react";
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -96,6 +96,41 @@ export default function Newsletter() {
     const { error } = await supabase.from("newsletter_campaigns").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("تم الحذف"); loadCampaigns();
+  };
+
+  const [sendingId, setSendingId] = useState<string | null>(null);
+  const sendCampaign = async (c: any) => {
+    if (c.status !== "ready") return toast.error("الحملة ليست جاهزة للإرسال.");
+    if (c.status === "sent") return toast.error("Campagna già inviata.");
+    const word = prompt(
+      `Stai per inviare "${c.title}" a tutti gli iscritti attivi.\nScrivi INVIA per confermare.`,
+    );
+    if (word !== "INVIA") return;
+    setSendingId(c.id);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-newsletter-campaign", {
+        body: { campaign_id: c.id },
+      });
+      if (error) {
+        let msg = error.message;
+        try {
+          const ctx: any = (error as any).context;
+          if (ctx?.json) {
+            const j = await ctx.json();
+            if (j?.message) msg = j.message;
+            else if (j?.error) msg = j.error;
+          }
+        } catch (_e) { /* noop */ }
+        throw new Error(msg);
+      }
+      const d: any = data || {};
+      toast.success(`Inviati: ${d.sent ?? 0} • Errori: ${d.failed ?? 0}`);
+      loadCampaigns();
+    } catch (err: any) {
+      toast.error(err?.message || "Invio fallito");
+    } finally {
+      setSendingId(null);
+    }
   };
 
   const activeCount = rows?.filter((r) => (r.status ?? "active") === "active").length ?? 0;
