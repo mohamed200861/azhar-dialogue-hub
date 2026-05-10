@@ -281,15 +281,54 @@ export default function Newsletter() {
         </TabsContent>
 
         <TabsContent value="campaigns" className="mt-4 space-y-4">
-          <Card className="p-4 border-amber-300 bg-amber-50/50 dark:bg-amber-950/20 flex items-start gap-2">
-            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+          <Card
+            className={
+              "p-4 flex items-start gap-2 " +
+              (serviceConfigured
+                ? "border-emerald-300 bg-emerald-50/50 dark:bg-emerald-950/20"
+                : "border-amber-300 bg-amber-50/50 dark:bg-amber-950/20")
+            }
+          >
+            <AlertCircle
+              className={
+                "h-5 w-5 mt-0.5 " +
+                (serviceConfigured ? "text-emerald-600" : "text-amber-600")
+              }
+            />
             <div className="text-sm space-y-1">
-              <div><strong>Servizio email non ancora configurato.</strong> Aggiungi <code>RESEND_API_KEY</code> per attivare l'invio reale.</div>
+              <div>
+                {serviceConfigured === null ? (
+                  <strong>Verifico stato servizio email…</strong>
+                ) : serviceConfigured ? (
+                  <strong>Servizio email configurato.</strong>
+                ) : (
+                  <>
+                    <strong>Servizio email non ancora configurato.</strong>{" "}
+                    Aggiungi <code>RESEND_API_KEY</code> per attivare l'invio reale.
+                  </>
+                )}
+              </div>
               <div className="text-muted-foreground text-xs">
                 المرسِل: <span dir="ltr">{(settings as any).newsletter_sender_email || "newsletter@alazharscholarunion.it"}</span>
                 {" • "}إشعارات الأخطاء: <span dir="ltr">{(settings as any).admin_notification_email || "info@alazharscholarunion.it"}</span>
               </div>
             </div>
+          </Card>
+
+          <Card className="p-4">
+            <Label htmlFor="test-email">Email di test</Label>
+            <Input
+              id="test-email"
+              dir="ltr"
+              type="email"
+              placeholder="tu@example.com"
+              value={testEmail}
+              onChange={(e) => setTestEmail(e.target.value)}
+              className="max-w-sm mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Usa il bottone "Test" su una campagna qui sotto per inviare un'anteprima a questa email.
+            </p>
           </Card>
 
           <Card className="p-4">
