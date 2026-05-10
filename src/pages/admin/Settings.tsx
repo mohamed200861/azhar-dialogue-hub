@@ -91,6 +91,15 @@ export default function Settings() {
         }
       />
 
+      <Card className="p-4 mb-6 border-primary/30 bg-primary/5">
+        <h4 className="font-semibold mb-2">دليل عناوين البريد المستخدمة في الموقع</h4>
+        <ul className="text-sm space-y-1 text-muted-foreground">
+          <li>• <span dir="ltr">alazharscholarunion@gmail.com</span> — البريد العام للموقع (الفوتر/التواصل).</li>
+          <li>• <span dir="ltr">info@alazharscholarunion.it</span> — إشعارات داخلية للإدارة وتقارير الأخطاء.</li>
+          <li>• <span dir="ltr">newsletter@alazharscholarunion.it</span> — مرسِل النشرة البريدية ورد الرسائل.</li>
+        </ul>
+      </Card>
+
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-5 space-y-4">
           <h3 className="font-semibold">المعلومات الأساسية</h3>
