@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, Send, CheckCircle2, Scale, Gavel, ShieldCheck } from "lucide-react";
 
 const REQUEST_TYPES = [
