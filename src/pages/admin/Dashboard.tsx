@@ -78,6 +78,19 @@ export default function Dashboard() {
     <div>
       <PageHeader title="لوحة التحكم" description="نظرة عامة على محتوى الموقع وأنشطة الاتحاد." />
 
+      {showTempPwdNotice && (
+        <Card className="p-4 mb-6 border-amber-300 bg-amber-50/60 dark:bg-amber-950/20 flex items-start gap-3">
+          <KeyRound className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <div className="text-sm space-y-1">
+            <div className="font-semibold">تنبيه أمني — كلمة مرور مؤقتة</div>
+            <div className="text-muted-foreground">
+              Questa password è temporanea. Per sicurezza cambia la password il prima possibile.
+              Vai su <em>reset password</em> dalla pagina di login oppure dalle impostazioni del tuo account per cambiarla.
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {cards.map((c) => {
           const Icon = c.icon;
