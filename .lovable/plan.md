@@ -1,74 +1,135 @@
-## Obiettivo
+# STEP 3 — Sistema Comunicazioni / Email / Notifiche
 
-Generare un report professionale completo del lavoro svolto sul sito **azhar-dialogue-hub1**, in italiano, strutturato in 7 sezioni come richiesto, e consegnarlo come documento scaricabile in `/mnt/documents/`.
+Implementazione completa, modulare, sicura. Nessuna modifica al design esistente. Nessuna funzione esistente rimossa.
 
-Il report sarà basato **solo su ciò che è realmente presente nel codice e nel database** (verificato in questa conversazione: tabelle Supabase, RLS, bucket storage, route, componenti). Nessuna affermazione inventata.
+---
 
-## Formato di consegna
+## 1. Database (1 migrazione)
 
-Propongo due output paralleli nello stesso file set:
+### Nuova tabella `notification_events`
+Campi: `id, entity_type, entity_id, event_kind, title, summary, url, status (pending/processing/processed/failed/skipped), processed_at, error_message, created_at, updated_at, metadata jsonb`.
+- UNIQUE `(entity_type, entity_id, event_kind)` → no duplicati.
+- RLS: admin SELECT, service_role ALL, anon nessun accesso.
+- Indici: `(status, created_at)`, `(entity_type, entity_id)`, `event_kind`.
 
-1. `Report_Progetto_Azhar_Dialogue_Hub.md` — versione Markdown leggibile e modificabile
-2. `Report_Progetto_Azhar_Dialogue_Hub.pdf` — versione PDF impaginata professionalmente (font, titoli, bullet, intestazione)
+### Nuova tabella `email_alert_log` (per anti-spam alert DLQ)
+Campi: `id, alert_kind, sent_at`. Indice su `(alert_kind, sent_at)`. Service-role-only.
 
-Entrambi salvati in `/mnt/documents/` e mostrati come `presentation-artifact`.
+### Trigger di pubblicazione
+Funzione `notify_on_publish()` + trigger AFTER INSERT/UPDATE su:
+`news_posts, events, library_items, videos, research_items, academy_programs, dialogue_initiatives`.
+Inserisce `notification_event` (kind=`published`) quando lo status passa a `published`. URL costruito per tabella. ON CONFLICT DO NOTHING (idempotente).
 
-## Struttura del documento
+### Trigger live streams
+Trigger su `live_streams` per status transitions:
+- → `live` ⇒ event `live_started`
+- → `completed` (con `replay_url`) ⇒ event `live_completed`
 
-```text
-1. Riepilogo esecutivo (mezza pagina)
-2. Cosa è stato realizzato finora
-   2.1 Struttura generale
-   2.2 Homepage
-   2.3 Header / menu / dropdown الأقسام
-   2.4 Footer (الأقسام المتخصصة)
-   2.5 Pagine pubbliche (lista + funzione di ognuna)
-   2.6 Pannello admin (lista route + funzione)
-   2.7 Sezioni specializzate:
-       - الفتوى والتحكيم الشرعي
-       - أكاديمية العلوم الشرعية
-       - الحوار والتواصل الحضاري
-       - البحوث والدراسات
-       - النشرة الإخبارية
-       - شريط الأخبار (News Ticker)
-       - Live streaming
-   2.8 Database: tabelle Supabase reali (academy_*, dialogue_*,
-       fatwa_arbitration_requests, research_*, news_*, events,
-       library_items, live_streams, videos, site_pages,
-       site_settings, newsletter_*, contact_messages, user_roles,
-       admin_users, audit_logs, media_files)
-   2.9 Storage buckets pubblici/privati (images, covers, thumbnails,
-       research-public | documents, attachments, fatwa-attachments,
-       research-submissions)
-   2.10 SEO + Open Graph dinamico per news/library/events/videos/live
-   2.11 Pulizia testi (إنجلترا, England, المقر, الأمانة العامة rimossi)
-   2.12 RTL + mobile + build/typecheck
-3. Funzionalità attive (cosa funziona ORA)
-4. Sicurezza implementata
-   - RLS per tabella
-   - has_role / is_admin / can_publish (SECURITY DEFINER, search_path)
-   - Bucket privati + signed URL
-   - Separazione anon/authenticated
-   - Bootstrap super_admin
-5. Sviluppi futuri consigliati
-   - Priorità alta / media / futura (come da richiesta)
-6. Checklist pre-consegna
-7. Valore commerciale del progetto
-```
+### Indici aggiuntivi
+`live_streams(status, scheduled_at)`, `live_streams(expires_at) WHERE auto_archive`, `email_send_log(template_name)`, `email_send_log((metadata->>'campaign_id'))`.
 
-## Cosa NON includerò
+---
 
-- Affermazioni non verificabili (es. "è stato testato su tutti i browser reali")
-- Funzionalità non realmente presenti (es. invio reale email newsletter — segnalato come "da fare")
-- Dettagli tecnici inventati su performance o analytics
+## 2. Edge Functions
 
-## Passi di esecuzione (dopo approvazione)
+### `process-notification-events` (cron-driven, service-role)
+- Legge `pending` con limit batch (es. 20).
+- Costruisce email HTML RTL professionale (template arabo) per ogni `event_kind`.
+- Recupera iscritti `active` da `newsletter_subscribers` (escludendo `suppressed_emails`).
+- Invio via Resend (gateway Lovable se `LOVABLE_API_KEY` disponibile altrimenti diretto). Se `RESEND_API_KEY` manca → marca `failed` con messaggio chiaro, NON crash.
+- Append `email_send_log` per ogni invio.
+- Aggiorna status `processed`/`failed`. Audit log.
 
-1. Scrivere `Report_Progetto_Azhar_Dialogue_Hub.md` con tutto il contenuto.
-2. Convertire in PDF con uno strumento headless (es. `md-to-pdf` o `pandoc` con stile pulito, font Inter/Noto, supporto caratteri arabi).
-3. QA: rendere ogni pagina del PDF in immagine e ispezionare layout/clip/font arabi.
-4. Consegnare entrambi i file con tag `<lov-artifact>`.
+### `live-stream-scheduler` (cron 1 min)
+Trova live `scheduled` con `scheduled_at` in `[now, now+15min]`, `notify_subscribers=true`, senza `live_starting` event esistente → crea evento.
 
-## Conferma richiesta
+### `live-stream-archiver` (cron 5 min)
+Trova live con `expires_at < now` e `auto_archive=true` (status non già `archived`) → set status `archived`, `hide_from_homepage=true`, `hide_from_videos=true`. Idempotente.
 
-Procedo con **MD + PDF** in italiano? Oppure preferisci solo uno dei due formati (es. solo PDF, o solo DOCX)?
+### `send-form-confirmation` (invocata da client dopo insert)
+- Input: `{form_type, record_id}`.
+- Carica record (service-role), invia 2 email: conferma al mittente + alert admin a `info@alazharscholarunion.it`.
+- Template arabo per ciascun form type.
+- Log su `email_send_log`.
+- Se Resend non config: salva log `error` ma ritorna 200 (il form non si rompe).
+
+### `daily-email-health-report` (cron 1/giorno)
+Conta errori 24h da `email_send_log` + DLQ pgmq se presente. Se errori > 0 e nessun alert oggi (`email_alert_log`), invia summary a `info@alazharscholarunion.it`.
+
+Tutte le funzioni: `verify_jwt = true` lato config, ma controllo interno `service_role` o admin via `getClaims` per quelle invocabili dal client (`send-form-confirmation`).
+
+---
+
+## 3. Frontend
+
+### Nuova pagina `/unsubscribe`
+- Legge `?token=...`, chiama edge function `unsubscribe-confirm` (service-role) che valida token, aggiorna subscriber, marca token usato.
+- UI RTL, design coerente, messaggio successo o errore.
+
+### `/admin/newsletter` — nuovi tab
+Aggiungi accanto agli esistenti (mantieni Iscritti, Campagne):
+- **Log email**: tabella ultimi 100 record `email_send_log` con filtro status.
+- **Eventi automatici**: tabella `notification_events`, contatori pending/processed/failed, bottone "Riprova falliti" (admin only) → resetta status a pending.
+- **Stato servizio**: card con probe RESEND, contatori subscribers, ultime campagne, ultimi errori.
+
+### Form pubblici — invocazione conferma
+Dopo insert riuscito su Contact, FatwaArbitration, ResearchStudies, ShariaAcademy, CivilizationalDialogue, NewsletterPublic → fire-and-forget chiamata a `send-form-confirmation`. Non bloccante: errori loggati console, form sempre completa.
+
+---
+
+## 4. Cron / Schedule
+Insert via `supabase--insert` (contiene URL+anon key, no migration):
+- `process-notification-events` ogni 2 min
+- `live-stream-scheduler` ogni 1 min
+- `live-stream-archiver` ogni 5 min
+- `daily-email-health-report` ogni giorno alle 08:00 UTC
+
+---
+
+## 5. Sicurezza
+- Tutte le tabelle nuove: RLS ON, anon nessun accesso, service_role ALL, admin SELECT dove utile.
+- `unsubscribe-confirm` è pubblica ma valida solo token; non espone email.
+- Nessun secret nel frontend.
+- Anti-doppio-invio: UNIQUE constraint + check `email_send_log` su `(template_name, recipient_email, metadata->>'event_id')`.
+
+---
+
+## 6. Documentazione
+Crea `EMAIL_SYSTEM.md` con: indirizzi email del sito, mappa tabelle, flusso notification events, flusso live, flusso form, cron list, troubleshooting, come configurare RESEND_API_KEY.
+
+---
+
+## File creati / modificati
+
+**Migrazione SQL** (1): tabella `notification_events`, `email_alert_log`, funzioni trigger, indici.
+
+**Edge functions nuove** (5):
+- `supabase/functions/process-notification-events/{index.ts,deno.json}`
+- `supabase/functions/live-stream-scheduler/{index.ts,deno.json}`
+- `supabase/functions/live-stream-archiver/{index.ts,deno.json}`
+- `supabase/functions/send-form-confirmation/{index.ts,deno.json}`
+- `supabase/functions/daily-email-health-report/{index.ts,deno.json}`
+- `supabase/functions/unsubscribe-confirm/{index.ts,deno.json}`
+
+**Frontend nuovo**:
+- `src/pages/Unsubscribe.tsx` (+ route in `App.tsx`)
+- nuovi tab in `src/pages/admin/Newsletter.tsx`
+
+**Frontend toccato leggermente** (chiamata fire-and-forget `send-form-confirmation`):
+- `src/pages/Contact.tsx`, `FatwaArbitration.tsx`, `ResearchStudies.tsx`, `ShariaAcademy.tsx`, `CivilizationalDialogue.tsx`, `NewsletterPublic.tsx`
+
+**Config** `supabase/config.toml`: registrazione nuove funzioni.
+
+**Docs**: `EMAIL_SYSTEM.md`.
+
+**Cron**: insert SQL via `supabase--insert`.
+
+---
+
+## Note importanti
+- Non promette zero manutenzione: la doc indica controlli mensili.
+- Senza `RESEND_API_KEY` il sistema continua a funzionare: gli eventi restano `failed` con errore chiaro, i form si salvano comunque.
+- Tutto idempotente: nessun rischio doppi invii.
+- Il design admin esistente NON viene modificato — solo aggiunti tab.
+
+Procedo all'implementazione una volta approvato il piano.
