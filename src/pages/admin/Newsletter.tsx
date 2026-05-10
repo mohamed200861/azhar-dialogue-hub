@@ -284,9 +284,22 @@ export default function Newsletter() {
                       </div>
                       {c.content && <p className="text-sm text-muted-foreground mt-2 line-clamp-2 whitespace-pre-wrap">{c.content}</p>}
                     </div>
-                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeCampaign(c.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      {c.status === "ready" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => sendCampaign(c)}
+                          disabled={sendingId === c.id}
+                        >
+                          {sendingId === c.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                          إرسال
+                        </Button>
+                      )}
+                      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => removeCampaign(c.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </Card>
               ))}
