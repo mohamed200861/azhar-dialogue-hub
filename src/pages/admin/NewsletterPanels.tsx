@@ -49,6 +49,39 @@ export function NotificationEventsPanel() {
     load();
   };
 
+  const [processing, setProcessing] = useState(false);
+  const processNow = async () => {
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("process-notification-events", { body: {} });
+      if (error) throw error;
+      const d: any = data ?? {};
+      toast.success(`Processati: ${d.processed ?? 0} • Falliti: ${d.failed ?? 0} • Skipped: ${d.skipped ?? 0}`);
+      load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Errore processing");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const [testing, setTesting] = useState(false);
+  const testSystem = async () => {
+    setTesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-newsletter-test", {
+        body: { test_email: "info@alazharscholarunion.it", subject: "Test sistema email", html: "<p dir='rtl'>اختبار النظام البريدي.</p>" },
+      });
+      if (error) throw error;
+      toast.success("Email di prova inviata a info@alazharscholarunion.it");
+      void data;
+    } catch (e: any) {
+      toast.error(e?.message ?? "Test fallito (verifica RESEND_API_KEY)");
+    } finally {
+      setTesting(false);
+    }
+  };
+
   return (
     <div className="space-y-3">
       <Card className="p-3 flex flex-wrap gap-2 items-center">
