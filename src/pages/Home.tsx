@@ -558,6 +558,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* PUBLIC STATS */}
+      <PublicStats />
+
       {/* PARTNERSHIPS CTA */}
       <section className="section-padding bg-gradient-soft">
         <div className="container-narrow">
