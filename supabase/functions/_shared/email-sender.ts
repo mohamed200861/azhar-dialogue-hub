@@ -6,8 +6,10 @@
 
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
-export const NEWSLETTER_SENDER = "Al Azhar Scholar Union <newsletter@alazharscholarunion.it>";
+export const NEWSLETTER_SENDER = '"Al-Azhar Scholars Union" <newsletter@alazharscholarunion.it>';
+export const NEWSLETTER_REPLY_TO = "newsletter@alazharscholarunion.it";
 export const ADMIN_NOTIFY_EMAIL = "info@alazharscholarunion.it";
+export const PUBLIC_CONTACT_EMAIL = "alazharscholarunion@gmail.com";
 export const SITE_URL_PUBLIC = Deno.env.get("SITE_URL") ?? "https://alazharscholarunion.it";
 export const LOGO_URL = `${SITE_URL_PUBLIC}/logo-email.png`;
 export const LOGO_FALLBACK_URL = `${SITE_URL_PUBLIC}/og-image.png`;
@@ -72,7 +74,7 @@ export async function sendEmail(args: SendEmailArgs): Promise<SendEmailResult> {
     to: [args.to],
     subject: args.subject,
     html: args.html,
-    reply_to: args.reply_to,
+    reply_to: args.reply_to ?? NEWSLETTER_REPLY_TO,
     tags: args.tags,
   };
 
