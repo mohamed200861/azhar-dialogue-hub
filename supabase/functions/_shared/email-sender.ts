@@ -8,6 +8,23 @@ import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-
 
 export const NEWSLETTER_SENDER = "Al Azhar Scholar Union <newsletter@alazharscholarunion.it>";
 export const ADMIN_NOTIFY_EMAIL = "info@alazharscholarunion.it";
+export const SITE_URL_PUBLIC = Deno.env.get("SITE_URL") ?? "https://alazharscholarunion.it";
+export const LOGO_URL = `${SITE_URL_PUBLIC}/logo-email.png`;
+export const LOGO_FALLBACK_URL = `${SITE_URL_PUBLIC}/og-image.png`;
+
+/** Renders a centered logo header for HTML emails. RTL-friendly. */
+export function emailLogoHeader(opts: { bg?: string; subtitle?: string } = {}): string {
+  const bg = opts.bg ?? "#ffffff";
+  const sub = opts.subtitle
+    ? `<div style="margin-top:10px;font-size:13px;color:#0f3a2e;font-weight:600;">${opts.subtitle}</div>`
+    : "";
+  return `<tr><td align="center" style="background:${bg};padding:22px 16px 12px 16px;">
+  <img src="${LOGO_URL}" alt="اتحاد علماء الأزهر" width="140"
+    style="display:block;max-width:140px;width:140px;height:auto;border:0;outline:none;"
+    onerror="this.onerror=null;this.src='${LOGO_FALLBACK_URL}';" />
+  ${sub}
+</td></tr>`;
+}
 
 export function getServiceClient(): SupabaseClient {
   return createClient(
