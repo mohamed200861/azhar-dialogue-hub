@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, FileText, Download, Eye, Send, CheckCircle2 } from "lucide-react";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 
 const CAT_LABEL: Record<string, string> = {

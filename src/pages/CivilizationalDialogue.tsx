@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, MessageCircle, Users, CheckCircle2, Send, Calendar } from "lucide-react";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 import { formatDate } from "@/lib/admin-utils";
 

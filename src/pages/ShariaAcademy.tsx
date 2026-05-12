@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { fireFormConfirmation } from "@/lib/form-notify";
 import { Loader2, GraduationCap, BookOpen, Award, CheckCircle2, Send } from "lucide-react";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 
 const CATEGORY_LABEL: Record<string, string> = { course: "دورة", diploma: "دبلوم", ijaza: "إجازة علمية" };
