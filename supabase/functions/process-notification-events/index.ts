@@ -63,6 +63,9 @@ Deno.serve(async (req) => {
   if (token && SERVICE_KEY && token === SERVICE_KEY) {
     authorized = true;
     authMode = "service_role";
+  } else if (token && (await isAuthorizedServiceCaller(req))) {
+    authorized = true;
+    authMode = "service_role_jwt";
   } else if (token) {
     try {
       const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.45.0");
