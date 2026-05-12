@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, PlayCircle, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 
 const TYPE_LABEL: Record<string, string> = { video: "فيديو مسجل", live: "بث مباشر", recording: "تسجيل" };
 const LIVE_LABEL: Record<string, string> = { scheduled: "بث قادم", live: "مباشر الآن", completed: "تسجيل سابق", cancelled: "ملغي" };
@@ -89,7 +90,7 @@ export default function VideoDetail() {
                 <Radio className="h-4 w-4 animate-pulse" /> مباشر الآن
               </div>
             )}
-            {video.description && <p className="text-muted-foreground leading-loose whitespace-pre-line">{video.description}</p>}
+            {video.description && <RichTextView html={video.description} className="rich-content text-muted-foreground leading-loose" />}
 
             {!hasAnyVideo && video.thumbnail && (
               <div className="mt-6 rounded-xl overflow-hidden aspect-video">
