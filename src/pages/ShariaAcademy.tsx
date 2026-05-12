@@ -104,9 +104,7 @@ export default function ShariaAcademy() {
       <section className="container-narrow py-12 md:py-16">
         {page?.content && (
           <Card className="p-6 md:p-8 mb-10">
-            {page.content.split(/\n{2,}/).map((p: string, i: number) => (
-              <p key={i} className="text-foreground/85 leading-loose mb-3 last:mb-0 whitespace-pre-line">{p}</p>
-            ))}
+            <RichTextView html={page.content} />
           </Card>
         )}
 
