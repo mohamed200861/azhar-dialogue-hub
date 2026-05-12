@@ -102,8 +102,8 @@ Deno.serve(async (req) => {
       admin_user_id: userId,
       action: "newsletter_test_sent",
       entity_type: "newsletter_campaigns",
-      entity_id: campaignId,
-      metadata: { to: testEmail, sender: senderEmail },
+      entity_id: entityId,
+      metadata: { to: testEmail, sender: senderEmail, adhoc: !entityId },
     });
 
     return json(200, { ok: true, to: testEmail });
