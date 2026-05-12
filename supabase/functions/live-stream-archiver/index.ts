@@ -3,13 +3,12 @@
 // Uses hide_from_homepage / hide_from_videos flags. Idempotent.
 
 import { corsHeaders, getServiceClient } from "../_shared/email-sender.ts";
+import { isAuthorizedServiceCaller } from "../_shared/cron-auth.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const auth = req.headers.get("Authorization") ?? "";
-  const isService = auth.includes(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "___nope___");
-  if (!isService) {
+  if (!(await isAuthorizedServiceCaller(req))) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
