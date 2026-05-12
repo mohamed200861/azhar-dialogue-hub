@@ -4,6 +4,7 @@ import { PageHero } from "@/components/PageHero";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 import { Loader2 } from "lucide-react";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 
 export function DynamicPageView({
   pageKey,
@@ -63,9 +64,7 @@ export function DynamicPageView({
         <div className="container-narrow">
           {content ? (
             <article className="card-elegant p-8 md:p-12 prose-rtl">
-              {content.split(/\n{2,}/).map((para, i) => (
-                <p key={i} className="text-foreground/85 leading-loose mb-4 last:mb-0 whitespace-pre-line">{para}</p>
-              ))}
+              <RichTextView html={content} />
             </article>
           ) : fallbackContent ? (
             <>{fallbackContent}</>
