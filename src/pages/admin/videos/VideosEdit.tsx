@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -104,7 +105,7 @@ export default function VideosEdit() {
           <Card className="p-5 space-y-4">
             <div><Label>العنوان *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
             <div><Label>الرابط المختصر</Label><Input dir="ltr" className="text-left" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} /></div>
-            <div><Label>الوصف</Label><Textarea rows={5} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+            <div><Label>الوصف</Label><RichTextEditor value={form.description ?? ""} onChange={(html) => setForm({ ...form, description: html })} minHeight={220} /></div>
             <div><Label>رابط الفيديو</Label><Input dir="ltr" className="text-left" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></div>
             <div><Label>رابط التضمين (اختياري)</Label><Input dir="ltr" className="text-left" value={form.embed_url ?? ""} onChange={(e) => setForm({ ...form, embed_url: e.target.value })} placeholder="يتم استنتاجه تلقائيًا من YouTube" /></div>
             <div className="flex justify-end">

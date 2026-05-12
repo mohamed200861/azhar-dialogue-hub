@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -131,7 +132,7 @@ export default function ResearchStudiesAdmin() {
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
                     <div><Label>المؤلف</Label><Input value={editing.author ?? ""} onChange={(e) => setEditing({ ...editing, author: e.target.value })} /></div>
-                    <div><Label>الملخص</Label><Textarea rows={4} value={editing.abstract ?? ""} onChange={(e) => setEditing({ ...editing, abstract: e.target.value })} /></div>
+                    <div><Label>الملخص</Label><RichTextEditor value={editing.abstract ?? ""} onChange={(html) => setEditing({ ...editing, abstract: html })} minHeight={200} /></div>
                     <div className="grid grid-cols-2 gap-3">
                       <div><Label>التصنيف</Label>
                         <Select value={editing.category} onValueChange={(v) => setEditing({ ...editing, category: v })}>

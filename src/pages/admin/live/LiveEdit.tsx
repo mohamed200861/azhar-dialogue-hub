@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -146,7 +147,7 @@ export default function LiveEdit() {
           <Card className="p-5 space-y-4">
             <div><Label>عنوان البث *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
             <div><Label>الرابط المختصر</Label><Input dir="ltr" className="text-left" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="my-live-stream" /></div>
-            <div><Label>وصف البث</Label><Textarea rows={4} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+            <div><Label>وصف البث</Label><RichTextEditor value={form.description ?? ""} onChange={(html) => setForm({ ...form, description: html })} minHeight={200} /></div>
             <div className="grid sm:grid-cols-2 gap-3">
               <div><Label>رابط البث</Label><Input dir="ltr" className="text-left" value={form.live_url ?? ""} onChange={(e) => setForm({ ...form, live_url: e.target.value })} placeholder="https://youtube.com/watch?v=…" /></div>
               <div><Label>رابط التضمين (اختياري)</Label><Input dir="ltr" className="text-left" value={form.embed_url ?? ""} onChange={(e) => setForm({ ...form, embed_url: e.target.value })} placeholder="يتم استنتاجه تلقائيًا" /></div>

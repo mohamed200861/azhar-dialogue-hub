@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/admin/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -127,7 +128,7 @@ export default function NewsEdit() {
             </div>
             <div>
               <Label>المحتوى</Label>
-              <Textarea rows={14} value={form.content ?? ""} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+              <RichTextEditor value={form.content ?? ""} onChange={(html) => setForm({ ...form, content: html })} minHeight={320} />
               <p className="text-xs text-muted-foreground mt-1">يدعم الفقرات النصية. تفصل الفقرات بسطر فارغ.</p>
             </div>
           </Card>
