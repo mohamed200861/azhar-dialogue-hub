@@ -25,9 +25,9 @@ function buildEmailHtml(opts: { title: string; summary: string | null; url: stri
 <body style="margin:0;padding:0;background:#f6f7f9;font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1f2937;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f7f9;padding:24px 0;"><tr><td align="center">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-<tr><td style="background:#0f3a2e;padding:24px;text-align:center;color:#fff;">
-  <div style="font-size:14px;opacity:.85;">اتحاد علماء الأزهر</div>
-  <div style="font-size:20px;font-weight:bold;margin-top:6px;">${escapeHtml(heading)}</div>
+${emailLogoHeader({ subtitle: "اتحاد علماء الأزهر" })}
+<tr><td style="background:#0f3a2e;padding:18px;text-align:center;color:#fff;">
+  <div style="font-size:18px;font-weight:bold;">${escapeHtml(heading)}</div>
 </td></tr>
 <tr><td style="padding:28px 28px 8px 28px;">
   <h2 style="margin:0 0 12px 0;font-size:20px;color:#0f3a2e;">${escapeHtml(title)}</h2>

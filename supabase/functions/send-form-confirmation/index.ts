@@ -6,7 +6,7 @@
 // Never throws on missing RESEND_API_KEY: returns { configured: false } so the
 // form UX is never broken. Validates input strictly before sending.
 
-import { corsHeaders, getServiceClient, sendEmail, logSend, NEWSLETTER_SENDER, ADMIN_NOTIFY_EMAIL } from "../_shared/email-sender.ts";
+import { corsHeaders, getServiceClient, sendEmail, logSend, NEWSLETTER_SENDER, ADMIN_NOTIFY_EMAIL, emailLogoHeader } from "../_shared/email-sender.ts";
 
 const SITE_URL = Deno.env.get("SITE_URL") ?? "https://alazharscholarunion.it";
 
@@ -29,8 +29,9 @@ function userTemplate(opts: { label_ar: string; full_name: string }) {
   return `<!DOCTYPE html><html dir="rtl" lang="ar"><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;background:#f6f7f9;font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1f2937;">
 <table width="100%" style="background:#f6f7f9;padding:24px 0;"><tr><td align="center">
-<table width="600" style="background:#fff;border-radius:8px;">
-<tr><td style="background:#0f3a2e;padding:20px;text-align:center;color:#fff;font-size:18px;font-weight:bold;">اتحاد علماء الأزهر</td></tr>
+<table width="600" style="background:#fff;border-radius:8px;overflow:hidden;">
+${emailLogoHeader()}
+<tr><td style="background:#0f3a2e;padding:16px;text-align:center;color:#fff;font-size:18px;font-weight:bold;">اتحاد علماء الأزهر</td></tr>
 <tr><td style="padding:28px;line-height:1.8;">
   <p>السلام عليكم ورحمة الله وبركاته،</p>
   <p>تحية طيبة الأستاذ/الأستاذة <strong>${escapeHtml(opts.full_name)}</strong>،</p>
@@ -49,8 +50,9 @@ function adminTemplate(opts: { label_ar: string; data: Record<string, unknown>; 
   ).join("");
   return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
 <body style="font-family:Arial,sans-serif;color:#111;background:#f6f7f9;padding:20px;">
-<table width="640" style="background:#fff;border-radius:6px;margin:0 auto;">
-<tr><td style="padding:18px 22px;background:#111827;color:#fff;border-radius:6px 6px 0 0;">
+<table width="640" style="background:#fff;border-radius:6px;margin:0 auto;overflow:hidden;">
+${emailLogoHeader()}
+<tr><td style="padding:18px 22px;background:#111827;color:#fff;">
   <strong>New ${escapeHtml(opts.label_ar)}</strong>
 </td></tr>
 <tr><td style="padding:18px 22px;">

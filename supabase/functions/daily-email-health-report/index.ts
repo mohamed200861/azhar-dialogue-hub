@@ -3,7 +3,7 @@
 // notification_events. Sends a single summary email to ADMIN_NOTIFY_EMAIL.
 // Anti-spam: skips if an alert of the same kind was already sent in last 20 hours.
 
-import { corsHeaders, getServiceClient, sendEmail, logSend, ADMIN_NOTIFY_EMAIL, NEWSLETTER_SENDER } from "../_shared/email-sender.ts";
+import { corsHeaders, getServiceClient, sendEmail, logSend, ADMIN_NOTIFY_EMAIL, NEWSLETTER_SENDER, LOGO_URL, LOGO_FALLBACK_URL } from "../_shared/email-sender.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -49,14 +49,19 @@ Deno.serve(async (req) => {
     });
   }
 
-  const html = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;color:#111;">
-  <h2>Daily email health report</h2>
-  <ul>
-    <li>Email errors (24h): <strong>${errorsCount ?? 0}</strong></li>
-    <li>Failed notification events (24h): <strong>${failedEventsCount ?? 0}</strong></li>
-    <li>Pending notification events: <strong>${pendingEventsCount ?? 0}</strong></li>
-  </ul>
-  <p>Open <a href="https://alazharscholarunion.it/admin/newsletter">/admin/newsletter</a> → tab "Log email" / "Eventi automatici" for details.</p>
+  const html = `<!DOCTYPE html><html><body style="font-family:Arial,sans-serif;color:#111;background:#f6f7f9;padding:20px;">
+  <div style="max-width:640px;margin:0 auto;background:#fff;border-radius:8px;overflow:hidden;">
+    <div style="text-align:center;padding:18px;"><img src="${LOGO_URL}" alt="logo" width="120" style="max-width:120px;height:auto;" onerror="this.onerror=null;this.src='${LOGO_FALLBACK_URL}';" /></div>
+    <div style="padding:0 24px 24px 24px;">
+      <h2 style="margin:0 0 12px 0;">Daily email health report</h2>
+      <ul style="line-height:1.8;">
+        <li>Email errors (24h): <strong>${errorsCount ?? 0}</strong></li>
+        <li>Failed notification events (24h): <strong>${failedEventsCount ?? 0}</strong></li>
+        <li>Pending notification events: <strong>${pendingEventsCount ?? 0}</strong></li>
+      </ul>
+      <p>Apri <a href="https://alazharscholarunion.it/admin/newsletter">/admin/newsletter</a> → tab "سجل الإرسال" / "الأحداث التلقائية" per i dettagli.</p>
+    </div>
+  </div>
   </body></html>`;
 
   const result = await sendEmail({
