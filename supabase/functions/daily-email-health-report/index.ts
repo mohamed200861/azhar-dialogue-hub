@@ -4,13 +4,12 @@
 // Anti-spam: skips if an alert of the same kind was already sent in last 20 hours.
 
 import { corsHeaders, getServiceClient, sendEmail, logSend, ADMIN_NOTIFY_EMAIL, NEWSLETTER_SENDER, LOGO_URL, LOGO_FALLBACK_URL } from "../_shared/email-sender.ts";
+import { isAuthorizedServiceCaller } from "../_shared/cron-auth.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  const auth = req.headers.get("Authorization") ?? "";
-  const isService = auth.includes(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "___nope___");
-  if (!isService) {
+  if (!(await isAuthorizedServiceCaller(req))) {
     return new Response(JSON.stringify({ error: "Forbidden" }), {
       status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
