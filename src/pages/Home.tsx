@@ -17,7 +17,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 import { SmartImage } from "@/components/SmartImage";
 import { NewsTicker } from "@/components/NewsTicker";
-import { PublicStats } from "@/components/PublicStats";
+
 import { applySeo } from "@/lib/seo";
 
 function LiveCountdown({ to }: { to: string }) {
@@ -558,8 +558,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* PUBLIC STATS */}
-      <PublicStats />
 
       {/* PARTNERSHIPS CTA */}
       <section className="section-padding bg-gradient-soft">
