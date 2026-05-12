@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects.
+# NOTE: Cloudflare Pages _redirects does NOT match by hostname, so we cannot
+# redirect "only when host = pages.dev" from this file. The hostname-based
+# redirect is handled by the inline <script> in index.html (preserves path,
+# query and hash). This file is kept as a placeholder for future rules.
+#
+# SPA fallback is handled automatically by Lovable / Cloudflare Pages.
