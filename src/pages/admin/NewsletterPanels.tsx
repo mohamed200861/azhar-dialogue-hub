@@ -49,6 +49,18 @@ export function NotificationEventsPanel() {
     load();
   };
 
+  const extractFnError = async (err: any): Promise<string> => {
+    try {
+      const ctx = err?.context;
+      if (ctx && typeof ctx === "object" && "response" in ctx && ctx.response) {
+        const txt = await (ctx.response as Response).clone().text();
+        try { const j = JSON.parse(txt); return j.error || j.message || txt.slice(0, 300); }
+        catch { return txt.slice(0, 300); }
+      }
+    } catch { /* ignore */ }
+    return err?.message ?? "Errore sconosciuto";
+  };
+
   const [processing, setProcessing] = useState(false);
   const processNow = async () => {
     setProcessing(true);
@@ -56,10 +68,10 @@ export function NotificationEventsPanel() {
       const { data, error } = await supabase.functions.invoke("process-notification-events", { body: {} });
       if (error) throw error;
       const d: any = data ?? {};
-      toast.success(`Processati: ${d.processed ?? 0} • Falliti: ${d.failed ?? 0} • Skipped: ${d.skipped ?? 0}`);
+      toast.success(`Processati: ${d.processed ?? 0} • Inviate: ${d.totalSent ?? 0} • Errori: ${d.totalErrors ?? 0}`);
       load();
     } catch (e: any) {
-      toast.error(e?.message ?? "Errore processing");
+      toast.error(await extractFnError(e), { duration: 8000 });
     } finally {
       setProcessing(false);
     }
@@ -76,7 +88,7 @@ export function NotificationEventsPanel() {
       toast.success("Email di prova inviata a info@alazharscholarunion.it");
       void data;
     } catch (e: any) {
-      toast.error(e?.message ?? "Test fallito (verifica RESEND_API_KEY)");
+      toast.error(await extractFnError(e), { duration: 8000 });
     } finally {
       setTesting(false);
     }
