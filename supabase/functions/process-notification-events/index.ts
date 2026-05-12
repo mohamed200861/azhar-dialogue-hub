@@ -4,6 +4,7 @@
 // on notification_events and email_send_log de-duplication per (template, event, recipient).
 
 import { corsHeaders, getServiceClient, sendEmail, logSend, isSuppressed, getOrCreateUnsubToken, NEWSLETTER_SENDER, ADMIN_NOTIFY_EMAIL, emailLogoHeader } from "../_shared/email-sender.ts";
+import { isAuthorizedServiceCaller } from "../_shared/cron-auth.ts";
 
 const SITE_URL = Deno.env.get("SITE_URL") ?? "https://alazharscholarunion.it";
 const BATCH_EVENTS = 5;       // events per run
@@ -62,6 +63,9 @@ Deno.serve(async (req) => {
   if (token && SERVICE_KEY && token === SERVICE_KEY) {
     authorized = true;
     authMode = "service_role";
+  } else if (token && (await isAuthorizedServiceCaller(req))) {
+    authorized = true;
+    authMode = "service_role_jwt";
   } else if (token) {
     try {
       const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.45.0");
