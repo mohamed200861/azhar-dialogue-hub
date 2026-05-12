@@ -52,12 +52,41 @@ function escapeAttr(s: string) { return escapeHtml(s); }
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
-  // Allow only service-role (cron) or admins
+  // Allow service-role (cron) OR admin/super_admin user JWT
   const auth = req.headers.get("Authorization") ?? "";
-  const isService = auth.includes(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "___nope___");
-  // For admin invocations we still rely on RLS; but to keep it strict, require service role:
-  if (!isService) {
-    return new Response(JSON.stringify({ error: "Forbidden" }), {
+  const token = auth.replace(/^Bearer\s+/i, "").trim();
+  const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+  let authorized = false;
+  let authMode = "none";
+
+  if (token && SERVICE_KEY && token === SERVICE_KEY) {
+    authorized = true;
+    authMode = "service_role";
+  } else if (token) {
+    try {
+      const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.45.0");
+      const userClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: `Bearer ${token}` } } },
+      );
+      const { data: claims } = await userClient.auth.getClaims(token);
+      const userId = claims?.claims?.sub;
+      if (userId) {
+        const svc = getServiceClient();
+        const { data: roles } = await svc
+          .from("user_roles").select("role").eq("user_id", userId);
+        const roleSet = new Set((roles ?? []).map((r: any) => r.role));
+        if (roleSet.has("super_admin") || roleSet.has("admin")) {
+          authorized = true;
+          authMode = "admin_user";
+        }
+      }
+    } catch (_e) { /* fallthrough */ }
+  }
+
+  if (!authorized) {
+    return new Response(JSON.stringify({ error: "Forbidden: admin or super_admin required" }), {
       status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
