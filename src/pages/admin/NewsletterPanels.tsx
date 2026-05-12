@@ -97,10 +97,20 @@ export function NotificationEventsPanel() {
         </Select>
         <Button variant="outline" size="sm" onClick={load}><RefreshCw className="h-4 w-4" /> تحديث</Button>
         {(isAdmin || isSuperAdmin) && (
-          <Button variant="outline" size="sm" onClick={retryFailed} disabled={retrying || !(counts.failed)}>
-            {retrying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCw className="h-4 w-4" />}
-            Riprova falliti ({counts.failed ?? 0})
-          </Button>
+          <>
+            <Button variant="outline" size="sm" onClick={processNow} disabled={processing}>
+              {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Processa ora
+            </Button>
+            <Button variant="outline" size="sm" onClick={testSystem} disabled={testing}>
+              {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Test sistema email
+            </Button>
+            <Button variant="outline" size="sm" onClick={retryFailed} disabled={retrying || !(counts.failed)}>
+              {retrying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCw className="h-4 w-4" />}
+              Riprova falliti ({counts.failed ?? 0})
+            </Button>
+          </>
         )}
         <div className="ms-auto flex gap-2 text-xs text-muted-foreground">
           <span>في الانتظار: {counts.pending ?? 0}</span>
