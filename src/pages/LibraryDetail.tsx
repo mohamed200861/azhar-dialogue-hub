@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { SmartImage } from "@/components/SmartImage";
 import { PdfViewer } from "@/components/PdfViewer";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 
 export default function LibraryDetail() {
   const { slug } = useParams();
@@ -87,7 +88,7 @@ export default function LibraryDetail() {
 
           <div className="lg:col-span-2">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">{item.title}</h1>
-            {item.description && <p className="text-muted-foreground leading-loose mb-6 whitespace-pre-line">{item.description}</p>}
+            {item.description && <RichTextView html={item.description} className="rich-content text-muted-foreground leading-loose mb-6" />}
 
             <div className="flex flex-wrap gap-2 mb-8">
               {hasFile ? (

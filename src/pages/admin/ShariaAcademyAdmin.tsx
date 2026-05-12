@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -123,7 +124,7 @@ export default function ShariaAcademyAdmin() {
                   <DialogHeader><DialogTitle>{editing.id ? "تعديل برنامج" : "برنامج جديد"}</DialogTitle></DialogHeader>
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
-                    <div><Label>الوصف</Label><Textarea rows={4} value={editing.description ?? ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} /></div>
+                    <div><Label>الوصف</Label><RichTextEditor value={editing.description ?? ""} onChange={(html) => setEditing({ ...editing, description: html })} minHeight={200} /></div>
                     <div className="grid grid-cols-2 gap-3">
                       <div><Label>المستوى</Label>
                         <Select value={editing.level} onValueChange={(v) => setEditing({ ...editing, level: v })}>

@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { RichTextView } from "@/components/RichTextView";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -364,8 +366,16 @@ export default function Newsletter() {
               </div>
               <div>
                 <Label>المحتوى</Label>
-                <Textarea rows={5} value={cContent} onChange={(e) => setCContent(e.target.value)} />
+                <RichTextEditor value={cContent} onChange={setCContent} minHeight={220} />
               </div>
+              {cContent && (
+                <div>
+                  <Label>معاينة</Label>
+                  <div dir="rtl" className="border rounded-md p-4 bg-background">
+                    <RichTextView html={cContent} />
+                  </div>
+                </div>
+              )}
               <Button onClick={createCampaign}><Plus className="h-4 w-4" /> إنشاء</Button>
             </div>
           </Card>

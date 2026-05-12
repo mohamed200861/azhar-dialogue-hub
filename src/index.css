@@ -177,3 +177,34 @@
     to   { transform: translateX(50%); }
   }
 }
+
+/* Rich text content rendered from the editor */
+@layer components {
+  .rich-content :where(p, li, blockquote) { word-wrap: break-word; overflow-wrap: anywhere; }
+  .rich-content [dir="rtl"] { text-align: right; }
+  .rich-content [dir="ltr"] { text-align: left; }
+  .rich-content ul { list-style: disc; padding-inline-start: 1.5rem; }
+  .rich-content ol { list-style: decimal; padding-inline-start: 1.5rem; }
+  .rich-content blockquote {
+    border-inline-start: 4px solid hsl(var(--primary) / 0.4);
+    padding-inline-start: 1rem;
+    color: hsl(var(--muted-foreground));
+    font-style: italic;
+    margin: 1rem 0;
+  }
+  .rich-content h1 { font-size: 1.875rem; font-weight: 700; margin: 1.25rem 0 0.75rem; }
+  .rich-content h2 { font-size: 1.5rem;   font-weight: 700; margin: 1.1rem 0 0.6rem; }
+  .rich-content h3 { font-size: 1.25rem;  font-weight: 600; margin: 1rem 0 0.5rem; }
+  .rich-content a  { color: hsl(var(--primary)); text-decoration: underline; }
+  .rich-content hr { border: 0; border-top: 1px solid hsl(var(--border)); margin: 1.5rem 0; }
+
+  /* TipTap editor surface */
+  .ProseMirror { min-height: 200px; outline: none; }
+  .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: inline-start;
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+    height: 0;
+  }
+}

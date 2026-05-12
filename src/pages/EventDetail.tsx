@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, MapPin, Tag, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, formatDate, isValidUrl } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 
 const STATUS_LABEL: Record<string, string> = {
   upcoming: "قادم",
@@ -79,7 +80,7 @@ export default function EventDetail() {
               </span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-6">{event.title}</h1>
-            {event.description && <div className="text-muted-foreground leading-loose whitespace-pre-line">{event.description}</div>}
+            {event.description && <RichTextView html={event.description} className="rich-content text-muted-foreground leading-loose" />}
           </div>
 
           <div className="lg:col-span-1">
