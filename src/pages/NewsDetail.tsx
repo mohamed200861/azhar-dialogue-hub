@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react";
 import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
+import { RichTextView } from "@/components/RichTextView";
 
 export default function NewsDetail() {
   const { slug } = useParams();
@@ -77,11 +78,7 @@ export default function NewsDetail() {
         {post.excerpt && <p className="text-lg text-muted-foreground leading-loose mb-6">{post.excerpt}</p>}
 
         {post.content && (
-          <div className="prose prose-lg max-w-none leading-loose">
-            {post.content.split("\n\n").map((para: string, i: number) => (
-              <p key={i} className="mb-4">{para}</p>
-            ))}
-          </div>
+          <RichTextView html={post.content} className="rich-content prose prose-lg max-w-none leading-loose" />
         )}
 
         {post.pdf_attachment && /^https?:\/\//i.test(post.pdf_attachment) && (
