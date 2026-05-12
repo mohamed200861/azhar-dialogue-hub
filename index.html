@@ -3,6 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // Canonical-domain redirect: force visitors on pages.dev / lovable.app preview
+      // hostnames to the official domain, preserving path, query and hash.
+      (function () {
+        try {
+          var h = window.location.hostname;
+          if (/(^|\.)pages\.dev$/i.test(h)) {
+            var target = 'https://alazharscholarunion.it' + window.location.pathname + window.location.search + window.location.hash;
+            window.location.replace(target);
+          }
+        } catch (e) { /* no-op */ }
+      })();
+    </script>
     <link rel="icon" href="/favicon.png" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>اتحاد علماء الأزهر</title>
