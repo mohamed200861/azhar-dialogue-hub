@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, RefreshCw, RotateCw } from "lucide-react";
+import { Loader2, RefreshCw, RotateCw, Play, Send } from "lucide-react";
 import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 
@@ -49,6 +49,39 @@ export function NotificationEventsPanel() {
     load();
   };
 
+  const [processing, setProcessing] = useState(false);
+  const processNow = async () => {
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("process-notification-events", { body: {} });
+      if (error) throw error;
+      const d: any = data ?? {};
+      toast.success(`Processati: ${d.processed ?? 0} • Falliti: ${d.failed ?? 0} • Skipped: ${d.skipped ?? 0}`);
+      load();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Errore processing");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const [testing, setTesting] = useState(false);
+  const testSystem = async () => {
+    setTesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("send-newsletter-test", {
+        body: { test_email: "info@alazharscholarunion.it", subject: "Test sistema email", html: "<p dir='rtl'>اختبار النظام البريدي.</p>" },
+      });
+      if (error) throw error;
+      toast.success("Email di prova inviata a info@alazharscholarunion.it");
+      void data;
+    } catch (e: any) {
+      toast.error(e?.message ?? "Test fallito (verifica RESEND_API_KEY)");
+    } finally {
+      setTesting(false);
+    }
+  };
+
   return (
     <div className="space-y-3">
       <Card className="p-3 flex flex-wrap gap-2 items-center">
@@ -64,10 +97,20 @@ export function NotificationEventsPanel() {
         </Select>
         <Button variant="outline" size="sm" onClick={load}><RefreshCw className="h-4 w-4" /> تحديث</Button>
         {(isAdmin || isSuperAdmin) && (
-          <Button variant="outline" size="sm" onClick={retryFailed} disabled={retrying || !(counts.failed)}>
-            {retrying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCw className="h-4 w-4" />}
-            Riprova falliti ({counts.failed ?? 0})
-          </Button>
+          <>
+            <Button variant="outline" size="sm" onClick={processNow} disabled={processing}>
+              {processing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+              Processa ora
+            </Button>
+            <Button variant="outline" size="sm" onClick={testSystem} disabled={testing}>
+              {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Test sistema email
+            </Button>
+            <Button variant="outline" size="sm" onClick={retryFailed} disabled={retrying || !(counts.failed)}>
+              {retrying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RotateCw className="h-4 w-4" />}
+              Riprova falliti ({counts.failed ?? 0})
+            </Button>
+          </>
         )}
         <div className="ms-auto flex gap-2 text-xs text-muted-foreground">
           <span>في الانتظار: {counts.pending ?? 0}</span>

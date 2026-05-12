@@ -42,21 +42,31 @@ Deno.serve(async (req) => {
     if (!allowed) return json(403, { error: "Forbidden" });
 
     const body = await req.json().catch(() => ({}));
-    const campaignId = String(body?.campaign_id ?? "");
+    const campaignId = String(body?.campaign_id ?? "").trim();
     const testEmail = String(body?.test_email ?? "").trim();
-    if (!campaignId) return json(400, { error: "campaign_id required" });
+    const adhocSubject = body?.subject ? String(body.subject) : null;
+    const adhocHtml = body?.html ? String(body.html) : null;
     if (!isEmail(testEmail)) return json(400, { error: "test_email non valido" });
 
-    const { data: campaign, error: cErr } = await admin
-      .from("newsletter_campaigns")
-      .select("*")
-      .eq("id", campaignId)
-      .maybeSingle();
-    if (cErr || !campaign) return json(404, { error: "Campaign not found" });
+    let subject = "";
+    let html = "";
+    let entityId: string | null = null;
+    if (campaignId) {
+      const { data: campaign, error: cErr } = await admin
+        .from("newsletter_campaigns").select("*").eq("id", campaignId).maybeSingle();
+      if (cErr || !campaign) return json(404, { error: "Campaign not found" });
+      subject = `[TEST] ${campaign.title}`;
+      html = `<div dir="rtl">${campaign.content || ""}</div>`;
+      entityId = campaignId;
+    } else if (adhocSubject && adhocHtml) {
+      subject = `[TEST] ${adhocSubject}`;
+      html = adhocHtml;
+    } else {
+      return json(400, { error: "campaign_id or (subject+html) required" });
+    }
 
     const { data: settingsRows } = await admin
-      .from("site_settings")
-      .select("key,value")
+      .from("site_settings").select("key,value")
       .in("key", ["newsletter_sender_email", "admin_notification_email"]);
     const settings: Record<string, string> = {};
     (settingsRows ?? []).forEach((r: any) => {
@@ -76,16 +86,10 @@ Deno.serve(async (req) => {
 
     const resp = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${RESEND_API_KEY}`,
-      },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
       body: JSON.stringify({
         from: `Al-Azhar Scholars Union <${senderEmail}>`,
-        to: [testEmail],
-        reply_to: senderEmail,
-        subject: `[TEST] ${campaign.title}`,
-        html: `<div dir="rtl">${campaign.content || ""}</div>`,
+        to: [testEmail], reply_to: senderEmail, subject, html,
       }),
     });
 
@@ -98,8 +102,8 @@ Deno.serve(async (req) => {
       admin_user_id: userId,
       action: "newsletter_test_sent",
       entity_type: "newsletter_campaigns",
-      entity_id: campaignId,
-      metadata: { to: testEmail, sender: senderEmail },
+      entity_id: entityId,
+      metadata: { to: testEmail, sender: senderEmail, adhoc: !entityId },
     });
 
     return json(200, { ok: true, to: testEmail });
