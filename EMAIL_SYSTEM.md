@@ -1,5 +1,22 @@
 # Sistema Email & Notifiche
 
+## Logo nelle email
+- Tutte le email (newsletter, test, notifiche automatiche, conferme form, alert admin, report giornaliero) caricano il logo da URL assoluto:
+  - Primario: `https://alazharscholarunion.it/logo-email.png`
+  - Fallback automatico: `https://alazharscholarunion.it/og-image.png` (gestito via `onerror` nell'`<img>`)
+- Per cambiare logo: sostituire il file `public/logo-email.png` (PNG, ~140px lato lungo, fondo trasparente o bianco). Dopo il deploy il nuovo logo viene mostrato in tutte le email — niente cache lato server.
+- BIMI/avatar accanto al mittente in Gmail NON è incluso (richiede DMARC reject + certificato VMC a parte).
+
+## Anteprima social (Open Graph)
+- Meta tag statici in `index.html` (WhatsApp/Facebook/Telegram non eseguono React, per questo sono statici).
+- Immagine: `public/og-image.png` → `https://alazharscholarunion.it/og-image.png` (1200x630 consigliato).
+- Per forzare refresh cache delle anteprime usare `?v=N`:
+  - WhatsApp: invia `https://alazharscholarunion.it/?v=2`
+  - Facebook Sharing Debugger: https://developers.facebook.com/tools/debug/ → "Scrape Again"
+  - LinkedIn Post Inspector: https://www.linkedin.com/post-inspector/
+- Per le pagine interne `applySeo()` (`src/lib/seo.ts`) aggiorna dinamicamente og:title/description/image.
+
+
 ## Indirizzi email
 - `alazharscholarunion@gmail.com` → email pubblica del sito (mostrata nelle pagine).
 - `info@alazharscholarunion.it` → notifiche admin / alert errori.

@@ -48,6 +48,22 @@ Deno.serve(async (req) => {
     const adhocHtml = body?.html ? String(body.html) : null;
     if (!isEmail(testEmail)) return json(400, { error: "test_email non valido" });
 
+    const SITE_URL = Deno.env.get("SITE_URL") ?? "https://alazharscholarunion.it";
+    const LOGO_URL = `${SITE_URL}/logo-email.png`;
+    const LOGO_FB = `${SITE_URL}/og-image.png`;
+    const wrapHtml = (innerHtml: string, title: string) => `<!DOCTYPE html>
+<html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${title}</title></head>
+<body style="margin:0;padding:0;background:#f6f7f9;font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:#1f2937;">
+<table width="100%" style="background:#f6f7f9;padding:24px 0;"><tr><td align="center">
+<table width="600" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+<tr><td align="center" style="background:#fff;padding:22px 16px 12px 16px;">
+  <img src="${LOGO_URL}" alt="اتحاد علماء الأزهر" width="140" style="display:block;max-width:140px;width:140px;height:auto;border:0;" onerror="this.onerror=null;this.src='${LOGO_FB}';" />
+</td></tr>
+<tr><td style="background:#0f3a2e;padding:14px;text-align:center;color:#fff;font-size:16px;font-weight:bold;">اتحاد علماء الأزهر</td></tr>
+<tr><td style="padding:24px 28px;line-height:1.8;" dir="rtl">${innerHtml}</td></tr>
+<tr><td style="padding:14px 28px;border-top:1px solid #eef0f3;font-size:12px;color:#6b7280;text-align:center;">اتحاد علماء الأزهر — alazharscholarunion.it</td></tr>
+</table></td></tr></table></body></html>`;
+
     let subject = "";
     let html = "";
     let entityId: string | null = null;
@@ -56,11 +72,11 @@ Deno.serve(async (req) => {
         .from("newsletter_campaigns").select("*").eq("id", campaignId).maybeSingle();
       if (cErr || !campaign) return json(404, { error: "Campaign not found" });
       subject = `[TEST] ${campaign.title}`;
-      html = `<div dir="rtl">${campaign.content || ""}</div>`;
+      html = wrapHtml(campaign.content || "", campaign.title);
       entityId = campaignId;
     } else if (adhocSubject && adhocHtml) {
       subject = `[TEST] ${adhocSubject}`;
-      html = adhocHtml;
+      html = wrapHtml(adhocHtml, adhocSubject);
     } else {
       return json(400, { error: "campaign_id or (subject+html) required" });
     }
