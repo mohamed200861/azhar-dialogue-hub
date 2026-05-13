@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { PageHero } from "@/components/PageHero";
 import { Search, Calendar, Loader2, Download, ArrowRight } from "lucide-react";
 import { formatDate } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
 
