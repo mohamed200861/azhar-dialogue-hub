@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, FlaskConical, Radio, PlayCircle, StopCircle,
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const PLATFORMS = ["YouTube", "Facebook", "Zoom", "Google Meet", "Vimeo", "Other"];
 const PUBLISHERS = ["إدارة الاتحاد", "القسم الإعلامي", "فريق البث", "إدارة الموقع"];
@@ -50,6 +52,14 @@ export default function LiveEdit() {
       setLoading(false);
     })();
   }, [id]);
+
+  const draft = useFormDraft({
+    key: `live:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.live_url?.trim() && !v?.description?.trim(),
+  });
 
   const buildPayload = (overrides: Partial<any> = {}) => {
     const embed = form.embed_url?.trim() || (form.live_url ? getYouTubeEmbed(form.live_url) ?? "" : "");
@@ -100,6 +110,7 @@ export default function LiveEdit() {
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
     if (overrides.status) setForm((f: any) => ({ ...f, ...overrides }));
+    draft.markSaved();
     return newId;
   };
 
@@ -133,6 +144,7 @@ export default function LiveEdit() {
       <PageHeader
         title={isNew ? "بث مباشر جديد" : "تعديل البث"}
         actions={<>
+          <DraftStatus state={draft.state} />
           <Button variant="outline" onClick={() => save({ status: "draft" })} disabled={saving}><Save className="h-4 w-4" /> مسودة</Button>
           <Button variant="outline" onClick={() => save({ status: "scheduled" })} disabled={saving}><Calendar className="h-4 w-4" /> جدولة</Button>
           <Button onClick={async () => { const r = await save({ status: "live", started_at: new Date().toISOString() }); if (r) toast.success("تم بدء البث بنجاح، وسيظهر الآن في الصفحة الرئيسية."); }} disabled={saving} className="bg-red-600 hover:bg-red-700"><Radio className="h-4 w-4" /> بدء البث الآن</Button>

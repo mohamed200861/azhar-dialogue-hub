@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
 const PUBLISHERS = ["إدارة الاتحاد","فريق التحرير","إدارة الموقع"];
@@ -58,6 +60,14 @@ export default function NewsEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `news:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.excerpt?.trim() && !v?.content?.trim(),
+  });
+
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
@@ -89,6 +99,7 @@ export default function NewsEdit() {
       const { data } = await supabase.from("news_posts").select("*").eq("id", id!).maybeSingle();
       if (data) setForm(data);
     }
+    draft.markSaved();
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
@@ -100,6 +111,7 @@ export default function NewsEdit() {
         title={isNew ? "خبر جديد" : "تعديل الخبر"}
         actions={
           <>
+            <DraftStatus state={draft.state} />
             <Button variant="outline" onClick={() => save(false)} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               حفظ كمسودة

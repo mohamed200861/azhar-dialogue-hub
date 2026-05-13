@@ -13,6 +13,8 @@ import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, ArrowRight, Save, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { sanitizeSlug } from "@/lib/admin-utils";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 // Section labels per page (Arabic)
 const HOME_SECTION_FIELDS: { key: string; label: string; type?: "text" | "textarea" }[] = [
@@ -48,6 +50,14 @@ export default function PagesEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `page:${id ?? "new"}`,
+    ready: !loading && !!form,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.content?.trim() && !v?.intro?.trim(),
+  });
+
   const save = async () => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
@@ -67,6 +77,7 @@ export default function PagesEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم حفظ الصفحة. سيظهر التحديث على الموقع فورًا.");
+    draft.markSaved();
   };
 
   if (loading || !form) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
@@ -90,6 +101,7 @@ export default function PagesEdit() {
         title={`تعديل: ${form.title}`}
         description="التغييرات تظهر على الموقع العام فور الحفظ."
         actions={<>
+          <DraftStatus state={draft.state} />
           <Button asChild variant="outline" size="sm"><a href={publicHref} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /> معاينة</a></Button>
           <Button onClick={save} disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ</Button>
         </>}

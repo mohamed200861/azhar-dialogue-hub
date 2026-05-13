@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, FlaskConical } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
 const PUBLISHERS = ["إدارة الاتحاد","القسم الإعلامي","فريق البث","إدارة الموقع"];
@@ -43,6 +45,14 @@ export default function VideosEdit() {
       setForm({ ...data, scheduled_at: data.scheduled_at ? new Date(data.scheduled_at).toISOString().slice(0, 16) : null }); setLoading(false);
     })();
   }, [id]);
+
+  const draft = useFormDraft({
+    key: `video:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.video_url?.trim() && !v?.description?.trim(),
+  });
 
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
@@ -75,6 +85,7 @@ export default function VideosEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
+    draft.markSaved();
   };
 
   const testLink = () => {
@@ -97,6 +108,7 @@ export default function VideosEdit() {
     <div>
       <Button variant="ghost" asChild className="mb-2"><Link to="/admin/videos"><ArrowRight className="h-4 w-4" /> العودة</Link></Button>
       <PageHeader title={isNew ? "محتوى مرئي جديد" : "تعديل المحتوى"} actions={<>
+        <DraftStatus state={draft.state} />
         <Button variant="outline" onClick={() => save(false)} disabled={saving}><Save className="h-4 w-4" /> مسودة</Button>
         <Button onClick={() => save(true)} disabled={saving}>نشر</Button>
       </>} />

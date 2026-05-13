@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
 const PUBLISHERS = ["إدارة الاتحاد","قسم النشر","المكتبة العلمية","فريق التحرير"];
@@ -42,6 +44,14 @@ export default function LibraryEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `library:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.description?.trim(),
+  });
+
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     if (!isValidUrl(form.external_url)) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
@@ -65,6 +75,7 @@ export default function LibraryEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
+    draft.markSaved();
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
@@ -75,6 +86,7 @@ export default function LibraryEdit() {
       <PageHeader
         title={isNew ? "عنصر مكتبة جديد" : "تعديل عنصر المكتبة"}
         actions={<>
+          <DraftStatus state={draft.state} />
           <Button variant="outline" onClick={() => save(false)} disabled={saving}><Save className="h-4 w-4" /> مسودة</Button>
           <Button onClick={() => save(true)} disabled={saving}>نشر</Button>
         </>}
