@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
 const ORGANIZERS = ["إدارة الاتحاد","قسم التدريب","القسم العلمي","القسم الإعلامي"];
