@@ -21,6 +21,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const LEVEL: Record<string, string> = { beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم" };
 const CATEGORY: Record<string, string> = { course: "دورة", diploma: "دبلوم", ijaza: "إجازة" };
