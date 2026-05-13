@@ -111,6 +111,7 @@ export default function NewsEdit() {
         title={isNew ? "خبر جديد" : "تعديل الخبر"}
         actions={
           <>
+            <DraftStatus state={draft.state} />
             <Button variant="outline" onClick={() => save(false)} disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               حفظ كمسودة
