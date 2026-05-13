@@ -57,6 +57,14 @@ export default function ResearchStudiesAdmin() {
   useEffect(() => { loadItems(); }, []);
   useEffect(() => { loadSubs(); }, [subFilter]);
 
+  const draft = useFormDraft({
+    key: `research:${editing?.id ?? "new"}`,
+    ready: !!editing,
+    value: editing,
+    setValue: setEditing,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.abstract?.trim(),
+  });
+
   const uploadPdf = async (file: File) => {
     if (file.size > 20 * 1024 * 1024) { toast.error("الحد الأقصى 20MB"); return; }
     setUploading(true);
