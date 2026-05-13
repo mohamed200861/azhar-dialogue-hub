@@ -50,6 +50,14 @@ export default function PagesEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `page:${id ?? "new"}`,
+    ready: !loading && !!form,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.content?.trim() && !v?.intro?.trim(),
+  });
+
   const save = async () => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
