@@ -99,6 +99,7 @@ export default function NewsEdit() {
       const { data } = await supabase.from("news_posts").select("*").eq("id", id!).maybeSingle();
       if (data) setForm(data);
     }
+    draft.markSaved();
   };
 
   if (loading) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
