@@ -21,6 +21,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const LEVEL: Record<string, string> = { beginner: "مبتدئ", intermediate: "متوسط", advanced: "متقدم" };
 const CATEGORY: Record<string, string> = { course: "دورة", diploma: "دبلوم", ijaza: "إجازة" };
@@ -68,6 +70,14 @@ export default function ShariaAcademyAdmin() {
   useEffect(() => { loadPrograms(); }, []);
   useEffect(() => { loadApps(); }, [appFilter, progFilter]);
 
+  const draft = useFormDraft({
+    key: `sharia-academy:${editing?.id ?? "new"}`,
+    ready: !!editing,
+    value: editing,
+    setValue: setEditing,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.description?.trim(),
+  });
+
   const saveProgram = async () => {
     if (!editing?.title?.trim()) return toast.error("العنوان مطلوب");
     const payload = { ...editing };
@@ -80,6 +90,7 @@ export default function ShariaAcademyAdmin() {
       if (error) return toast.error(error.message);
     }
     toast.success("تم الحفظ");
+    draft.markSaved();
     setOpenDialog(false);
     setEditing(null);
     loadPrograms();
@@ -121,7 +132,12 @@ export default function ShariaAcademyAdmin() {
               </DialogTrigger>
               {editing && (
                 <DialogContent dir="rtl" className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>{editing.id ? "تعديل برنامج" : "برنامج جديد"}</DialogTitle></DialogHeader>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center justify-between gap-2">
+                      <span>{editing.id ? "تعديل برنامج" : "برنامج جديد"}</span>
+                      <DraftStatus state={draft.state} />
+                    </DialogTitle>
+                  </DialogHeader>
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
                     <div><Label>الوصف</Label><RichTextEditor value={editing.description ?? ""} onChange={(html) => setEditing({ ...editing, description: html })} minHeight={200} /></div>

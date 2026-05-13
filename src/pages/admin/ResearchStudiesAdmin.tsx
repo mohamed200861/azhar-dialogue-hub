@@ -19,6 +19,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORY: Record<string, string> = { sharia: "شرعية", intellectual: "فكرية", contemporary: "معاصرة", reports: "تقارير" };
 const PUBLISH: Record<string, string> = { draft: "مسودة", published: "منشور", archived: "مؤرشف" };
@@ -55,6 +57,14 @@ export default function ResearchStudiesAdmin() {
   useEffect(() => { loadItems(); }, []);
   useEffect(() => { loadSubs(); }, [subFilter]);
 
+  const draft = useFormDraft({
+    key: `research:${editing?.id ?? "new"}`,
+    ready: !!editing,
+    value: editing,
+    setValue: setEditing,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.abstract?.trim(),
+  });
+
   const uploadPdf = async (file: File) => {
     if (file.size > 20 * 1024 * 1024) { toast.error("الحد الأقصى 20MB"); return; }
     setUploading(true);
@@ -84,6 +94,7 @@ export default function ResearchStudiesAdmin() {
       if (error) return toast.error(error.message);
     }
     toast.success("تم الحفظ");
+    draft.markSaved();
     setOpen(false); setEditing(null); loadItems();
   };
 
@@ -128,7 +139,12 @@ export default function ResearchStudiesAdmin() {
               </DialogTrigger>
               {editing && (
                 <DialogContent dir="rtl" className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>{editing.id ? "تعديل" : "بحث جديد"}</DialogTitle></DialogHeader>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center justify-between gap-2">
+                      <span>{editing.id ? "تعديل" : "بحث جديد"}</span>
+                      <DraftStatus state={draft.state} />
+                    </DialogTitle>
+                  </DialogHeader>
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
                     <div><Label>المؤلف</Label><Input value={editing.author ?? ""} onChange={(e) => setEditing({ ...editing, author: e.target.value })} /></div>

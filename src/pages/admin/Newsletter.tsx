@@ -17,6 +17,8 @@ import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { NotificationEventsPanel, EmailLogsPanel } from "./NewsletterPanels";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CAMPAIGN_TYPES: Record<string, string> = {
   news: "أخبار", event: "فعالية", library: "مكتبة", live: "بث مباشر", general: "عام",
@@ -36,6 +38,19 @@ export default function Newsletter() {
   const [cContent, setCContent] = useState("");
   const [cType, setCType] = useState("general");
   const [cStatus, setCStatus] = useState("draft");
+
+  // Local autosave for the new-campaign composer.
+  const campaignForm = { cTitle, cContent, cType, cStatus };
+  const setCampaignForm = (v: typeof campaignForm) => {
+    setCTitle(v.cTitle); setCContent(v.cContent); setCType(v.cType); setCStatus(v.cStatus);
+  };
+  const draft = useFormDraft({
+    key: "newsletter-campaign:new",
+    ready: true,
+    value: campaignForm,
+    setValue: setCampaignForm,
+    isEmpty: (v) => !v.cTitle.trim() && !v.cContent.trim(),
+  });
 
   const load = async () => {
     setRows(null);
@@ -93,6 +108,7 @@ export default function Newsletter() {
     if (error) return toast.error(error.message);
     toast.success("تم إنشاء الحملة");
     setCTitle(""); setCContent(""); setCType("general"); setCStatus("draft");
+    draft.markSaved({ cTitle: "", cContent: "", cType: "general", cStatus: "draft" });
     loadCampaigns();
   };
   const removeCampaign = async (id: string) => {
@@ -337,7 +353,10 @@ export default function Newsletter() {
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-bold mb-3">إنشاء حملة جديدة</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold">إنشاء حملة جديدة</h3>
+              <DraftStatus state={draft.state} />
+            </div>
             <div className="space-y-3">
               <div>
                 <Label>العنوان</Label>
