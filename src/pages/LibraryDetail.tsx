@@ -43,8 +43,8 @@ export default function LibraryDetail() {
           image: data.cover_image ? [data.cover_image] : undefined,
           inLanguage: data.language || "ar",
           datePublished: data.published_at || data.created_at,
-          author: data.author
-            ? { "@type": "Person", name: data.author }
+          author: (data as any).author
+            ? { "@type": "Person", name: (data as any).author }
             : { "@type": "Organization", name: data.publisher_source || "اتحاد علماء الأزهر" },
           publisher: {
             "@type": "Organization",
