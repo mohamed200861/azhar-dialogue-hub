@@ -37,11 +37,38 @@ export default function EventDetail() {
         : await q.eq("slug", slug).maybeSingle();
       if (!data) { setEvent(null); return; }
       setEvent(data);
+      const pageUrl = `https://alazharscholarunion.it/events/${data.slug || data.id}`;
       applySeo({
         title: data.title,
         description: data.description,
         image: data.cover_image || undefined,
         type: "article",
+        url: pageUrl,
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: data.title,
+          description: data.description || undefined,
+          image: data.cover_image ? [data.cover_image] : undefined,
+          startDate: data.start_datetime || undefined,
+          endDate: data.end_datetime || undefined,
+          eventStatus:
+            data.status === "cancelled"
+              ? "https://schema.org/EventCancelled"
+              : "https://schema.org/EventScheduled",
+          eventAttendanceMode: data.location
+            ? "https://schema.org/OfflineEventAttendanceMode"
+            : "https://schema.org/OnlineEventAttendanceMode",
+          location: data.location
+            ? { "@type": "Place", name: data.location, address: data.location }
+            : { "@type": "VirtualLocation", url: pageUrl },
+          organizer: {
+            "@type": "Organization",
+            name: data.organizer_source || "اتحاد علماء الأزهر",
+            url: "https://alazharscholarunion.it/",
+          },
+          inLanguage: "ar",
+        },
       });
       const { data: rel } = await supabase
         .from("events").select("id,slug,title,cover_image,event_type,start_datetime,location,status")
