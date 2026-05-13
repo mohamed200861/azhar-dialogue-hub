@@ -112,7 +112,12 @@ export default function CivilizationalDialogueAdmin() {
               </DialogTrigger>
               {editing && (
                 <DialogContent dir="rtl" className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>{editing.id ? "تعديل" : "مبادرة جديدة"}</DialogTitle></DialogHeader>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center justify-between gap-2">
+                      <span>{editing.id ? "تعديل" : "مبادرة جديدة"}</span>
+                      <DraftStatus state={draft.state} />
+                    </DialogTitle>
+                  </DialogHeader>
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
                     <div><Label>الوصف</Label><RichTextEditor value={editing.description ?? ""} onChange={(html) => setEditing({ ...editing, description: html })} minHeight={200} /></div>
