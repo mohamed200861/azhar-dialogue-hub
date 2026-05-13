@@ -28,7 +28,13 @@ export default function Partnerships() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    document.title = `${page?.seo_title || page?.title || "الشراكات"} — اتحاد علماء الأزهر`;
+    applySeo({
+      title: page?.seo_title || page?.title || "الشراكات والتعاون",
+      description:
+        page?.seo_description ||
+        page?.intro ||
+        "فرص تعاون وشراكة مع اتحاد علماء الأزهر في المجالات العلمية والتدريبية والاجتماعية والإعلامية والدعوية.",
+    });
   }, [page]);
 
   const submit = async (e: React.FormEvent) => {
