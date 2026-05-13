@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
 import { supabase } from "@/integrations/supabase/client";
+import { applySeo } from "@/lib/seo";
 
 const areas = [
   { icon: GraduationCap, label: "علمي" },
