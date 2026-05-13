@@ -55,6 +55,14 @@ export default function CivilizationalDialogueAdmin() {
   useEffect(() => { loadItems(); }, []);
   useEffect(() => { loadReqs(); }, [reqFilter]);
 
+  const draft = useFormDraft({
+    key: `civilizational-dialogue:${editing?.id ?? "new"}`,
+    ready: !!editing,
+    value: editing,
+    setValue: setEditing,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.description?.trim(),
+  });
+
   const save = async () => {
     if (!editing?.title?.trim()) return toast.error("العنوان مطلوب");
     const payload: any = { ...editing };
