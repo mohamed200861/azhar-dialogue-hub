@@ -77,6 +77,7 @@ export default function PagesEdit() {
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("تم حفظ الصفحة. سيظهر التحديث على الموقع فورًا.");
+    draft.markSaved();
   };
 
   if (loading || !form) return <div className="p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto" /></div>;
