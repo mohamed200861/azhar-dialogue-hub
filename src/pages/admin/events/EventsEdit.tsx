@@ -46,6 +46,14 @@ export default function EventsEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `event:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.description?.trim(),
+  });
+
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     if (!form.start_datetime) return toast.error("تاريخ البداية مطلوب");
