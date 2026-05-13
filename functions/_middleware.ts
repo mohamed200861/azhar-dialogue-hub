@@ -151,7 +151,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       return {
         title: row.seo_title || row.title,
         description: clamp(stripHtml(row.seo_description || row.excerpt) || DEFAULT_DESC),
-        image: abs(row.cover_image, DEFAULT_IMAGE),
+        image: ogImage(row.cover_image),
         url,
         type: "article",
         publishedAt: row.published_at || row.created_at,
@@ -161,7 +161,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": "NewsArticle",
           headline: row.title,
           description: stripHtml(row.seo_description || row.excerpt) || undefined,
-          image: row.cover_image ? [abs(row.cover_image, DEFAULT_IMAGE)] : undefined,
+          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
           datePublished: row.published_at || row.created_at,
           dateModified: row.updated_at || row.published_at || row.created_at,
           mainEntityOfPage: url,
@@ -189,7 +189,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: abs(row.cover_image, DEFAULT_IMAGE),
+        image: ogImage(row.cover_image),
         url,
         type: "article",
         jsonLd: {
@@ -197,7 +197,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": "Event",
           name: row.title,
           description: stripHtml(row.description) || undefined,
-          image: row.cover_image ? [abs(row.cover_image, DEFAULT_IMAGE)] : undefined,
+          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
           startDate: row.start_datetime || undefined,
           endDate: row.end_datetime || undefined,
           eventStatus:
@@ -230,7 +230,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: abs(row.cover_image, DEFAULT_IMAGE),
+        image: ogImage(row.cover_image),
         url,
         type: "article",
         jsonLd: {
@@ -238,7 +238,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": /كتب|كتاب|book/i.test(row.category || "") ? "Book" : "CreativeWork",
           name: row.title,
           description: stripHtml(row.description) || undefined,
-          image: row.cover_image ? [abs(row.cover_image, DEFAULT_IMAGE)] : undefined,
+          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
           inLanguage: row.language || "ar",
           datePublished: row.published_at || row.created_at,
           publisher: { "@type": "Organization", name: row.publisher_source || SITE_NAME },
@@ -261,7 +261,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: abs(row.thumbnail, DEFAULT_IMAGE),
+        image: ogImage(row.thumbnail),
         url,
         type: "article",
       };
@@ -279,7 +279,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: abs(row.thumbnail, DEFAULT_IMAGE),
+        image: ogImage(row.thumbnail),
         url,
         type: "article",
       };
@@ -325,7 +325,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
         return {
           title: dp.seo_title || dp.title || p.title,
           description: clamp(stripHtml(dp.seo_description || dp.intro) || p.description),
-          image: abs(dp.cover_image, DEFAULT_IMAGE),
+          image: ogImage(dp.cover_image),
           url,
           type: "website",
         };
