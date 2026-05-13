@@ -94,6 +94,7 @@ export default function ResearchStudiesAdmin() {
       if (error) return toast.error(error.message);
     }
     toast.success("تم الحفظ");
+    draft.markSaved();
     setOpen(false); setEditing(null); loadItems();
   };
 
