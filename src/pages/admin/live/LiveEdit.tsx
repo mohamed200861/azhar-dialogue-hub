@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, FlaskConical, Radio, PlayCircle, StopCircle,
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const PLATFORMS = ["YouTube", "Facebook", "Zoom", "Google Meet", "Vimeo", "Other"];
 const PUBLISHERS = ["إدارة الاتحاد", "القسم الإعلامي", "فريق البث", "إدارة الموقع"];
