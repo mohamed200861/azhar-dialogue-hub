@@ -13,6 +13,8 @@ import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, ArrowRight, Save, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { sanitizeSlug } from "@/lib/admin-utils";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 // Section labels per page (Arabic)
 const HOME_SECTION_FIELDS: { key: string; label: string; type?: "text" | "textarea" }[] = [
