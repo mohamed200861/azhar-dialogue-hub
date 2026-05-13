@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, FlaskConical } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug, getYouTubeEmbed, isValidUrl } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
 const PUBLISHERS = ["إدارة الاتحاد","القسم الإعلامي","فريق البث","إدارة الموقع"];
