@@ -101,6 +101,7 @@ export default function PagesEdit() {
         title={`تعديل: ${form.title}`}
         description="التغييرات تظهر على الموقع العام فور الحفظ."
         actions={<>
+          <DraftStatus state={draft.state} />
           <Button asChild variant="outline" size="sm"><a href={publicHref} target="_blank" rel="noopener noreferrer"><ExternalLink className="h-4 w-4" /> معاينة</a></Button>
           <Button onClick={save} disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} حفظ</Button>
         </>}
