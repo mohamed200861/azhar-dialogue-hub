@@ -108,6 +108,7 @@ export default function VideosEdit() {
     <div>
       <Button variant="ghost" asChild className="mb-2"><Link to="/admin/videos"><ArrowRight className="h-4 w-4" /> العودة</Link></Button>
       <PageHeader title={isNew ? "محتوى مرئي جديد" : "تعديل المحتوى"} actions={<>
+        <DraftStatus state={draft.state} />
         <Button variant="outline" onClick={() => save(false)} disabled={saving}><Save className="h-4 w-4" /> مسودة</Button>
         <Button onClick={() => save(true)} disabled={saving}>نشر</Button>
       </>} />
