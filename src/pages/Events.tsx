@@ -17,7 +17,10 @@ export default function EventsPage() {
   const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "الفعاليات — اتحاد علماء الأزهر";
+    applySeo({
+      title: "فعاليات الاتحاد",
+      description: "مؤتمرات وندوات ودورات ولقاءات علمية ودعوية لاتحاد علماء الأزهر.",
+    });
     (async () => {
       const { data } = await supabase.from("events").select("*").eq("publish_status", "published").order("start_datetime", { ascending: false });
       setEvents(data ?? []);
