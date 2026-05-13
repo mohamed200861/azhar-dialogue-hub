@@ -353,7 +353,10 @@ export default function Newsletter() {
           </Card>
 
           <Card className="p-4">
-            <h3 className="font-bold mb-3">إنشاء حملة جديدة</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-bold">إنشاء حملة جديدة</h3>
+              <DraftStatus state={draft.state} />
+            </div>
             <div className="space-y-3">
               <div>
                 <Label>العنوان</Label>
