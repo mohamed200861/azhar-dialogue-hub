@@ -60,6 +60,14 @@ export default function NewsEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `news:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.excerpt?.trim() && !v?.content?.trim(),
+  });
+
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
