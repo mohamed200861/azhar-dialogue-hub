@@ -70,6 +70,14 @@ export default function ShariaAcademyAdmin() {
   useEffect(() => { loadPrograms(); }, []);
   useEffect(() => { loadApps(); }, [appFilter, progFilter]);
 
+  const draft = useFormDraft({
+    key: `sharia-academy:${editing?.id ?? "new"}`,
+    ready: !!editing,
+    value: editing,
+    setValue: setEditing,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.description?.trim(),
+  });
+
   const saveProgram = async () => {
     if (!editing?.title?.trim()) return toast.error("العنوان مطلوب");
     const payload = { ...editing };
