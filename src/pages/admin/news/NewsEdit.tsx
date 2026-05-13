@@ -15,6 +15,8 @@ import { Loader2, ArrowRight, Save, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
 const PUBLISHERS = ["إدارة الاتحاد","فريق التحرير","إدارة الموقع"];
