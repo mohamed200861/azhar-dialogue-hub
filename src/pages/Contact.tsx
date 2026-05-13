@@ -35,6 +35,13 @@ export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", contact_type: REASONS[0], message: "" });
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    applySeo({
+      title: "تواصل معنا",
+      description: "تواصل مع اتحاد علماء الأزهر للاستفسارات والتعاون والشراكات والطلبات الإعلامية.",
+    });
+  }, []);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = schema.safeParse(form);
