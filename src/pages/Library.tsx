@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Download, Eye, Search, Loader2, Star } from "lucide-react";
 import { toast } from "sonner";
+import { applySeo } from "@/lib/seo";
 
 const CATEGORIES = ["كتب","ملفات PDF","بحوث علمية","مقالات علمية","مجلات","إصدارات الاتحاد","مواد تدريبية","المرئيات","الصوتيات"];
 
@@ -18,7 +19,10 @@ export default function LibraryPage() {
   const [year, setYear] = useState<string>("all");
 
   useEffect(() => {
-    document.title = "المكتبة الرقمية — اتحاد علماء الأزهر";
+    applySeo({
+      title: "المكتبة الرقمية",
+      description: "كتب وبحوث وإصدارات اتحاد علماء الأزهر — مكتبة شرعية رقمية مفتوحة للجميع.",
+    });
     (async () => {
       const { data } = await supabase
         .from("library_items")

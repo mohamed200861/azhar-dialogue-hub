@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -11,6 +11,7 @@ import { Mail, MapPin, Facebook, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { fireFormConfirmation } from "@/lib/form-notify";
+import { applySeo } from "@/lib/seo";
 
 const REASONS = [
   "استفسار عام",
@@ -33,6 +34,13 @@ export default function ContactPage() {
   const { settings } = useSiteSettings();
   const [form, setForm] = useState({ name: "", email: "", subject: "", contact_type: REASONS[0], message: "" });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    applySeo({
+      title: "تواصل معنا",
+      description: "تواصل مع اتحاد علماء الأزهر للاستفسارات والتعاون والشراكات والطلبات الإعلامية.",
+    });
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

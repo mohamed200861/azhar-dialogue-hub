@@ -1,9 +1,10 @@
-// Lightweight runtime SEO helper. Updates document title and Open Graph /
-// Twitter Card meta tags so that links shared on social platforms display
-// the correct preview when JS executes (most modern crawlers do).
+// Lightweight runtime SEO helper. Updates document title, Open Graph /
+// Twitter Card meta tags, canonical URL, and optional JSON-LD so links
+// shared on social platforms display the correct preview when JS executes
+// (most modern crawlers do).
 //
-// For platforms that do NOT execute JS (some link unfurlers), `index.html`
-// also ships with sane static defaults.
+// For platforms that do NOT execute JS, `index.html` ships with sane
+// static defaults plus sitewide Organization + WebSite JSON-LD.
 
 type SeoOptions = {
   title?: string;
@@ -11,10 +12,13 @@ type SeoOptions = {
   image?: string; // absolute or root-relative
   type?: "website" | "article";
   url?: string;
+  jsonLd?: Record<string, any> | Record<string, any>[];
 };
 
 const SITE_NAME = "اتحاد علماء الأزهر";
-const DEFAULT_DESC = "اتحاد علماء الأزهر — مؤسسة إسلامية دعوية علمية غير ربحية تنشر المنهج الأزهري الوسطي وتخدم قضايا الأمة.";
+const DEFAULT_TITLE = "اتحاد علماء الأزهر — المنهج الأزهري الوسطي";
+const DEFAULT_DESC =
+  "اتحاد علماء الأزهر — مؤسسة إسلامية دعوية علمية غير ربحية تنشر المنهج الأزهري الوسطي وتخدم قضايا الأمة.";
 const DEFAULT_OG = "/og-image.png";
 
 const DEFAULT_SITE_URL = "https://alazharscholarunion.it";
@@ -24,7 +28,6 @@ function siteOrigin(): string {
   if (env) return env.replace(/\/+$/, "");
   if (typeof window !== "undefined") {
     const o = window.location.origin;
-    // Use the canonical production domain when running on the temporary preview/Pages domain
     if (/lovable\.app$|pages\.dev$/i.test(o)) return DEFAULT_SITE_URL;
     return o;
   }
@@ -37,6 +40,12 @@ function absoluteUrl(pathOrUrl: string): string {
   const origin = siteOrigin();
   if (!origin) return pathOrUrl;
   return `${origin}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+}
+
+function clamp(text: string, max: number): string {
+  if (!text) return text;
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1).trimEnd() + "…";
 }
 
 function setMeta(attr: "name" | "property", key: string, value: string) {
@@ -61,11 +70,40 @@ function setLink(rel: string, href: string) {
   el.setAttribute("href", href);
 }
 
+function setJsonLd(data?: SeoOptions["jsonLd"]) {
+  // Remove any previously-injected per-route JSON-LD blocks.
+  document.head
+    .querySelectorAll('script[type="application/ld+json"][data-seo="route"]')
+    .forEach((el) => el.remove());
+  if (!data) return;
+  const arr = Array.isArray(data) ? data : [data];
+  for (const item of arr) {
+    const s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.setAttribute("data-seo", "route");
+    s.text = JSON.stringify(item);
+    document.head.appendChild(s);
+  }
+}
+
 export function applySeo(opts: SeoOptions = {}) {
-  const title = opts.title ? `${opts.title} — ${SITE_NAME}` : SITE_NAME;
-  const description = opts.description || DEFAULT_DESC;
+  const raw = (opts.title || "").trim();
+  // Dedupe: if title already mentions the brand, don't append it again.
+  let title: string;
+  if (!raw) {
+    title = DEFAULT_TITLE;
+  } else if (raw.includes(SITE_NAME)) {
+    title = raw;
+  } else {
+    title = `${raw} — ${SITE_NAME}`;
+  }
+  title = clamp(title, 70);
+
+  const description = clamp((opts.description || DEFAULT_DESC).trim(), 160);
   const image = absoluteUrl(opts.image || DEFAULT_OG);
-  const url = absoluteUrl(opts.url || (typeof window !== "undefined" ? window.location.pathname : "/"));
+  const url = absoluteUrl(
+    opts.url || (typeof window !== "undefined" ? window.location.pathname + window.location.search : "/"),
+  );
   const type = opts.type || "website";
 
   document.title = title;
@@ -84,9 +122,10 @@ export function applySeo(opts: SeoOptions = {}) {
   setMeta("name", "twitter:title", title);
   setMeta("name", "twitter:description", description);
   setMeta("name", "twitter:image", image);
+
+  setJsonLd(opts.jsonLd);
 }
 
 export function useSeo(opts: SeoOptions) {
-  // Tiny effect helper — used inline to avoid importing react in non-component files.
   if (typeof window !== "undefined") applySeo(opts);
 }

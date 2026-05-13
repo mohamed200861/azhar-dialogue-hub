@@ -28,11 +28,30 @@ export default function NewsDetail() {
         return;
       }
       setPost(data);
+      const pageUrl = `https://alazharscholarunion.it/news/${data.slug || data.id}`;
       applySeo({
         title: data.seo_title || data.title,
         description: data.seo_description || data.excerpt,
         image: data.cover_image || undefined,
         type: "article",
+        url: pageUrl,
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: data.title,
+          description: data.seo_description || data.excerpt || undefined,
+          image: data.cover_image ? [data.cover_image] : undefined,
+          datePublished: data.published_at || data.created_at,
+          dateModified: data.updated_at || data.published_at || data.created_at,
+          inLanguage: "ar",
+          mainEntityOfPage: pageUrl,
+          author: { "@type": "Organization", name: data.publisher_source || "اتحاد علماء الأزهر" },
+          publisher: {
+            "@type": "Organization",
+            name: "اتحاد علماء الأزهر",
+            logo: { "@type": "ImageObject", url: "https://alazharscholarunion.it/logo.png" },
+          },
+        },
       });
       if (data.pdf_attachment) {
         setSignedPdf(await resolveStorageUrl(data.pdf_attachment, 3600));

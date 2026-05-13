@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Radio, Calendar, Clock, Loader2 } from "lucide-react";
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
 
@@ -49,7 +50,10 @@ export default function VideosPage() {
   };
 
   useEffect(() => {
-    document.title = "المرئيات والبث المباشر — اتحاد علماء الأزهر";
+    applySeo({
+      title: "المرئيات والبث المباشر",
+      description: "أحدث محاضرات ولقاءات وبثوث مباشرة لاتحاد علماء الأزهر.",
+    });
     loadAll();
     const channel = supabase
       .channel("videos_live_realtime")

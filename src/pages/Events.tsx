@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tag, Loader2, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, isValidUrl } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
 
@@ -16,7 +17,10 @@ export default function EventsPage() {
   const [type, setType] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "الفعاليات — اتحاد علماء الأزهر";
+    applySeo({
+      title: "فعاليات الاتحاد",
+      description: "مؤتمرات وندوات ودورات ولقاءات علمية ودعوية لاتحاد علماء الأزهر.",
+    });
     (async () => {
       const { data } = await supabase.from("events").select("*").eq("publish_status", "published").order("start_datetime", { ascending: false });
       setEvents(data ?? []);

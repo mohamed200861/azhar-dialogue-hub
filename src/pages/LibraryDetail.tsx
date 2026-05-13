@@ -27,11 +27,33 @@ export default function LibraryDetail() {
         : await query.eq("slug", slug).maybeSingle();
       if (!data) { setItem(null); return; }
       setItem(data);
+      const pageUrl = `https://alazharscholarunion.it/library/${data.slug || data.id}`;
+      const isBook = /كتب|كتاب|book/i.test(data.category || "");
       applySeo({
         title: data.title,
         description: data.description,
         image: data.cover_image || undefined,
         type: "article",
+        url: pageUrl,
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": isBook ? "Book" : "CreativeWork",
+          name: data.title,
+          description: data.description || undefined,
+          image: data.cover_image ? [data.cover_image] : undefined,
+          inLanguage: data.language || "ar",
+          datePublished: data.published_at || data.created_at,
+          author: (data as any).author
+            ? { "@type": "Person", name: (data as any).author }
+            : { "@type": "Organization", name: data.publisher_source || "اتحاد علماء الأزهر" },
+          publisher: {
+            "@type": "Organization",
+            name: data.publisher_source || "اتحاد علماء الأزهر",
+            url: "https://alazharscholarunion.it/",
+          },
+          genre: data.category || undefined,
+          url: pageUrl,
+        },
       });
       if (data.file_url) {
         const signed = await resolveStorageUrl(data.file_url, 3600);
