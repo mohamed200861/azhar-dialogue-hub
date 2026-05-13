@@ -39,6 +39,19 @@ export default function Newsletter() {
   const [cType, setCType] = useState("general");
   const [cStatus, setCStatus] = useState("draft");
 
+  // Local autosave for the new-campaign composer.
+  const campaignForm = { cTitle, cContent, cType, cStatus };
+  const setCampaignForm = (v: typeof campaignForm) => {
+    setCTitle(v.cTitle); setCContent(v.cContent); setCType(v.cType); setCStatus(v.cStatus);
+  };
+  const draft = useFormDraft({
+    key: "newsletter-campaign:new",
+    ready: true,
+    value: campaignForm,
+    setValue: setCampaignForm,
+    isEmpty: (v) => !v.cTitle.trim() && !v.cContent.trim(),
+  });
+
   const load = async () => {
     setRows(null);
     let q = supabase.from("newsletter_subscribers").select("*").order("subscribed_at", { ascending: false });
