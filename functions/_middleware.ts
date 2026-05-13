@@ -21,18 +21,28 @@ const DEFAULT_DESC =
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-image.png`;
 
 const CRAWLER_RE =
-  /facebookexternalhit|facebookcatalog|whatsapp|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|skypeuripreview|pinterest|redditbot|embedly|quora link preview|outbrain|vkshare|w3c_validator|baiduspider|applebot|bingbot|googlebot|google-inspectiontool|yandexbot|duckduckbot|tumblr|nuzzel|bitlybot|chatwork|line|kakaotalk|viber/i;
+  /facebookexternalhit|facebookcatalog|facebot|whatsapp(?:\/\d+)?|twitterbot|linkedinbot|telegrambot|slackbot|discordbot|skypeuripreview|pinterest|redditbot|embedly|quora link preview|outbrain|vkshare|w3c_validator|baiduspider|applebot|bingbot|googlebot|google-inspectiontool|yandexbot|duckduckbot|tumblr|nuzzel|bitlybot|chatwork|line|kakaotalk|viber/i;
+
+const SOCIAL_PREVIEW_RE =
+  /^\/social-preview\/(news|events|videos|live|library)\/([^/?#]+)\.jpg$/i;
+
+type SocialPreviewKind = "news" | "events" | "videos" | "live" | "library";
 
 type Meta = {
   title: string;
   description: string;
   image: string;
+  sourceImage?: string;
   url: string;
   type: "website" | "article";
   publishedAt?: string;
   modifiedAt?: string;
   jsonLd?: Record<string, any>;
 };
+
+function socialPreviewUrl(kind: SocialPreviewKind, slug: string): string {
+  return `${SITE_ORIGIN}/social-preview/${kind}/${encodeURIComponent(slug)}.jpg`;
+}
 
 function abs(pathOrUrl: string | null | undefined, fallback: string): string {
   if (!pathOrUrl) return fallback;
@@ -136,6 +146,43 @@ async function fetchOne(
   return rows && rows.length ? rows[0] : null;
 }
 
+async function fetchSocialPreviewImage(pathname: string): Promise<Response | null> {
+  const match = pathname.match(SOCIAL_PREVIEW_RE);
+  if (!match) return null;
+
+  const [, kind, rawSlug] = match;
+  const slug = decodeURIComponent(rawSlug);
+  const pagePath = `/${kind}/${encodeURIComponent(slug)}`;
+  const meta = await metaForRoute(pagePath, `${SITE_ORIGIN}${pagePath}`);
+  const sourceUrl = meta?.sourceImage || DEFAULT_IMAGE;
+  const imageRequest = {
+    cf: {
+      image: {
+        fit: "cover",
+        width: 1200,
+        height: 630,
+        quality: 80,
+        format: "jpeg",
+        metadata: "none",
+      },
+    },
+  } as RequestInit & { cf: { image: Record<string, unknown> } };
+
+  let response = await fetch(sourceUrl, imageRequest);
+  if (!response.ok) {
+    response = await fetch(DEFAULT_IMAGE, imageRequest);
+  }
+  if (!response.ok) {
+    return null;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("content-type", "image/jpeg");
+  headers.set("cache-control", "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800");
+  headers.delete("set-cookie");
+  return new Response(response.body, { status: response.status, headers });
+}
+
 async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | null> {
   const url = `${SITE_ORIGIN}${pathname}`;
 
@@ -148,10 +195,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       "&status=eq.published",
     );
     if (row) {
+      const sourceImage = abs(row.cover_image, DEFAULT_IMAGE);
       return {
         title: row.seo_title || row.title,
         description: clamp(stripHtml(row.seo_description || row.excerpt) || DEFAULT_DESC),
-        image: ogImage(row.cover_image),
+        image: row.cover_image ? socialPreviewUrl("news", row.slug || row.id) : DEFAULT_IMAGE,
+        sourceImage,
         url,
         type: "article",
         publishedAt: row.published_at || row.created_at,
@@ -161,7 +210,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": "NewsArticle",
           headline: row.title,
           description: stripHtml(row.seo_description || row.excerpt) || undefined,
-          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
+          image: row.cover_image ? [socialPreviewUrl("news", row.slug || row.id)] : undefined,
           datePublished: row.published_at || row.created_at,
           dateModified: row.updated_at || row.published_at || row.created_at,
           mainEntityOfPage: url,
@@ -186,10 +235,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       "&publish_status=eq.published",
     );
     if (row) {
+      const sourceImage = abs(row.cover_image, DEFAULT_IMAGE);
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: ogImage(row.cover_image),
+        image: row.cover_image ? socialPreviewUrl("events", row.slug || row.id) : DEFAULT_IMAGE,
+        sourceImage,
         url,
         type: "article",
         jsonLd: {
@@ -197,7 +248,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": "Event",
           name: row.title,
           description: stripHtml(row.description) || undefined,
-          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
+          image: row.cover_image ? [socialPreviewUrl("events", row.slug || row.id)] : undefined,
           startDate: row.start_datetime || undefined,
           endDate: row.end_datetime || undefined,
           eventStatus:
@@ -227,10 +278,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       "&status=eq.published",
     );
     if (row) {
+      const sourceImage = abs(row.cover_image, DEFAULT_IMAGE);
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: ogImage(row.cover_image),
+        image: row.cover_image ? socialPreviewUrl("library", row.slug || row.id) : DEFAULT_IMAGE,
+        sourceImage,
         url,
         type: "article",
         jsonLd: {
@@ -238,7 +291,7 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
           "@type": /كتب|كتاب|book/i.test(row.category || "") ? "Book" : "CreativeWork",
           name: row.title,
           description: stripHtml(row.description) || undefined,
-          image: row.cover_image ? [ogImage(row.cover_image)] : undefined,
+          image: row.cover_image ? [socialPreviewUrl("library", row.slug || row.id)] : undefined,
           inLanguage: row.language || "ar",
           datePublished: row.published_at || row.created_at,
           publisher: { "@type": "Organization", name: row.publisher_source || SITE_NAME },
@@ -258,10 +311,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       "&status=eq.published",
     );
     if (row) {
+      const sourceImage = abs(row.thumbnail, DEFAULT_IMAGE);
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: ogImage(row.thumbnail),
+        image: row.thumbnail ? socialPreviewUrl("videos", row.slug || row.id) : DEFAULT_IMAGE,
+        sourceImage,
         url,
         type: "article",
       };
@@ -276,10 +331,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       "id,slug,title,description,thumbnail,scheduled_at,status",
     );
     if (row) {
+      const sourceImage = abs(row.thumbnail, DEFAULT_IMAGE);
       return {
         title: row.title,
         description: clamp(stripHtml(row.description) || DEFAULT_DESC),
-        image: ogImage(row.thumbnail),
+        image: row.thumbnail ? socialPreviewUrl("live", row.slug || row.id) : DEFAULT_IMAGE,
+        sourceImage,
         url,
         type: "article",
       };
@@ -322,10 +379,12 @@ async function metaForRoute(pathname: string, fullUrl: string): Promise<Meta | n
       );
       const dp = rows && rows[0];
       if (dp) {
+        const sourceImage = abs(dp.cover_image, DEFAULT_IMAGE);
         return {
           title: dp.seo_title || dp.title || p.title,
           description: clamp(stripHtml(dp.seo_description || dp.intro) || p.description),
           image: ogImage(dp.cover_image),
+          sourceImage,
           url,
           type: "website",
         };
