@@ -110,6 +110,7 @@ export default function LiveEdit() {
     if (error) return toast.error(error.message);
     toast.success("تم الحفظ");
     if (overrides.status) setForm((f: any) => ({ ...f, ...overrides }));
+    draft.markSaved();
     return newId;
   };
 
