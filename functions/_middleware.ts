@@ -369,7 +369,7 @@ function buildHead(meta: Meta): string {
     <meta property="og:url" content="${url}" />
     <meta property="og:image" content="${img}" />
     <meta property="og:image:secure_url" content="${img}" />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:type" content="${escAttr(imageMime(meta.image))}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="ar_AR" />
