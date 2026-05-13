@@ -42,6 +42,34 @@ function abs(pathOrUrl: string | null | undefined, fallback: string): string {
   return `${SITE_ORIGIN}${v.startsWith("/") ? "" : "/"}${v}`;
 }
 
+/**
+ * Convert any image URL into a social-preview-friendly variant.
+ * - Supabase storage public URLs are routed through the image-transformation
+ *   endpoint at 1200x630 so WhatsApp/FB/Telegram receive a small (<300KB)
+ *   correctly-sized image. (Original covers can be 2-3MB which WhatsApp drops.)
+ * - Other absolute URLs are returned as-is.
+ * - Falsy values fall back to the default OG image.
+ */
+function ogImage(pathOrUrl: string | null | undefined): string {
+  const u = abs(pathOrUrl, DEFAULT_IMAGE);
+  // Rewrite Supabase public storage URLs to the resizing endpoint.
+  // /storage/v1/object/public/<bucket>/<path>  ->  /storage/v1/render/image/public/<bucket>/<path>?...
+  const m = u.match(/^(https?:\/\/[^/]+)\/storage\/v1\/object\/public\/(.+)$/i);
+  if (m) {
+    return `${m[1]}/storage/v1/render/image/public/${m[2]}?width=1200&height=630&resize=cover&quality=80`;
+  }
+  return u;
+}
+
+function imageMime(url: string): string {
+  const u = url.toLowerCase().split("?")[0];
+  if (u.endsWith(".png")) return "image/png";
+  if (u.endsWith(".webp")) return "image/webp";
+  if (u.endsWith(".gif")) return "image/gif";
+  // Supabase render endpoint returns JPEG by default; covers are usually jpg.
+  return "image/jpeg";
+}
+
 function stripHtml(html: string | null | undefined): string {
   if (!html) return "";
   return String(html)
