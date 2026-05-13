@@ -50,7 +50,10 @@ export default function VideosPage() {
   };
 
   useEffect(() => {
-    document.title = "المرئيات والبث المباشر — اتحاد علماء الأزهر";
+    applySeo({
+      title: "المرئيات والبث المباشر",
+      description: "أحدث محاضرات ولقاءات وبثوث مباشرة لاتحاد علماء الأزهر.",
+    });
     loadAll();
     const channel = supabase
       .channel("videos_live_realtime")
