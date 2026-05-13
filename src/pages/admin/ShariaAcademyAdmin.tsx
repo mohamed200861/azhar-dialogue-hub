@@ -90,6 +90,7 @@ export default function ShariaAcademyAdmin() {
       if (error) return toast.error(error.message);
     }
     toast.success("تم الحفظ");
+    draft.markSaved();
     setOpenDialog(false);
     setEditing(null);
     loadPrograms();
