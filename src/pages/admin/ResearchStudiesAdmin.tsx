@@ -139,7 +139,12 @@ export default function ResearchStudiesAdmin() {
               </DialogTrigger>
               {editing && (
                 <DialogContent dir="rtl" className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader><DialogTitle>{editing.id ? "تعديل" : "بحث جديد"}</DialogTitle></DialogHeader>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center justify-between gap-2">
+                      <span>{editing.id ? "تعديل" : "بحث جديد"}</span>
+                      <DraftStatus state={draft.state} />
+                    </DialogTitle>
+                  </DialogHeader>
                   <div className="space-y-3">
                     <div><Label>العنوان</Label><Input value={editing.title} onChange={(e) => setEditing({ ...editing, title: e.target.value })} /></div>
                     <div><Label>المؤلف</Label><Input value={editing.author ?? ""} onChange={(e) => setEditing({ ...editing, author: e.target.value })} /></div>
