@@ -46,6 +46,14 @@ export default function VideosEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `video:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.video_url?.trim() && !v?.description?.trim(),
+  });
+
   const save = async (publish?: boolean) => {
     if (!form.title.trim()) return toast.error("العنوان مطلوب");
     if (!isValidUrl(form.video_url)) return toast.error("يرجى إدخال رابط صحيح يبدأ بـ https://");
