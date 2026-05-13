@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, Tag, Loader2, Radio, ExternalLink } from "lucide-react";
 import { formatDateTime, isValidUrl } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const TYPES = ["مؤتمرات","ندوات","دورات","لقاءات","محاضرات","بث مباشر"];
 
