@@ -108,6 +108,7 @@ export default function Newsletter() {
     if (error) return toast.error(error.message);
     toast.success("تم إنشاء الحملة");
     setCTitle(""); setCContent(""); setCType("general"); setCStatus("draft");
+    draft.markSaved({ cTitle: "", cContent: "", cType: "general", cStatus: "draft" });
     loadCampaigns();
   };
   const removeCampaign = async (id: string) => {
