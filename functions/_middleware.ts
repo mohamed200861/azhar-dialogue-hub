@@ -458,6 +458,11 @@ export const onRequest: PagesFunction = async (ctx) => {
     return Response.redirect(target, 301);
   }
 
+  const socialImage = await fetchSocialPreviewImage(url.pathname);
+  if (socialImage) {
+    return socialImage;
+  }
+
   const isCrawler = CRAWLER_RE.test(ua);
   const accept = req.headers.get("accept") || "";
   const wantsHtml = req.method === "GET" && (accept.includes("text/html") || accept === "*/*" || accept === "");
