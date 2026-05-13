@@ -7,6 +7,7 @@ import { PageHero } from "@/components/PageHero";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Radio, Calendar, Clock, Loader2 } from "lucide-react";
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
+import { applySeo } from "@/lib/seo";
 
 const CATEGORIES = ["بث مباشر","محاضرات","لقاءات","دروس قصيرة","ندوات مسجلة","تسجيلات","برامج توعوية"];
 
