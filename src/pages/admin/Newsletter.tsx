@@ -17,6 +17,8 @@ import { formatDateTime } from "@/lib/admin-utils";
 import { toast } from "sonner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { NotificationEventsPanel, EmailLogsPanel } from "./NewsletterPanels";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 const CAMPAIGN_TYPES: Record<string, string> = {
   news: "أخبار", event: "فعالية", library: "مكتبة", live: "بث مباشر", general: "عام",
