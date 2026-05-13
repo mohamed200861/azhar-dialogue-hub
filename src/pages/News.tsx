@@ -18,7 +18,10 @@ export default function NewsPage() {
   const [cat, setCat] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "الأخبار والبيانات — اتحاد علماء الأزهر";
+    applySeo({
+      title: "الأخبار والبيانات الرسمية",
+      description: "آخر بيانات اتحاد علماء الأزهر وأنشطته العلمية والدعوية ومقالاته وقضاياه المعاصرة.",
+    });
     (async () => {
       const { data } = await supabase
         .from("news_posts")
