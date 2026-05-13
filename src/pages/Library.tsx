@@ -19,7 +19,10 @@ export default function LibraryPage() {
   const [year, setYear] = useState<string>("all");
 
   useEffect(() => {
-    document.title = "المكتبة الرقمية — اتحاد علماء الأزهر";
+    applySeo({
+      title: "المكتبة الرقمية",
+      description: "كتب وبحوث وإصدارات اتحاد علماء الأزهر — مكتبة شرعية رقمية مفتوحة للجميع.",
+    });
     (async () => {
       const { data } = await supabase
         .from("library_items")
