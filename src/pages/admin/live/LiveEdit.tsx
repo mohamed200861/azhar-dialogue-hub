@@ -53,6 +53,14 @@ export default function LiveEdit() {
     })();
   }, [id]);
 
+  const draft = useFormDraft({
+    key: `live:${id ?? "new"}`,
+    ready: !loading,
+    value: form,
+    setValue: setForm,
+    isEmpty: (v: any) => !v?.title?.trim() && !v?.live_url?.trim() && !v?.description?.trim(),
+  });
+
   const buildPayload = (overrides: Partial<any> = {}) => {
     const embed = form.embed_url?.trim() || (form.live_url ? getYouTubeEmbed(form.live_url) ?? "" : "");
     return {
