@@ -232,8 +232,35 @@ export default function Home() {
         </section>
       )}
 
+      {/* ABOUT — compact (moved to top) */}
+      <section className="py-14 md:py-16 bg-gradient-soft">
+        <div className="container-narrow grid lg:grid-cols-2 gap-10 items-center">
+          <div>
+            <span className="eyebrow">من نحن</span>
+            <h2 className="heading-section mt-3 mb-4">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
+            <p className="text-muted-foreground leading-relaxed mb-5 line-clamp-5">{about.full}</p>
+            <Button asChild variant="outline">
+              <Link to="/about">اقرأ المزيد عنا <ArrowLeft className="h-4 w-4" /></Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { icon: Calendar, label: "التأسيس", value: site.founded },
+              { icon: MapPin, label: "مجال العمل", value: "عالمي" },
+              { icon: Building2, label: "الكيان", value: "غير ربحية" },
+              { icon: Sparkles, label: "المنهج", value: "أزهري وسطي" },
+            ].map((item, i) => (
+              <div key={i} className="card-elegant p-4">
+                <item.icon className="h-5 w-5 text-primary mb-2" />
+                <div className="text-[11px] text-muted-foreground">{item.label}</div>
+                <div className="font-semibold text-sm text-foreground mt-0.5">{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* SPECIALIZED SECTIONS — moved up */}
+      {/* SPECIALIZED SECTIONS */}
       <section className="section-padding">
         <div className="container-wide">
           <div className="text-center mb-10">
@@ -421,63 +448,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* PARTNERSHIPS CTA */}
-      <section className="py-16 md:py-20">
-        <div className="container-narrow">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-hero text-primary-foreground p-10 md:p-14 text-center">
-            <div className="absolute inset-0 pattern-islamic opacity-20" />
-            <div className="relative">
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-foreground/80">الشراكات</span>
-              <h2 className="heading-section mt-3 mb-4 max-w-2xl mx-auto">شراكاتنا المؤسسية</h2>
-              <p className="text-primary-foreground/85 max-w-2xl mx-auto mb-8 leading-relaxed">{ui.partnerCta}</p>
-              <div className="flex flex-wrap justify-center gap-3">
-                <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
-                  <a href={`mailto:${settings.contact_email}`}>
-                    <Mail className="h-4 w-4" /> {settings.contact_email}
-                  </a>
-                </Button>
-                {settings.facebook_url && (
-                  <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground">
-                    <a href={settings.facebook_url} target="_blank" rel="noreferrer">
-                      <Facebook className="h-4 w-4" /> فيسبوك
-                    </a>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ABOUT — compact */}
-      <section className="py-14 md:py-16 bg-gradient-soft">
-        <div className="container-narrow grid lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <span className="eyebrow">من نحن</span>
-            <h2 className="heading-section mt-3 mb-4">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
-            <p className="text-muted-foreground leading-relaxed mb-5 line-clamp-5">{about.full}</p>
-            <Button asChild variant="outline">
-              <Link to="/about">اقرأ المزيد عنا <ArrowLeft className="h-4 w-4" /></Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: Calendar, label: "التأسيس", value: site.founded },
-              { icon: MapPin, label: "مجال العمل", value: "عالمي" },
-              { icon: Building2, label: "الكيان", value: "غير ربحية" },
-              { icon: Sparkles, label: "المنهج", value: "أزهري وسطي" },
-            ].map((item, i) => (
-              <div key={i} className="card-elegant p-4">
-                <item.icon className="h-5 w-5 text-primary mb-2" />
-                <div className="text-[11px] text-muted-foreground">{item.label}</div>
-                <div className="font-semibold text-sm text-foreground mt-0.5">{item.value}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* VISION & MISSION — compact */}
       <section className="py-12 md:py-14">
         <div className="container-narrow">
           <div className="text-center mb-8">
@@ -546,6 +517,34 @@ export default function Home() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* PARTNERSHIPS CTA — moved to bottom */}
+      <section className="py-16 md:py-20">
+        <div className="container-narrow">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-hero text-primary-foreground p-10 md:p-14 text-center">
+            <div className="absolute inset-0 pattern-islamic opacity-20" />
+            <div className="relative">
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-primary-foreground/80">الشراكات</span>
+              <h2 className="heading-section mt-3 mb-4 max-w-2xl mx-auto">شراكاتنا المؤسسية</h2>
+              <p className="text-primary-foreground/85 max-w-2xl mx-auto mb-8 leading-relaxed">{ui.partnerCta}</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Button asChild size="lg" className="bg-white text-primary hover:bg-white/90">
+                  <a href={`mailto:${settings.contact_email}`}>
+                    <Mail className="h-4 w-4" /> {settings.contact_email}
+                  </a>
+                </Button>
+                {settings.facebook_url && (
+                  <Button asChild size="lg" variant="outline" className="border-white/30 bg-white/5 text-primary-foreground hover:bg-white/15 hover:text-primary-foreground">
+                    <a href={settings.facebook_url} target="_blank" rel="noreferrer">
+                      <Facebook className="h-4 w-4" /> فيسبوك
+                    </a>
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>
