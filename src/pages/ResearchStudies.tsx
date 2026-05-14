@@ -69,7 +69,7 @@ export default function ResearchStudies() {
       if (file) {
         if (file.size > 15 * 1024 * 1024) throw new Error("حجم الملف يجب ألا يتجاوز 15 ميغابايت");
         if (file.type !== "application/pdf") throw new Error("يجب أن يكون الملف من نوع PDF");
-        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.pdf`;
+        const path = `${crypto.randomUUID()}/${Date.now()}.pdf`;
         const up = await supabase.storage.from("research-submissions").upload(path, file, { contentType: "application/pdf", upsert: false });
         if (up.error) throw up.error;
         attachment_url = up.data.path;

@@ -96,6 +96,21 @@ Deno.serve(async (req) => {
   const userEmail = (rec.email as string | undefined)?.toLowerCase() ?? "";
   const fullName = (rec.full_name as string | undefined) ?? (rec.name as string | undefined) ?? userEmail.split("@")[0] ?? "—";
 
+  // Idempotency: if we already sent an admin alert for this record, do not resend.
+  // This prevents anyone with the record UUID from triggering repeated emails.
+  const { data: existing } = await supabase
+    .from("email_send_log")
+    .select("id")
+    .eq("template_name", `admin_alert:${ft}`)
+    .filter("metadata->>record_id", "eq", id)
+    .limit(1)
+    .maybeSingle();
+  if (existing) {
+    return new Response(JSON.stringify({ ok: true, deduped: true }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   // 1. user confirmation
   if (userEmail) {
     const result = await sendEmail({

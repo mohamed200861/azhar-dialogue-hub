@@ -81,7 +81,7 @@ export default function FatwaArbitration() {
           return;
         }
         const ext = file.name.split(".").pop() || "bin";
-        const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const path = `${crypto.randomUUID()}/${Date.now()}.${ext}`;
         const up = await supabase.storage.from("fatwa-attachments").upload(path, file, {
           contentType: file.type,
           upsert: false,
