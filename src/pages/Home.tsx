@@ -166,7 +166,7 @@ export default function Home() {
       {/* NEWS TICKER */}
       <NewsTicker />
 
-
+      {/* LIVE */}
       {(liveNow || liveScheduled) && (
         <section className="bg-gradient-to-l from-red-700 via-red-600 to-red-700 text-white border-y-4 border-red-800">
           <div className="container-wide py-8">
