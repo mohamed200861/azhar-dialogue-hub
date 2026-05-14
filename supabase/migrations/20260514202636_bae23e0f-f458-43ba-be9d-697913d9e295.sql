@@ -1,0 +1,1 @@
+REVOKE SELECT (internal_notes) ON public.live_streams FROM anon;
