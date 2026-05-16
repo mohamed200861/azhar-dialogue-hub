@@ -90,6 +90,7 @@ export default function Settings() {
         description="هذه الإعدادات تظهر مباشرة على الموقع العام."
         actions={
           <>
+            <DraftStatus state={draft.state} />
             <Button variant="outline" onClick={forceRefresh} disabled={refreshing}>
               {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               تحديث البيانات الآن
