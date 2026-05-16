@@ -119,6 +119,8 @@ const App = () => (
                 <Route path="messages" element={<Messages />} />
                 <Route path="newsletter" element={<Newsletter />} />
                 <Route path="fatwa-arbitration" element={<FatwaRequests />} />
+                <Route path="fatwa-arbitration/files" element={<FatwaFilesAdmin />} />
+                <Route path="feedback" element={<FeedbackAdmin />} />
                 <Route path="sharia-academy" element={<ShariaAcademyAdmin />} />
                 <Route path="civilizational-dialogue" element={<CivilizationalDialogueAdmin />} />
                 <Route path="research-studies" element={<ResearchStudiesAdmin />} />
