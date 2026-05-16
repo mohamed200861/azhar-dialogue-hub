@@ -8,6 +8,7 @@ import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react"
 import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 
 export default function NewsDetail() {
   const { slug } = useParams();
