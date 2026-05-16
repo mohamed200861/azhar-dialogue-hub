@@ -433,74 +433,35 @@ export default function Home() {
       )}
 
 
-      <section className="py-12 md:py-14">
-        <div className="container-narrow">
-          <div className="text-center mb-8">
-            <span className="eyebrow">التوجهات</span>
-            <h2 className="heading-section mt-2 text-2xl md:text-3xl">الرؤية والرسالة</h2>
-          </div>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="card-elegant p-6">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary mb-3">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">رؤيتنا</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{vision}</p>
-            </div>
-            <div className="card-elegant p-6">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-crimson/10 text-crimson mb-3">
-                <HeartHandshake className="h-5 w-5" />
-              </div>
-              <h3 className="text-lg font-bold mb-2">رسالتنا</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{mission}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VALUES — compact */}
-      <section className="py-12 md:py-14 bg-gradient-soft">
+      {/* QUICK LINKS — replaces vision/values/work-areas heavy blocks */}
+      <section className="section-padding bg-gradient-soft">
         <div className="container-wide">
-          <div className="text-center mb-8">
-            <span className="eyebrow">قيمنا</span>
-            <h2 className="heading-section mt-2 text-2xl md:text-3xl">القيم التي نلتزم بها</h2>
+          <div className="text-center mb-10">
+            <span className="eyebrow">روابط مهمة</span>
+            <h2 className="heading-section mt-3">استكشف أقسام الاتحاد</h2>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-            {values.map((v, i) => {
-              const Icon = iconMap[v.icon] || Sparkles;
-              return (
-                <div key={i} className="card-elegant p-3 text-center">
-                  <div className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 text-primary mb-2">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div className="font-semibold text-xs">{v.label}</div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { icon: BookOpen, title: "المكتبة", desc: "كتب وإصدارات الاتحاد متاحة للقراءة والتحميل.", href: "/library" },
+              { icon: FileText, title: "البحوث والدراسات", desc: "بحوث ودراسات شرعية وفكرية معاصرة.", href: "/research-studies" },
+              { icon: GraduationCap, title: "أكاديمية العلوم الشرعية", desc: "برامج تعليمية ودبلومات وإجازات.", href: "/sharia-academy" },
+              { icon: MessageCircle, title: "الحوار والتواصل الحضاري", desc: "تعزيز الحوار بين الأديان والثقافات.", href: "/civilizational-dialogue" },
+              { icon: Gavel, title: "الفتوى والتحكيم الشرعي", desc: "فتاوى وتحكيم وفق منهج وسطي.", href: "/fatwa-arbitration" },
+              { icon: PlayCircle, title: "المرئيات", desc: "محاضرات ولقاءات وبثوث الاتحاد.", href: "/videos" },
+              { icon: Calendar, title: "الفعاليات", desc: "آخر الفعاليات والمؤتمرات.", href: "/events" },
+              { icon: Mail, title: "النشرة البريدية", desc: "اشترك لتصلك أهم الأخبار.", href: "/newsletter" },
+            ].map((q, i) => (
+              <Link key={i} to={q.href} className="card-elegant p-5 flex flex-col group hover:shadow-elegant transition-shadow">
+                <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 text-primary mb-3">
+                  <q.icon className="h-5 w-5" />
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* WORK AREAS — compact */}
-      <section className="py-12 md:py-14">
-        <div className="container-wide">
-          <div className="text-center mb-8">
-            <span className="eyebrow">ميادين العمل</span>
-            <h2 className="heading-section mt-2 text-2xl md:text-3xl">مجالات عمل الاتحاد</h2>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {workAreas.map((f, i) => {
-              const Icon = iconMap[f.icon] || Sparkles;
-              return (
-                <div key={i} className="card-elegant p-4 text-center">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-emerald text-primary-foreground mb-2 mx-auto">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="font-bold text-sm mb-1">{f.title}</h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-snug">{f.desc}</p>
-                </div>
-              );
-            })}
+                <h3 className="font-bold mb-1">{q.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed flex-1">{q.desc}</p>
+                <span className="text-xs font-semibold text-primary mt-3 inline-flex items-center gap-1 group-hover:gap-2 transition-all">
+                  زيارة <ArrowLeft className="h-3 w-3" />
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
