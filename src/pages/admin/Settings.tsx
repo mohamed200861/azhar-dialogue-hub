@@ -11,6 +11,8 @@ import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { refreshSiteSettings } from "@/hooks/useSiteSettings";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 export default function Settings() {
   const [loading, setLoading] = useState(true);
