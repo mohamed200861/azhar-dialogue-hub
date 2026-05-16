@@ -55,6 +55,13 @@ export default function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const draft = useFormDraft({
+    key: "settings:site",
+    ready: !loading,
+    value: s,
+    setValue: setS,
+  });
+
   const save = async () => {
     setSaving(true);
     const upserts = Object.entries(s).map(([key, value]) => ({ key, value: { value } as any }));
@@ -63,6 +70,7 @@ export default function Settings() {
     await refreshSiteSettings();
     setSaving(false);
     toast.success("تم حفظ الإعدادات. سيظهر التحديث على الموقع فورًا.");
+    draft.markSaved();
   };
 
   const forceRefresh = async () => {
