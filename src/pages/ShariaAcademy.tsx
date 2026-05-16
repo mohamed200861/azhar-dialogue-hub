@@ -202,6 +202,7 @@ export default function ShariaAcademy() {
             </form>
           )}
         </Card>
+        <ReaderFeedback entityType="academy" pagePath="/sharia-academy" />
       </section>
     </SiteLayout>
   );
