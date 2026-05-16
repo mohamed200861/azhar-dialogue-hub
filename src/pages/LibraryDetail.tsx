@@ -153,6 +153,9 @@ export default function LibraryDetail() {
             </div>
           </section>
         )}
+        <div className="container-narrow">
+          <ReaderFeedback entityType="library" entityId={item.id} pagePath={`/library/${item.slug || item.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );
