@@ -232,31 +232,15 @@ export default function Home() {
         </section>
       )}
 
-      {/* ABOUT — compact (moved to top) */}
-      <section className="py-14 md:py-16 bg-gradient-soft">
-        <div className="container-narrow grid lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <span className="eyebrow">من نحن</span>
-            <h2 className="heading-section mt-3 mb-4">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
-            <p className="text-muted-foreground leading-relaxed mb-5 line-clamp-5">{about.full}</p>
-            <Button asChild variant="outline">
-              <Link to="/about">اقرأ المزيد عنا <ArrowLeft className="h-4 w-4" /></Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: Calendar, label: "التأسيس", value: site.founded },
-              { icon: MapPin, label: "مجال العمل", value: "عالمي" },
-              { icon: Building2, label: "الكيان", value: "غير ربحية" },
-              { icon: Sparkles, label: "المنهج", value: "أزهري وسطي" },
-            ].map((item, i) => (
-              <div key={i} className="card-elegant p-4">
-                <item.icon className="h-5 w-5 text-primary mb-2" />
-                <div className="text-[11px] text-muted-foreground">{item.label}</div>
-                <div className="font-semibold text-sm text-foreground mt-0.5">{item.value}</div>
-              </div>
-            ))}
-          </div>
+      {/* ABOUT — compact (no stats) */}
+      <section className="py-12 md:py-14 bg-gradient-soft">
+        <div className="container-narrow text-center">
+          <span className="eyebrow">من نحن</span>
+          <h2 className="heading-section mt-3 mb-4">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
+          <p className="text-muted-foreground leading-relaxed mb-5 line-clamp-4 max-w-3xl mx-auto">{about.full}</p>
+          <Button asChild variant="outline">
+            <Link to="/about">اقرأ المزيد عنا <ArrowLeft className="h-4 w-4" /></Link>
+          </Button>
         </div>
       </section>
 
