@@ -520,6 +520,57 @@ export type Database = {
         }
         Relationships: []
       }
+      fatwa_public_files: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          display_order: number
+          download_count: number
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          publish_status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          download_count?: number
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          publish_status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          display_order?: number
+          download_count?: number
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          publish_status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       library_items: {
         Row: {
           category: string
@@ -919,6 +970,51 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      reader_feedback: {
+        Row: {
+          author_email: string | null
+          author_name: string
+          comment: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          id: string
+          page_path: string | null
+          rating: number
+          status: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          author_email?: string | null
+          author_name: string
+          comment?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          page_path?: string | null
+          rating: number
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          author_email?: string | null
+          author_name?: string
+          comment?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          page_path?: string | null
+          rating?: number
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
         }
         Relationships: []
       }

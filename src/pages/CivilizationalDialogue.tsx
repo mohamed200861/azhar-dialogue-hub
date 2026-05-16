@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { PageHero } from "@/components/PageHero";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -144,6 +145,7 @@ export default function CivilizationalDialogue() {
             </form>
           )}
         </Card>
+        <ReaderFeedback entityType="dialogue" pagePath="/civilizational-dialogue" />
       </section>
     </SiteLayout>
   );

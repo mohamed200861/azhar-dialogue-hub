@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PdfViewer } from "@/components/PdfViewer";
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 
 export default function LibraryDetail() {
   const { slug } = useParams();
@@ -152,6 +153,9 @@ export default function LibraryDetail() {
             </div>
           </section>
         )}
+        <div className="container-narrow">
+          <ReaderFeedback entityType="library" entityId={item.id} pagePath={`/library/${item.slug || item.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );

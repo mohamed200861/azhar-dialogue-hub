@@ -8,6 +8,7 @@ import { Loader2, ArrowRight, Calendar, MapPin, Tag, Radio, ExternalLink } from 
 import { formatDateTime, formatDate, isValidUrl } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 
 const STATUS_LABEL: Record<string, string> = {
   upcoming: "قادم",
@@ -170,6 +171,9 @@ export default function EventDetail() {
             </div>
           </section>
         )}
+        <div className="container-narrow">
+          <ReaderFeedback entityType="event" entityId={event.id} pagePath={`/events/${event.slug || event.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );

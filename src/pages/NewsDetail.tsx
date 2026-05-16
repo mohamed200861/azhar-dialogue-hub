@@ -8,6 +8,7 @@ import { Loader2, ArrowRight, Calendar, Download, FileText } from "lucide-react"
 import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 
 export default function NewsDetail() {
   const { slug } = useParams();
@@ -125,6 +126,10 @@ export default function NewsDetail() {
             </div>
           </section>
         )}
+
+        <div className="container-narrow">
+          <ReaderFeedback entityType="news" entityId={post.id} pagePath={`/news/${post.slug || post.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );

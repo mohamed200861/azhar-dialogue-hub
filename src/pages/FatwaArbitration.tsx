@@ -14,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { fireFormConfirmation } from "@/lib/form-notify";
+import { FatwaPublicFilesList } from "@/components/FatwaPublicFilesList";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 import { Loader2, Send, CheckCircle2, Scale, Gavel, ShieldCheck } from "lucide-react";
 
 const REQUEST_TYPES = [
@@ -253,7 +255,11 @@ export default function FatwaArbitration() {
             </form>
           )}
         </Card>
+
+        <ReaderFeedback entityType="fatwa" pagePath="/fatwa-arbitration" />
       </section>
+
+      <FatwaPublicFilesList />
     </SiteLayout>
   );
 }
