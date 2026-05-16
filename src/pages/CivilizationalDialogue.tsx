@@ -145,6 +145,7 @@ export default function CivilizationalDialogue() {
             </form>
           )}
         </Card>
+        <ReaderFeedback entityType="dialogue" pagePath="/civilizational-dialogue" />
       </section>
     </SiteLayout>
   );
