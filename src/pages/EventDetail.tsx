@@ -171,6 +171,9 @@ export default function EventDetail() {
             </div>
           </section>
         )}
+        <div className="container-narrow">
+          <ReaderFeedback entityType="event" entityId={event.id} pagePath={`/events/${event.slug || event.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );
