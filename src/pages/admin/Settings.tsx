@@ -11,6 +11,8 @@ import { FileUploadField } from "@/components/admin/FileUploadField";
 import { Loader2, Save, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { refreshSiteSettings } from "@/hooks/useSiteSettings";
+import { useFormDraft } from "@/hooks/useFormDraft";
+import { DraftStatus } from "@/components/admin/DraftStatus";
 
 export default function Settings() {
   const [loading, setLoading] = useState(true);
@@ -53,6 +55,13 @@ export default function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const draft = useFormDraft({
+    key: "settings:site",
+    ready: !loading,
+    value: s,
+    setValue: setS,
+  });
+
   const save = async () => {
     setSaving(true);
     const upserts = Object.entries(s).map(([key, value]) => ({ key, value: { value } as any }));
@@ -61,6 +70,7 @@ export default function Settings() {
     await refreshSiteSettings();
     setSaving(false);
     toast.success("تم حفظ الإعدادات. سيظهر التحديث على الموقع فورًا.");
+    draft.markSaved();
   };
 
   const forceRefresh = async () => {
@@ -80,6 +90,7 @@ export default function Settings() {
         description="هذه الإعدادات تظهر مباشرة على الموقع العام."
         actions={
           <>
+            <DraftStatus state={draft.state} />
             <Button variant="outline" onClick={forceRefresh} disabled={refreshing}>
               {refreshing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               تحديث البيانات الآن

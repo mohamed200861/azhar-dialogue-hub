@@ -256,10 +256,15 @@ export default function FatwaArbitration() {
           )}
         </Card>
 
-        <ReaderFeedback entityType="fatwa" pagePath="/fatwa-arbitration" />
       </section>
 
       <FatwaPublicFilesList />
+
+      <section className="section-padding pt-0">
+        <div className="container-narrow">
+          <ReaderFeedback entityType="fatwa" pagePath="/fatwa-arbitration" />
+        </div>
+      </section>
     </SiteLayout>
   );
 }
