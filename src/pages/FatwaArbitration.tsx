@@ -255,7 +255,11 @@ export default function FatwaArbitration() {
             </form>
           )}
         </Card>
+
+        <ReaderFeedback entityType="fatwa" pagePath="/fatwa-arbitration" />
       </section>
+
+      <FatwaPublicFilesList />
     </SiteLayout>
   );
 }
