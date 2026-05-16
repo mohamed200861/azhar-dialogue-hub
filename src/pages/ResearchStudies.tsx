@@ -195,6 +195,7 @@ export default function ResearchStudies() {
             </form>
           )}
         </Card>
+        <ReaderFeedback entityType="research" pagePath="/research-studies" />
       </section>
     </SiteLayout>
   );
