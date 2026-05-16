@@ -8,6 +8,7 @@ import { Loader2, ArrowRight, Calendar, PlayCircle, Radio, ExternalLink } from "
 import { formatDateTime, formatDate, getYouTubeEmbed } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
+import { ReaderFeedback } from "@/components/ReaderFeedback";
 
 const TYPE_LABEL: Record<string, string> = { video: "فيديو مسجل", live: "بث مباشر", recording: "تسجيل" };
 const LIVE_LABEL: Record<string, string> = { scheduled: "بث قادم", live: "مباشر الآن", completed: "تسجيل سابق", cancelled: "ملغي" };
