@@ -126,6 +126,10 @@ export default function NewsDetail() {
             </div>
           </section>
         )}
+
+        <div className="container-narrow">
+          <ReaderFeedback entityType="news" entityId={post.id} pagePath={`/news/${post.slug || post.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );
