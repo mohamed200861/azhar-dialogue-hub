@@ -25,6 +25,8 @@ const items = [
   { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات" },
   { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات" },
   { url: "/admin/fatwa-arbitration", icon: Scale, label: "الفتوى والتحكيم الشرعي" },
+  { url: "/admin/fatwa-arbitration/files", icon: Files, label: "ملفات الفتوى العامة" },
+  { url: "/admin/feedback", icon: Star, label: "آراء القراء" },
   { url: "/admin/sharia-academy", icon: GraduationCap, label: "أكاديمية العلوم الشرعية" },
   { url: "/admin/civilizational-dialogue", icon: MessageCircle, label: "الحوار والتواصل الحضاري" },
   { url: "/admin/research-studies", icon: FileSearch, label: "البحوث والدراسات" },
