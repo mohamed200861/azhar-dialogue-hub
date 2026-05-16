@@ -142,6 +142,9 @@ export default function VideoDetail() {
             </div>
           </section>
         )}
+        <div className="container-narrow">
+          <ReaderFeedback entityType="video" entityId={video.id} pagePath={`/videos/${video.slug || video.id}`} />
+        </div>
       </article>
     </SiteLayout>
   );
