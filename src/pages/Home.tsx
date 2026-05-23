@@ -234,17 +234,67 @@ export default function Home() {
         </section>
       )}
 
-      {/* ABOUT — compact (no stats) */}
-      <section className="py-12 md:py-14 bg-gradient-soft">
-        <div className="container-narrow text-center">
-          <span className="eyebrow">من نحن</span>
-          <h2 className="heading-section mt-3 mb-4">منهج أزهري وسطي يخدم الأمة والإنسانية</h2>
-          <p className="text-muted-foreground leading-relaxed mb-5 line-clamp-4 max-w-3xl mx-auto">{about.full}</p>
-          <Button asChild variant="outline">
-            <Link to="/about">اقرأ المزيد عنا <ArrowLeft className="h-4 w-4" /></Link>
-          </Button>
-        </div>
-      </section>
+      {/* LATEST NEWS — moved up, right below hero/ticker/live */}
+      {settings.show_news_section !== false && (
+        <section className="section-padding bg-gradient-soft">
+          <div className="container-wide">
+            <div className="flex items-end justify-between mb-10 gap-4">
+              <div>
+                <span className="eyebrow">الأخبار</span>
+                <h2 className="heading-section mt-3">آخر الأخبار والبيانات</h2>
+              </div>
+              <Button asChild variant="outline" className="hidden sm:inline-flex">
+                <Link to="/news">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
+              </Button>
+            </div>
+            <div className="min-h-[420px]">
+              {news === null ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="card-elegant overflow-hidden">
+                      <Skeleton className="aspect-[16/10] w-full rounded-none" />
+                      <div className="p-6 space-y-3">
+                        <Skeleton className="h-4 w-1/3" />
+                        <Skeleton className="h-5 w-full" />
+                        <Skeleton className="h-4 w-5/6" />
+                        <Skeleton className="h-4 w-2/3" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : news.length === 0 ? (
+                <div className="card-elegant p-12 text-center text-muted-foreground">
+                  لا توجد أخبار منشورة حاليًا. ترقبوا المحتوى الجديد قريبًا.
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {news.map((n) => (
+                    <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
+                      <div className="aspect-[16/10] overflow-hidden bg-muted">
+                        <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
+                      </div>
+                      <div className="p-6 flex flex-col flex-1">
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
+                          <span>{formatDate(n.published_at ?? n.created_at)}</span>
+                        </div>
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
+                        {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
+                        <div className="text-xs text-muted-foreground mb-3">
+                          {ui.publishedBy}: <span className="font-medium text-foreground/80">{n.publisher_source}</span>
+                        </div>
+                        <span className="text-sm font-semibold text-primary inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
+                          {ui.readMore} <ArrowLeft className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* SPECIALIZED SECTIONS */}
       <section className="section-padding">
@@ -278,53 +328,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LATEST NEWS */}
-      {settings.show_news_section !== false && (
-        <section className="section-padding bg-gradient-soft">
-          <div className="container-wide">
-            <div className="flex items-end justify-between mb-10 gap-4">
-              <div>
-                <span className="eyebrow">الأخبار</span>
-                <h2 className="heading-section mt-3">آخر الأخبار والبيانات</h2>
-              </div>
-              <Button asChild variant="outline" className="hidden sm:inline-flex">
-                <Link to="/news">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
-              </Button>
-            </div>
-            {news === null ? (
-              <div className="card-elegant p-12 text-center"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
-            ) : news.length === 0 ? (
-              <div className="card-elegant p-12 text-center text-muted-foreground">
-                لا توجد أخبار منشورة حاليًا. ترقبوا المحتوى الجديد قريبًا.
-              </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {news.map((n) => (
-                  <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
-                    <div className="aspect-[16/10] overflow-hidden">
-                      <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                    </div>
-                    <div className="p-6 flex flex-col flex-1">
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
-                        <span>{formatDate(n.published_at ?? n.created_at)}</span>
-                      </div>
-                      <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
-                      {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
-                      <div className="text-xs text-muted-foreground mb-3">
-                        {ui.publishedBy}: <span className="font-medium text-foreground/80">{n.publisher_source}</span>
-                      </div>
-                      <span className="text-sm font-semibold text-primary inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all">
-                        {ui.readMore} <ArrowLeft className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
 
       {/* LIBRARY + VIDEOS */}
       <section className="section-padding">
