@@ -168,6 +168,15 @@ export default function ResearchStudiesAdmin() {
                       </div>
                     </div>
                     <div>
+                      <Label>صورة الغلاف</Label>
+                      <FileUploadField
+                        bucket="covers"
+                        value={editing.cover_image ?? null}
+                        onChange={(url) => setEditing({ ...editing, cover_image: url ?? "" })}
+                      />
+                    </div>
+                    <div>
+
                       <Label>ملف PDF (عمومي)</Label>
                       <div className="flex items-center gap-2">
                         <Input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0])} disabled={uploading} />
