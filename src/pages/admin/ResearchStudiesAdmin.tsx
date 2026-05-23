@@ -26,7 +26,7 @@ const CATEGORY: Record<string, string> = { sharia: "شرعية", intellectual: "
 const PUBLISH: Record<string, string> = { draft: "مسودة", published: "منشور", archived: "مؤرشف" };
 const SUB_STATUS: Record<string, string> = { new: "قيد الانتظار", reviewing: "قيد المراجعة", approved: "مقبول", rejected: "مرفوض" };
 
-const empty = { title: "", abstract: "", author: "", category: "sharia", publish_status: "published", file_url: "", external_url: "", display_order: 0 };
+const empty = { title: "", abstract: "", author: "", category: "sharia", publish_status: "published", file_url: "", external_url: "", cover_image: "", display_order: 0 };
 
 export default function ResearchStudiesAdmin() {
   const { isSuperAdmin } = useAuth();
