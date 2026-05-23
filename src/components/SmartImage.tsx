@@ -56,9 +56,12 @@ export function SmartImage({
     <img
       src={src}
       alt={alt}
+      loading={rest.loading ?? "lazy"}
+      decoding={rest.decoding ?? "async"}
       onError={() => setFailed(true)}
       className={className}
       {...rest}
     />
   );
+
 }

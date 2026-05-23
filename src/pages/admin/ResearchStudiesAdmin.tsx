@@ -21,12 +21,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useFormDraft } from "@/hooks/useFormDraft";
 import { DraftStatus } from "@/components/admin/DraftStatus";
+import { FileUploadField } from "@/components/admin/FileUploadField";
+
 
 const CATEGORY: Record<string, string> = { sharia: "شرعية", intellectual: "فكرية", contemporary: "معاصرة", reports: "تقارير" };
 const PUBLISH: Record<string, string> = { draft: "مسودة", published: "منشور", archived: "مؤرشف" };
 const SUB_STATUS: Record<string, string> = { new: "قيد الانتظار", reviewing: "قيد المراجعة", approved: "مقبول", rejected: "مرفوض" };
 
-const empty = { title: "", abstract: "", author: "", category: "sharia", publish_status: "published", file_url: "", external_url: "", display_order: 0 };
+const empty = { title: "", abstract: "", author: "", category: "sharia", publish_status: "published", file_url: "", external_url: "", cover_image: "", display_order: 0 };
 
 export default function ResearchStudiesAdmin() {
   const { isSuperAdmin } = useAuth();
@@ -84,7 +86,9 @@ export default function ResearchStudiesAdmin() {
     const payload: any = { ...editing };
     if (!payload.file_url) payload.file_url = null;
     if (!payload.external_url) payload.external_url = null;
+    if (!payload.cover_image) payload.cover_image = null;
     if (!payload.author) payload.author = null;
+
     if (editing.id) {
       const { id, created_at, updated_at, created_by, published_at, ...rest } = payload;
       const { error } = await supabase.from("research_items").update(rest).eq("id", editing.id);
@@ -164,6 +168,15 @@ export default function ResearchStudiesAdmin() {
                       </div>
                     </div>
                     <div>
+                      <Label>صورة الغلاف</Label>
+                      <FileUploadField
+                        bucket="covers"
+                        value={editing.cover_image ?? null}
+                        onChange={(url) => setEditing({ ...editing, cover_image: url ?? "" })}
+                      />
+                    </div>
+                    <div>
+
                       <Label>ملف PDF (عمومي)</Label>
                       <div className="flex items-center gap-2">
                         <Input type="file" accept="application/pdf" onChange={(e) => e.target.files?.[0] && uploadPdf(e.target.files[0])} disabled={uploading} />

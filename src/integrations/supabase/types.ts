@@ -1023,6 +1023,7 @@ export type Database = {
           abstract: string | null
           author: string | null
           category: Database["public"]["Enums"]["research_category"]
+          cover_image: string | null
           created_at: string
           created_by: string | null
           display_order: number
@@ -1038,6 +1039,7 @@ export type Database = {
           abstract?: string | null
           author?: string | null
           category?: Database["public"]["Enums"]["research_category"]
+          cover_image?: string | null
           created_at?: string
           created_by?: string | null
           display_order?: number
@@ -1053,6 +1055,7 @@ export type Database = {
           abstract?: string | null
           author?: string | null
           category?: Database["public"]["Enums"]["research_category"]
+          cover_image?: string | null
           created_at?: string
           created_by?: string | null
           display_order?: number
