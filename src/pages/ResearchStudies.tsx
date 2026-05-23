@@ -16,6 +16,9 @@ import { Loader2, FileText, Download, Eye, Send, CheckCircle2 } from "lucide-rea
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
 import { useDynamicPage } from "@/hooks/useDynamicPages";
+import { SmartImage } from "@/components/SmartImage";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 const CAT_LABEL: Record<string, string> = {
   sharia: "بحوث شرعية",
