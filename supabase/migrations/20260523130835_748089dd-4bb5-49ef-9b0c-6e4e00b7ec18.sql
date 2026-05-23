@@ -1,0 +1,1 @@
+ALTER TABLE public.research_items ADD COLUMN IF NOT EXISTS cover_image text;
