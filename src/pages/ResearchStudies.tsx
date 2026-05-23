@@ -126,41 +126,67 @@ export default function ResearchStudies() {
         </div>
 
         {items === null ? (
-          <div className="text-center py-12"><Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" /></div>
+          <div className="grid md:grid-cols-2 gap-4 mb-12 min-h-[300px]">
+            {[0, 1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="aspect-[16/9] w-full rounded-none" />
+                <div className="p-5 space-y-3">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+              </Card>
+            ))}
+          </div>
         ) : filtered.length === 0 ? (
           <Card className="p-10 text-center text-muted-foreground mb-10">لا توجد بحوث في هذا التصنيف حاليًا.</Card>
         ) : (
           <div className="grid md:grid-cols-2 gap-4 mb-12">
             {filtered.map((r) => (
-              <Card key={r.id} className="p-5 flex flex-col">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{CAT_LABEL[r.category]}</span>
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+              <Card key={r.id} className="overflow-hidden flex flex-col group">
+                <div className="aspect-[16/9] overflow-hidden bg-muted">
+                  <SmartImage
+                    src={r.cover_image}
+                    alt={r.title}
+                    variant="general"
+                    icon={FileText}
+                    fallbackClassName="bg-gradient-to-br from-primary/15 to-primary-glow/10"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
-                <h3 className="font-bold text-lg mb-2 leading-snug">{r.title}</h3>
-                {r.author && <div className="text-xs text-muted-foreground mb-2">المصدر: <span className="text-foreground/80 font-medium">{r.author}</span></div>}
-                {r.abstract && <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4 mb-3 flex-1">{r.abstract}</p>}
-                <div className="flex flex-wrap gap-2 mt-auto">
-                  {r.file_url && (
-                    <Button asChild size="sm" variant="outline">
-                      <a href={r.file_url} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /> عرض</a>
-                    </Button>
-                  )}
-                  {r.file_url && (
-                    <Button asChild size="sm">
-                      <a href={r.file_url} target="_blank" rel="noopener noreferrer" download><Download className="h-4 w-4" /> تحميل</a>
-                    </Button>
-                  )}
-                  {!r.file_url && r.external_url && (
-                    <Button asChild size="sm" variant="outline">
-                      <a href={r.external_url} target="_blank" rel="noopener noreferrer">رابط خارجي</a>
-                    </Button>
-                  )}
+                <div className="p-5 flex flex-col flex-1">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{CAT_LABEL[r.category]}</span>
+                    <FileText className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2 leading-snug">{r.title}</h3>
+                  {r.author && <div className="text-xs text-muted-foreground mb-2">المصدر: <span className="text-foreground/80 font-medium">{r.author}</span></div>}
+                  {r.abstract && <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4 mb-3 flex-1">{r.abstract}</p>}
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {r.file_url && (
+                      <Button asChild size="sm" variant="outline">
+                        <a href={r.file_url} target="_blank" rel="noopener noreferrer"><Eye className="h-4 w-4" /> عرض</a>
+                      </Button>
+                    )}
+                    {r.file_url && (
+                      <Button asChild size="sm">
+                        <a href={r.file_url} target="_blank" rel="noopener noreferrer" download><Download className="h-4 w-4" /> تحميل</a>
+                      </Button>
+                    )}
+                    {!r.file_url && r.external_url && (
+                      <Button asChild size="sm" variant="outline">
+                        <a href={r.external_url} target="_blank" rel="noopener noreferrer">رابط خارجي</a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </Card>
             ))}
           </div>
         )}
+
 
         <Card className="p-6 md:p-8">
           {success ? (
