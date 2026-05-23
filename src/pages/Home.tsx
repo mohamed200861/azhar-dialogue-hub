@@ -17,6 +17,8 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 import { SmartImage } from "@/components/SmartImage";
 import { NewsTicker } from "@/components/NewsTicker";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 import { applySeo } from "@/lib/seo";
 
