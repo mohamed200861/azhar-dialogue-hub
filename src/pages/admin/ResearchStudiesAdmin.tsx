@@ -86,7 +86,9 @@ export default function ResearchStudiesAdmin() {
     const payload: any = { ...editing };
     if (!payload.file_url) payload.file_url = null;
     if (!payload.external_url) payload.external_url = null;
+    if (!payload.cover_image) payload.cover_image = null;
     if (!payload.author) payload.author = null;
+
     if (editing.id) {
       const { id, created_at, updated_at, created_by, published_at, ...rest } = payload;
       const { error } = await supabase.from("research_items").update(rest).eq("id", editing.id);
