@@ -125,7 +125,7 @@ export default function Home() {
         <div className="absolute top-1/4 end-0 w-[500px] h-[500px] rounded-full bg-primary-glow/20 blur-3xl" />
         <div className="absolute bottom-0 start-1/4 w-[400px] h-[400px] rounded-full bg-crimson/10 blur-3xl" />
 
-        <div className="container-wide relative py-20 md:py-28 lg:py-32 grid lg:grid-cols-[1.3fr,1fr] gap-12 items-center">
+        <div className="container-wide relative py-10 md:py-14 lg:py-16 grid lg:grid-cols-[1.3fr,1fr] gap-10 items-center">
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium mb-6">
               <Sparkles className="h-3.5 w-3.5" />
