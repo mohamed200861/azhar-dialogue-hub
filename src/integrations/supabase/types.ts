@@ -537,6 +537,7 @@ export type Database = {
           attachment_url: string | null
           country: string | null
           created_at: string
+          department_id: string | null
           email: string
           full_name: string
           id: string
@@ -554,6 +555,7 @@ export type Database = {
           attachment_url?: string | null
           country?: string | null
           created_at?: string
+          department_id?: string | null
           email: string
           full_name: string
           id?: string
@@ -571,6 +573,7 @@ export type Database = {
           attachment_url?: string | null
           country?: string | null
           created_at?: string
+          department_id?: string | null
           email?: string
           full_name?: string
           id?: string
@@ -583,6 +586,50 @@ export type Database = {
           subject?: string
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "fatwa_arbitration_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "fatwa_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fatwa_departments: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
         Relationships: []
       }
       fatwa_public_files: {
@@ -590,6 +637,7 @@ export type Database = {
           category: string
           created_at: string
           created_by: string | null
+          department_id: string | null
           description: string | null
           display_order: number
           download_count: number
@@ -606,6 +654,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           display_order?: number
           download_count?: number
@@ -622,6 +671,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           display_order?: number
           download_count?: number
@@ -634,7 +684,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fatwa_public_files_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "fatwa_departments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       library_items: {
         Row: {
