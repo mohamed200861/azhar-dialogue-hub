@@ -62,6 +62,7 @@ import NewsTickerAdmin from "./pages/admin/NewsTickerAdmin.tsx";
 import FatwaFilesAdmin from "./pages/admin/FatwaFilesAdmin.tsx";
 import FeedbackAdmin from "./pages/admin/FeedbackAdmin.tsx";
 import RolesPermissions from "./pages/admin/RolesPermissions.tsx";
+import FatwaDepartmentsAdmin from "./pages/admin/FatwaDepartmentsAdmin.tsx";
 
 const queryClient = new QueryClient();
 
