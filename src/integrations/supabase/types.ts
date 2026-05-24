@@ -115,6 +115,71 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_module_grants: {
+        Row: {
+          can_delete: boolean
+          can_read: boolean
+          can_write: boolean
+          created_at: string
+          id: string
+          module_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_delete?: boolean
+          can_read?: boolean
+          can_write?: boolean
+          created_at?: string
+          id?: string
+          module_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_delete?: boolean
+          can_read?: boolean
+          can_write?: boolean
+          created_at?: string
+          id?: string
+          module_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_module_grants_module_key_fkey"
+            columns: ["module_key"]
+            isOneToOne: false
+            referencedRelation: "admin_modules"
+            referencedColumns: ["key"]
+          },
+        ]
+      }
+      admin_modules: {
+        Row: {
+          created_at: string
+          description: string | null
+          key: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          key: string
+          label: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          key?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       admin_users: {
         Row: {
           created_at: string
@@ -472,6 +537,7 @@ export type Database = {
           attachment_url: string | null
           country: string | null
           created_at: string
+          department_id: string | null
           email: string
           full_name: string
           id: string
@@ -489,6 +555,7 @@ export type Database = {
           attachment_url?: string | null
           country?: string | null
           created_at?: string
+          department_id?: string | null
           email: string
           full_name: string
           id?: string
@@ -506,6 +573,7 @@ export type Database = {
           attachment_url?: string | null
           country?: string | null
           created_at?: string
+          department_id?: string | null
           email?: string
           full_name?: string
           id?: string
@@ -518,6 +586,50 @@ export type Database = {
           subject?: string
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "fatwa_arbitration_requests_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "fatwa_departments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fatwa_departments: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
         Relationships: []
       }
       fatwa_public_files: {
@@ -525,6 +637,7 @@ export type Database = {
           category: string
           created_at: string
           created_by: string | null
+          department_id: string | null
           description: string | null
           display_order: number
           download_count: number
@@ -541,6 +654,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           display_order?: number
           download_count?: number
@@ -557,6 +671,7 @@ export type Database = {
           category?: string
           created_at?: string
           created_by?: string | null
+          department_id?: string | null
           description?: string | null
           display_order?: number
           download_count?: number
@@ -569,7 +684,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fatwa_public_files_department_id_fkey"
+            columns: ["department_id"]
+            isOneToOne: false
+            referencedRelation: "fatwa_departments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       library_items: {
         Row: {
@@ -1323,6 +1446,10 @@ export type Database = {
       }
       get_admin_dashboard_stats: { Args: never; Returns: Json }
       get_public_stats: { Args: never; Returns: Json }
+      has_module_access: {
+        Args: { _level?: string; _module: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

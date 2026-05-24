@@ -3,6 +3,7 @@ import {
   LayoutDashboard, Newspaper, BookOpen, PlayCircle, Calendar,
   FolderOpen, MessageSquare, Mail, Settings, Users2, LogOut, ExternalLink,
   Radio, FileText, Scale, GraduationCap, MessageCircle, FileSearch, Megaphone, Star, Files,
+  ShieldCheck, IdCard, BookMarked,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -10,34 +11,44 @@ import {
   SidebarHeader, SidebarFooter,
 } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/useAuth";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { Logo } from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
-const items = [
+const items: { url: string; icon: any; label: string; end?: boolean; module?: string }[] = [
   { url: "/admin", icon: LayoutDashboard, label: "لوحة التحكم", end: true },
-  { url: "/admin/news", icon: Newspaper, label: "الأخبار والبيانات" },
-  { url: "/admin/news-ticker", icon: Megaphone, label: "شريط الأخبار" },
-  { url: "/admin/library", icon: BookOpen, label: "المكتبة" },
-  { url: "/admin/videos", icon: PlayCircle, label: "المرئيات" },
-  { url: "/admin/live", icon: Radio, label: "استوديو البث المباشر" },
-  { url: "/admin/events", icon: Calendar, label: "الفعاليات" },
-  { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات" },
-  { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات" },
-  { url: "/admin/fatwa-arbitration", icon: Scale, label: "الفتوى والتحكيم الشرعي" },
-  { url: "/admin/fatwa-arbitration/files", icon: Files, label: "ملفات الفتوى العامة" },
-  { url: "/admin/feedback", icon: Star, label: "آراء القراء" },
-  { url: "/admin/sharia-academy", icon: GraduationCap, label: "أكاديمية العلوم الشرعية" },
-  { url: "/admin/civilizational-dialogue", icon: MessageCircle, label: "الحوار والتواصل الحضاري" },
-  { url: "/admin/research-studies", icon: FileSearch, label: "البحوث والدراسات" },
-  { url: "/admin/messages", icon: MessageSquare, label: "رسائل التواصل" },
-  { url: "/admin/newsletter", icon: Mail, label: "النشرة البريدية" },
-  { url: "/admin/settings", icon: Settings, label: "إعدادات الموقع" },
+  { url: "/admin/news", icon: Newspaper, label: "الأخبار والبيانات", module: "news" },
+  { url: "/admin/news-ticker", icon: Megaphone, label: "شريط الأخبار", module: "news_ticker" },
+  { url: "/admin/library", icon: BookOpen, label: "المكتبة", module: "library" },
+  { url: "/admin/videos", icon: PlayCircle, label: "المرئيات", module: "videos" },
+  { url: "/admin/live", icon: Radio, label: "استوديو البث المباشر", module: "live" },
+  { url: "/admin/events", icon: Calendar, label: "الفعاليات", module: "events" },
+  { url: "/admin/pages", icon: FileText, label: "إدارة الصفحات", module: "pages" },
+  { url: "/admin/media", icon: FolderOpen, label: "إدارة الملفات", module: "media" },
+  { url: "/admin/fatwa-arbitration", icon: Scale, label: "الفتوى والتحكيم الشرعي", module: "fatwa" },
+  { url: "/admin/fatwa-arbitration/departments", icon: Scale, label: "أقسام الفتوى", module: "fatwa_departments" },
+  { url: "/admin/fatwa-arbitration/files", icon: Files, label: "ملفات الفتوى العامة", module: "fatwa_files" },
+  { url: "/admin/memberships", icon: IdCard, label: "العضوية", module: "memberships" },
+  { url: "/admin/memberships/applications", icon: IdCard, label: "طلبات العضوية", module: "membership_applications" },
+  { url: "/admin/memberships/methods", icon: IdCard, label: "وسائل الدفع", module: "membership_methods" },
+  { url: "/admin/quran-courses", icon: BookMarked, label: "دورات القرآن الكريم", module: "quran_courses" },
+  { url: "/admin/quran-courses/teachers", icon: BookMarked, label: "معلمو القرآن", module: "quran_teachers" },
+  { url: "/admin/quran-courses/enrollments", icon: BookMarked, label: "تسجيلات الدورات", module: "quran_enrollments" },
+  { url: "/admin/feedback", icon: Star, label: "آراء القراء", module: "feedback" },
+  { url: "/admin/sharia-academy", icon: GraduationCap, label: "أكاديمية العلوم الشرعية", module: "sharia_academy" },
+  { url: "/admin/civilizational-dialogue", icon: MessageCircle, label: "الحوار والتواصل الحضاري", module: "civilizational_dialogue" },
+  { url: "/admin/research-studies", icon: FileSearch, label: "البحوث والدراسات", module: "research" },
+  { url: "/admin/messages", icon: MessageSquare, label: "رسائل التواصل", module: "messages" },
+  { url: "/admin/newsletter", icon: Mail, label: "النشرة البريدية", module: "newsletter" },
+  { url: "/admin/settings", icon: Settings, label: "إعدادات الموقع", module: "settings" },
 ];
 
 function AdminSidebar() {
   const location = useLocation();
   const { isSuperAdmin, signOut, user } = useAuth();
+  const { can } = useModuleAccess();
+  const visible = items.filter((it) => !it.module || can(it.module, "read"));
 
   return (
     <Sidebar side="right" collapsible="icon">
@@ -56,7 +67,7 @@ function AdminSidebar() {
           <SidebarGroupLabel>الأقسام</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
+              {visible.map((item) => {
                 const active = item.end
                   ? location.pathname === item.url
                   : location.pathname.startsWith(item.url);
@@ -73,14 +84,24 @@ function AdminSidebar() {
               })}
 
               {isSuperAdmin && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={location.pathname.startsWith("/admin/admins")} tooltip="إدارة المدراء">
-                    <NavLink to="/admin/admins">
-                      <Users2 className="h-4 w-4" />
-                      <span>إدارة المدراء</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={location.pathname.startsWith("/admin/admins")} tooltip="إدارة المدراء">
+                      <NavLink to="/admin/admins">
+                        <Users2 className="h-4 w-4" />
+                        <span>إدارة المدراء</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild isActive={location.pathname.startsWith("/admin/roles")} tooltip="الأدوار والصلاحيات">
+                      <NavLink to="/admin/roles">
+                        <ShieldCheck className="h-4 w-4" />
+                        <span>الأدوار والصلاحيات</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </>
               )}
             </SidebarMenu>
           </SidebarGroupContent>

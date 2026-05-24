@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { fireFormConfirmation } from "@/lib/form-notify";
 import { FatwaPublicFilesList } from "@/components/FatwaPublicFilesList";
+import { FatwaDepartmentsGrid } from "@/components/FatwaDepartmentsGrid";
 import { ReaderFeedback } from "@/components/ReaderFeedback";
 import { Loader2, Send, CheckCircle2, Scale, Gavel, ShieldCheck } from "lucide-react";
 
@@ -42,6 +43,7 @@ export default function FatwaArbitration() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [departmentId, setDepartmentId] = useState<string | null>(null);
   useEffect(() => {
     applySeo({
       title: "الفتوى والتحكيم الشرعي",
@@ -102,7 +104,8 @@ export default function FatwaArbitration() {
         message: form.message.trim(),
         is_urgent: form.is_urgent,
         attachment_url,
-      }).select("id").maybeSingle();
+        department_id: departmentId,
+      } as any).select("id").maybeSingle();
       if (error) throw error;
       fireFormConfirmation("fatwa", inserted?.id);
       setSuccess(true);
@@ -144,6 +147,15 @@ export default function FatwaArbitration() {
             </Card>
           ))}
         </div>
+
+        <FatwaDepartmentsGrid
+          selectedId={departmentId}
+          onSelect={(d) => {
+            setDepartmentId(d.id === departmentId ? null : d.id);
+            document.getElementById("fatwa-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+        />
+
 
         <div className="prose prose-sm max-w-none text-foreground/90 leading-loose mb-10">
           <p>
