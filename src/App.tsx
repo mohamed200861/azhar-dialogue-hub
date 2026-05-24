@@ -61,6 +61,7 @@ import ResearchStudiesAdmin from "./pages/admin/ResearchStudiesAdmin.tsx";
 import NewsTickerAdmin from "./pages/admin/NewsTickerAdmin.tsx";
 import FatwaFilesAdmin from "./pages/admin/FatwaFilesAdmin.tsx";
 import FeedbackAdmin from "./pages/admin/FeedbackAdmin.tsx";
+import RolesPermissions from "./pages/admin/RolesPermissions.tsx";
 
 const queryClient = new QueryClient();
 
@@ -127,6 +128,7 @@ const App = () => (
                 <Route path="news-ticker" element={<NewsTickerAdmin />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
+                <Route path="roles" element={<RequireAdmin superOnly><RolesPermissions /></RequireAdmin>} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
