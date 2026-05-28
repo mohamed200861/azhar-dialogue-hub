@@ -534,6 +534,7 @@ export type Database = {
       fatwa_arbitration_requests: {
         Row: {
           admin_notes: string | null
+          assigned_to: string | null
           attachment_url: string | null
           country: string | null
           created_at: string
@@ -544,6 +545,7 @@ export type Database = {
           is_urgent: boolean
           message: string
           phone: string | null
+          priority: string | null
           request_type: Database["public"]["Enums"]["fatwa_request_type"]
           response_text: string | null
           status: Database["public"]["Enums"]["fatwa_request_status"]
@@ -552,6 +554,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          assigned_to?: string | null
           attachment_url?: string | null
           country?: string | null
           created_at?: string
@@ -562,6 +565,7 @@ export type Database = {
           is_urgent?: boolean
           message: string
           phone?: string | null
+          priority?: string | null
           request_type?: Database["public"]["Enums"]["fatwa_request_type"]
           response_text?: string | null
           status?: Database["public"]["Enums"]["fatwa_request_status"]
@@ -570,6 +574,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          assigned_to?: string | null
           attachment_url?: string | null
           country?: string | null
           created_at?: string
@@ -580,6 +585,7 @@ export type Database = {
           is_urgent?: boolean
           message?: string
           phone?: string | null
+          priority?: string | null
           request_type?: Database["public"]["Enums"]["fatwa_request_type"]
           response_text?: string | null
           status?: Database["public"]["Enums"]["fatwa_request_status"]
@@ -693,6 +699,150 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      khutbah_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      khutbah_speakers: {
+        Row: {
+          biography: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          photo_url: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          biography?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          photo_url?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          biography?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          photo_url?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      khutbahs: {
+        Row: {
+          audio_url: string | null
+          category_id: string | null
+          created_at: string
+          description: string | null
+          embed_url: string | null
+          featured_image: string | null
+          id: string
+          is_featured: boolean
+          khutbah_date: string | null
+          location: string | null
+          mosque: string | null
+          publish_status: string
+          published_at: string | null
+          slug: string
+          speaker_id: string | null
+          speaker_name: string | null
+          tags: Json
+          title: string
+          transcript: string | null
+          updated_at: string
+          video_url: string | null
+          view_count: number
+        }
+        Insert: {
+          audio_url?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean
+          khutbah_date?: string | null
+          location?: string | null
+          mosque?: string | null
+          publish_status?: string
+          published_at?: string | null
+          slug: string
+          speaker_id?: string | null
+          speaker_name?: string | null
+          tags?: Json
+          title: string
+          transcript?: string | null
+          updated_at?: string
+          video_url?: string | null
+          view_count?: number
+        }
+        Update: {
+          audio_url?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean
+          khutbah_date?: string | null
+          location?: string | null
+          mosque?: string | null
+          publish_status?: string
+          published_at?: string | null
+          slug?: string
+          speaker_id?: string | null
+          speaker_name?: string | null
+          tags?: Json
+          title?: string
+          transcript?: string | null
+          updated_at?: string
+          video_url?: string | null
+          view_count?: number
+        }
+        Relationships: []
       }
       library_items: {
         Row: {
@@ -874,6 +1024,282 @@ export type Database = {
           folder?: string
           id?: string
           uploaded_by?: string | null
+        }
+        Relationships: []
+      }
+      membership_applications: {
+        Row: {
+          academic_specialization: string | null
+          admin_notes: string | null
+          citizenship: string | null
+          created_at: string
+          cv_url: string | null
+          email: string
+          full_name_ar: string
+          full_name_en: string | null
+          id: string
+          job_title: string | null
+          membership_type_id: string | null
+          mobile: string | null
+          personal_photo_url: string | null
+          phone: string | null
+          recommendation_1_membership_no: string | null
+          recommendation_1_name: string | null
+          recommendation_1_note: string | null
+          recommendation_2_membership_no: string | null
+          recommendation_2_name: string | null
+          recommendation_2_note: string | null
+          residence_country: string | null
+          scientific_contributions: string | null
+          social_links: string | null
+          status: Database["public"]["Enums"]["membership_application_status"]
+          updated_at: string
+        }
+        Insert: {
+          academic_specialization?: string | null
+          admin_notes?: string | null
+          citizenship?: string | null
+          created_at?: string
+          cv_url?: string | null
+          email: string
+          full_name_ar: string
+          full_name_en?: string | null
+          id?: string
+          job_title?: string | null
+          membership_type_id?: string | null
+          mobile?: string | null
+          personal_photo_url?: string | null
+          phone?: string | null
+          recommendation_1_membership_no?: string | null
+          recommendation_1_name?: string | null
+          recommendation_1_note?: string | null
+          recommendation_2_membership_no?: string | null
+          recommendation_2_name?: string | null
+          recommendation_2_note?: string | null
+          residence_country?: string | null
+          scientific_contributions?: string | null
+          social_links?: string | null
+          status?: Database["public"]["Enums"]["membership_application_status"]
+          updated_at?: string
+        }
+        Update: {
+          academic_specialization?: string | null
+          admin_notes?: string | null
+          citizenship?: string | null
+          created_at?: string
+          cv_url?: string | null
+          email?: string
+          full_name_ar?: string
+          full_name_en?: string | null
+          id?: string
+          job_title?: string | null
+          membership_type_id?: string | null
+          mobile?: string | null
+          personal_photo_url?: string | null
+          phone?: string | null
+          recommendation_1_membership_no?: string | null
+          recommendation_1_name?: string | null
+          recommendation_1_note?: string | null
+          recommendation_2_membership_no?: string | null
+          recommendation_2_name?: string | null
+          recommendation_2_note?: string | null
+          residence_country?: string | null
+          scientific_contributions?: string | null
+          social_links?: string | null
+          status?: Database["public"]["Enums"]["membership_application_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_documents: {
+        Row: {
+          application_id: string
+          created_at: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          title: string | null
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          title?: string | null
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          title?: string | null
+        }
+        Relationships: []
+      }
+      membership_payment_methods: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          instructions: string | null
+          is_enabled: boolean
+          provider_key: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_enabled?: boolean
+          provider_key: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          is_enabled?: boolean
+          provider_key?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_payments: {
+        Row: {
+          amount: number
+          application_id: string | null
+          created_at: string
+          currency: string
+          id: string
+          method_key: string | null
+          paid_at: string | null
+          raw: Json
+          reference: string | null
+          status: Database["public"]["Enums"]["membership_payment_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          application_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          method_key?: string | null
+          paid_at?: string | null
+          raw?: Json
+          reference?: string | null
+          status?: Database["public"]["Enums"]["membership_payment_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          application_id?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          method_key?: string | null
+          paid_at?: string | null
+          raw?: Json
+          reference?: string | null
+          status?: Database["public"]["Enums"]["membership_payment_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      membership_status_history: {
+        Row: {
+          application_id: string
+          changed_by: string | null
+          created_at: string
+          from_status: string | null
+          id: string
+          note: string | null
+          to_status: string
+        }
+        Insert: {
+          application_id: string
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          to_status: string
+        }
+        Update: {
+          application_id?: string
+          changed_by?: string | null
+          created_at?: string
+          from_status?: string | null
+          id?: string
+          note?: string | null
+          to_status?: string
+        }
+        Relationships: []
+      }
+      membership_types: {
+        Row: {
+          benefits: Json
+          created_at: string
+          currency: string
+          description_ar: string | null
+          description_en: string | null
+          duration_months: number | null
+          id: string
+          is_active: boolean
+          price: number
+          requirements: Json
+          slug: string
+          sort_order: number
+          title_ar: string
+          title_en: string | null
+          updated_at: string
+        }
+        Insert: {
+          benefits?: Json
+          created_at?: string
+          currency?: string
+          description_ar?: string | null
+          description_en?: string | null
+          duration_months?: number | null
+          id?: string
+          is_active?: boolean
+          price?: number
+          requirements?: Json
+          slug: string
+          sort_order?: number
+          title_ar: string
+          title_en?: string | null
+          updated_at?: string
+        }
+        Update: {
+          benefits?: Json
+          created_at?: string
+          currency?: string
+          description_ar?: string | null
+          description_en?: string | null
+          duration_months?: number | null
+          id?: string
+          is_active?: boolean
+          price?: number
+          requirements?: Json
+          slug?: string
+          sort_order?: number
+          title_ar?: string
+          title_en?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1093,6 +1519,273 @@ export type Database = {
           title?: string
           updated_at?: string
           url?: string | null
+        }
+        Relationships: []
+      }
+      quran_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quran_enrollments: {
+        Row: {
+          admin_notes: string | null
+          country: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          lesson_id: string | null
+          notes: string | null
+          phone: string | null
+          status: Database["public"]["Enums"]["quran_enrollment_status"]
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          lesson_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["quran_enrollment_status"]
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          lesson_id?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["quran_enrollment_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quran_lessons: {
+        Row: {
+          attachments: Json
+          audio_url: string | null
+          category_id: string | null
+          created_at: string
+          description: string | null
+          duration: string | null
+          id: string
+          is_featured: boolean
+          pdf_url: string | null
+          publish_status: string
+          published_at: string | null
+          slug: string
+          sort_order: number
+          teacher_id: string | null
+          text_content: string | null
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          attachments?: Json
+          audio_url?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          is_featured?: boolean
+          pdf_url?: string | null
+          publish_status?: string
+          published_at?: string | null
+          slug: string
+          sort_order?: number
+          teacher_id?: string | null
+          text_content?: string | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          attachments?: Json
+          audio_url?: string | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          id?: string
+          is_featured?: boolean
+          pdf_url?: string | null
+          publish_status?: string
+          published_at?: string | null
+          slug?: string
+          sort_order?: number
+          teacher_id?: string | null
+          text_content?: string | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      quran_materials: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          is_active: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quran_teachers: {
+        Row: {
+          bio: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          photo_url: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          photo_url?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          photo_url?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quran_videos: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          embed_url: string | null
+          id: string
+          is_featured: boolean
+          publish_status: string
+          published_at: string | null
+          sort_order: number
+          teacher_id: string | null
+          thumbnail: string | null
+          title: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          id?: string
+          is_featured?: boolean
+          publish_status?: string
+          published_at?: string | null
+          sort_order?: number
+          teacher_id?: string | null
+          thumbnail?: string | null
+          title: string
+          updated_at?: string
+          video_url: string
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          embed_url?: string | null
+          id?: string
+          is_featured?: boolean
+          publish_status?: string
+          published_at?: string | null
+          sort_order?: number
+          teacher_id?: string | null
+          thumbnail?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string
         }
         Relationships: []
       }
@@ -1512,6 +2205,14 @@ export type Database = {
         | "live"
         | "completed"
         | "cancelled"
+      membership_application_status:
+        | "new"
+        | "under_review"
+        | "approved"
+        | "rejected"
+        | "payment_pending"
+        | "completed"
+      membership_payment_status: "pending" | "paid" | "failed" | "refunded"
       message_status: "new" | "read" | "replied" | "archived" | "spam"
       notification_event_status:
         | "pending"
@@ -1519,6 +2220,7 @@ export type Database = {
         | "processed"
         | "failed"
         | "skipped"
+      quran_enrollment_status: "new" | "approved" | "rejected"
       research_category: "sharia" | "intellectual" | "contemporary" | "reports"
       research_submission_status: "new" | "reviewing" | "approved" | "rejected"
       subscriber_status: "active" | "unsubscribed"
@@ -1688,6 +2390,15 @@ export const Constants = {
         "completed",
         "cancelled",
       ],
+      membership_application_status: [
+        "new",
+        "under_review",
+        "approved",
+        "rejected",
+        "payment_pending",
+        "completed",
+      ],
+      membership_payment_status: ["pending", "paid", "failed", "refunded"],
       message_status: ["new", "read", "replied", "archived", "spam"],
       notification_event_status: [
         "pending",
@@ -1696,6 +2407,7 @@ export const Constants = {
         "failed",
         "skipped",
       ],
+      quran_enrollment_status: ["new", "approved", "rejected"],
       research_category: ["sharia", "intellectual", "contemporary", "reports"],
       research_submission_status: ["new", "reviewing", "approved", "rejected"],
       subscriber_status: ["active", "unsubscribed"],
