@@ -386,6 +386,36 @@ export default function Home() {
         </div>
       </section>
 
+      {/* NEW DEPARTMENTS — Membership / Quran / Khutbahs */}
+      <section className="section-padding bg-gradient-soft">
+        <div className="container-wide">
+          <div className="text-center mb-8">
+            <span className="eyebrow">أقسام جديدة</span>
+            <h2 className="heading-section mt-3">العضوية والقرآن والخطب</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { icon: Award, title: "العضوية", desc: "انضم إلى اتحاد علماء الأزهر واستفد من البرامج والخدمات والأنشطة العلمية والدعوية.", primary: { label: "تقديم طلب عضوية", href: "/memberships" }, secondary: { label: "أنواع العضوية", href: "/memberships#types" } },
+              { icon: BookOpen, title: "هيئة القرآن الكريم", desc: "دورات ودروس ومواد تعليمية متخصصة في القرآن الكريم والتجويد والتفسير.", primary: { label: "استعراض الدورات", href: "/quran" }, secondary: { label: "مشاهدة الدروس", href: "/quran" } },
+              { icon: Megaphone, title: "خطب وخطباء", desc: "مجموعة من الخطب والمحاضرات والدروس الدعوية لكبار الخطباء والدعاة.", primary: { label: "مشاهدة الخطب", href: "/khutbahs" }, secondary: { label: "عرض الخطباء", href: "/khutbahs" } },
+            ].map((s, i) => (
+              <div key={i} className="card-elegant p-6 flex flex-col">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-emerald text-primary-foreground mb-3 shadow-elegant">
+                  <s.icon className="h-6 w-6" />
+                </div>
+                <h3 className="font-bold text-lg mb-1.5">{s.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-4">{s.desc}</p>
+                <div className="flex flex-wrap gap-2">
+                  <Button asChild size="sm"><Link to={s.primary.href}>{s.primary.label}</Link></Button>
+                  <Button asChild size="sm" variant="outline"><Link to={s.secondary.href}>{s.secondary.label}</Link></Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       {/* UPCOMING EVENTS */}
       {settings.show_events_section !== false && (
         <section className="section-padding bg-gradient-soft">
