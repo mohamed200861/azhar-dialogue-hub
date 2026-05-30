@@ -31,6 +31,17 @@ import CivilizationalDialogue from "./pages/CivilizationalDialogue.tsx";
 import ResearchStudies from "./pages/ResearchStudies.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Memberships from "./pages/Memberships.tsx";
+import Quran from "./pages/Quran.tsx";
+import QuranDetail from "./pages/QuranDetail.tsx";
+import Khutbahs from "./pages/Khutbahs.tsx";
+import KhutbahDetail from "./pages/KhutbahDetail.tsx";
+import MembershipTypesAdmin from "./pages/admin/MembershipTypesAdmin.tsx";
+import MembershipApplicationsAdmin from "./pages/admin/MembershipApplicationsAdmin.tsx";
+import MembershipMethodsAdmin from "./pages/admin/MembershipMethodsAdmin.tsx";
+import QuranLessonsAdmin from "./pages/admin/QuranLessonsAdmin.tsx";
+import KhutbahsAdmin from "./pages/admin/KhutbahsAdmin.tsx";
+import { QuranCategoriesAdmin, QuranTeachersAdmin, KhutbahCategoriesAdmin, KhutbahSpeakersAdmin } from "./pages/admin/SimpleListAdmins.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
 import PagesEdit from "./pages/admin/pages/PagesEdit.tsx";
