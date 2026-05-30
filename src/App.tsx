@@ -31,6 +31,17 @@ import CivilizationalDialogue from "./pages/CivilizationalDialogue.tsx";
 import ResearchStudies from "./pages/ResearchStudies.tsx";
 import Unsubscribe from "./pages/Unsubscribe.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Memberships from "./pages/Memberships.tsx";
+import Quran from "./pages/Quran.tsx";
+import QuranDetail from "./pages/QuranDetail.tsx";
+import Khutbahs from "./pages/Khutbahs.tsx";
+import KhutbahDetail from "./pages/KhutbahDetail.tsx";
+import MembershipTypesAdmin from "./pages/admin/MembershipTypesAdmin.tsx";
+import MembershipApplicationsAdmin from "./pages/admin/MembershipApplicationsAdmin.tsx";
+import MembershipMethodsAdmin from "./pages/admin/MembershipMethodsAdmin.tsx";
+import QuranLessonsAdmin from "./pages/admin/QuranLessonsAdmin.tsx";
+import KhutbahsAdmin from "./pages/admin/KhutbahsAdmin.tsx";
+import { QuranCategoriesAdmin, QuranTeachersAdmin, KhutbahCategoriesAdmin, KhutbahSpeakersAdmin } from "./pages/admin/SimpleListAdmins.tsx";
 
 import PagesList from "./pages/admin/pages/PagesList.tsx";
 import PagesEdit from "./pages/admin/pages/PagesEdit.tsx";
@@ -98,6 +109,11 @@ const App = () => (
               <Route path="/civilizational-dialogue" element={<CivilizationalDialogue />} />
               <Route path="/research-studies" element={<ResearchStudies />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/memberships" element={<Memberships />} />
+              <Route path="/quran" element={<Quran />} />
+              <Route path="/quran/:slug" element={<QuranDetail />} />
+              <Route path="/khutbahs" element={<Khutbahs />} />
+              <Route path="/khutbahs/:slug" element={<KhutbahDetail />} />
 
 
               {/* Admin */}
@@ -131,6 +147,21 @@ const App = () => (
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
                 <Route path="roles" element={<RequireAdmin superOnly><RolesPermissions /></RequireAdmin>} />
+
+                <Route path="memberships" element={<MembershipApplicationsAdmin />} />
+                <Route path="memberships/types" element={<MembershipTypesAdmin />} />
+                <Route path="memberships/applications" element={<MembershipApplicationsAdmin />} />
+                <Route path="memberships/payment-methods" element={<MembershipMethodsAdmin />} />
+                <Route path="memberships/methods" element={<MembershipMethodsAdmin />} />
+
+                <Route path="quran" element={<QuranLessonsAdmin />} />
+                <Route path="quran/lessons" element={<QuranLessonsAdmin />} />
+                <Route path="quran/categories" element={<QuranCategoriesAdmin />} />
+                <Route path="quran/teachers" element={<QuranTeachersAdmin />} />
+
+                <Route path="khutbahs" element={<KhutbahsAdmin />} />
+                <Route path="khutbahs/categories" element={<KhutbahCategoriesAdmin />} />
+                <Route path="khutbahs/speakers" element={<KhutbahSpeakersAdmin />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
