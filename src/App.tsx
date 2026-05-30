@@ -147,6 +147,21 @@ const App = () => (
                 <Route path="settings" element={<Settings />} />
                 <Route path="admins" element={<RequireAdmin superOnly><AdminUsers /></RequireAdmin>} />
                 <Route path="roles" element={<RequireAdmin superOnly><RolesPermissions /></RequireAdmin>} />
+
+                <Route path="memberships" element={<MembershipApplicationsAdmin />} />
+                <Route path="memberships/types" element={<MembershipTypesAdmin />} />
+                <Route path="memberships/applications" element={<MembershipApplicationsAdmin />} />
+                <Route path="memberships/payment-methods" element={<MembershipMethodsAdmin />} />
+                <Route path="memberships/methods" element={<MembershipMethodsAdmin />} />
+
+                <Route path="quran" element={<QuranLessonsAdmin />} />
+                <Route path="quran/lessons" element={<QuranLessonsAdmin />} />
+                <Route path="quran/categories" element={<QuranCategoriesAdmin />} />
+                <Route path="quran/teachers" element={<QuranTeachersAdmin />} />
+
+                <Route path="khutbahs" element={<KhutbahsAdmin />} />
+                <Route path="khutbahs/categories" element={<KhutbahCategoriesAdmin />} />
+                <Route path="khutbahs/speakers" element={<KhutbahSpeakersAdmin />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
