@@ -11,6 +11,7 @@ import { Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useFormDraft } from "@/hooks/useFormDraft";
 import { DraftStatus } from "@/components/admin/DraftStatus";
+import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 
 type T = {
   id: string; slug: string; title_ar: string; title_en: string | null;
@@ -19,10 +20,6 @@ type T = {
 };
 
 const empty: any = { slug: "", title_ar: "", title_en: "", description_ar: "", price: 0, currency: "USD", is_active: true, sort_order: 0 };
-
-function slugify(s: string) {
-  return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
-}
 
 function Editor({ initial, onClose, onSaved }: { initial: T | null; onClose: () => void; onSaved: () => void }) {
   const [form, setForm] = useState<any>(initial ?? empty);
