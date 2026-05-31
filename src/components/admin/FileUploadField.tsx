@@ -109,6 +109,18 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
           </button>
         </div>
       )}
+      {value && preview === "audio" && (
+        <div className="flex items-center gap-2 bg-muted rounded-lg p-2">
+          <audio controls src={value} className="flex-1 h-9" />
+          <button type="button" onClick={() => onChange(null)} className="text-destructive p-1"><X className="h-4 w-4" /></button>
+        </div>
+      )}
+      {value && preview === "video" && (
+        <div className="relative">
+          <video controls src={value} className="w-full max-h-64 rounded-lg border bg-black" />
+          <button type="button" onClick={() => onChange(null)} className="absolute top-2 end-2 bg-destructive text-destructive-foreground rounded-full p-1"><X className="h-3 w-3" /></button>
+        </div>
+      )}
       <div className="flex gap-2">
         <input
           ref={fileRef}
