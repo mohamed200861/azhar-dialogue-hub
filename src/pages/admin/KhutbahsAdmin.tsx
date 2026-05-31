@@ -48,7 +48,7 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div className="md:col-span-2"><Label>العنوان *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto" /></div>
+        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form.title || "") || "auto"} /></div>
         <div><Label>التاريخ</Label><Input type="date" value={form.khutbah_date ?? ""} onChange={(e) => setForm({ ...form, khutbah_date: e.target.value })} /></div>
         <div><Label>التصنيف</Label>
           <Select value={form.category_id || ""} onValueChange={(v) => setForm({ ...form, category_id: v })}>
