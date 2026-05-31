@@ -64,10 +64,10 @@ function Editor({ initial, cats, teachers, onClose, onSaved }: { initial: L | nu
           </Select>
         </div>
         <div className="md:col-span-2"><Label>الوصف</Label><Textarea rows={3} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
-        <div><Label>صورة مصغرة (URL)</Label><Input dir="ltr" value={form.thumbnail ?? ""} onChange={(e) => setForm({ ...form, thumbnail: e.target.value })} /></div>
-        <div><Label>رابط الفيديو</Label><Input dir="ltr" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} /></div>
-        <div><Label>رابط الصوت</Label><Input dir="ltr" value={form.audio_url ?? ""} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} /></div>
-        <div><Label>رابط PDF</Label><Input dir="ltr" value={form.pdf_url ?? ""} onChange={(e) => setForm({ ...form, pdf_url: e.target.value })} /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="quran-thumbnails" label="الصورة المصغّرة" value={form.thumbnail} onChange={(v) => setForm({ ...form, thumbnail: v })} preview="image" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="quran-videos-media" label="الفيديو" value={form.video_url} onChange={(v) => setForm({ ...form, video_url: v })} preview="video" maxSizeMB={500} accept="video/mp4,video/webm" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="quran-videos-media" label="الملف الصوتي" value={form.audio_url} onChange={(v) => setForm({ ...form, audio_url: v })} preview="audio" maxSizeMB={200} accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="quran-materials" label="ملف PDF" value={form.pdf_url} onChange={(v) => setForm({ ...form, pdf_url: v })} preview="file" accept="application/pdf" /></div>
         <div className="md:col-span-2"><Label>نص الدرس (HTML)</Label><Textarea rows={5} value={form.text_content ?? ""} onChange={(e) => setForm({ ...form, text_content: e.target.value })} /></div>
         <div><Label>حالة النشر</Label>
           <Select value={form.publish_status} onValueChange={(v) => setForm({ ...form, publish_status: v })}>
