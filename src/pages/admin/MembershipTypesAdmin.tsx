@@ -28,7 +28,7 @@ function Editor({ initial, onClose, onSaved }: { initial: T | null; onClose: () 
 
   const save = async () => {
     if (!form.title_ar?.trim()) return toast.error("العنوان مطلوب");
-    const slug = form.slug?.trim() || slugify(form.title_en || form.title_ar);
+    const slug = sanitizeSlug(form.slug) || slugify(form.title_en || form.title_ar);
     setSaving(true);
     try {
       const payload = {
