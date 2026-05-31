@@ -65,9 +65,9 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
         <div><Label>اسم الخطيب (نصي)</Label><Input value={form.speaker_name ?? ""} onChange={(e) => setForm({ ...form, speaker_name: e.target.value })} /></div>
         <div><Label>المسجد</Label><Input value={form.mosque ?? ""} onChange={(e) => setForm({ ...form, mosque: e.target.value })} /></div>
         <div><Label>المكان</Label><Input value={form.location ?? ""} onChange={(e) => setForm({ ...form, location: e.target.value })} /></div>
-        <div><Label>الصورة (URL)</Label><Input dir="ltr" value={form.featured_image ?? ""} onChange={(e) => setForm({ ...form, featured_image: e.target.value })} /></div>
-        <div><Label>رابط الفيديو</Label><Input dir="ltr" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} /></div>
-        <div><Label>رابط الصوت</Label><Input dir="ltr" value={form.audio_url ?? ""} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-images" label="الصورة الرئيسية" value={form.featured_image} onChange={(v) => setForm({ ...form, featured_image: v })} preview="image" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-media" label="الفيديو" value={form.video_url} onChange={(v) => setForm({ ...form, video_url: v })} preview="video" maxSizeMB={500} accept="video/mp4,video/webm" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-media" label="الملف الصوتي" value={form.audio_url} onChange={(v) => setForm({ ...form, audio_url: v })} preview="audio" maxSizeMB={200} accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg" /></div>
         <div className="md:col-span-2"><Label>الوصف</Label><Textarea rows={3} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
         <div className="md:col-span-2"><Label>نص الخطبة</Label><Textarea rows={8} value={form.transcript ?? ""} onChange={(e) => setForm({ ...form, transcript: e.target.value })} /></div>
         <div><Label>حالة النشر</Label>
