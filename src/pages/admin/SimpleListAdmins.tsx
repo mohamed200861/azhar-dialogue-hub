@@ -89,13 +89,16 @@ function Inline({ cfg, initial, onClose, onSaved }: { cfg: Cfg; initial: any | n
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div><Label>{cfg.nameField === "name" ? "الاسم" : "العنوان"} *</Label><Input value={form[cfg.nameField] ?? ""} onChange={(e) => setForm({ ...form, [cfg.nameField]: e.target.value })} maxLength={200} /></div>
-        {"slug" in defaults && <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto" /></div>}
+        {"slug" in defaults && <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form[cfg.nameField] || "") || "auto"} /></div>}
         {cfg.extraFields.map((f) => (
-          <div key={f.key} className={f.type === "textarea" ? "md:col-span-2" : ""}>
-            <Label>{f.label}</Label>
-            {f.type === "textarea"
-              ? <Textarea rows={3} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} maxLength={4000} />
-              : <Input type={f.type === "number" ? "number" : "text"} dir={f.type === "image" ? "ltr" : undefined} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} />}
+          <div key={f.key} className={(f.type === "textarea" || f.type === "image") ? "md:col-span-2" : ""}>
+            {f.type === "image" ? (
+              <FileUploadField bucket={f.bucket || "images"} label={f.label} value={form[f.key] ?? ""} onChange={(v) => setForm({ ...form, [f.key]: v })} preview="image" />
+            ) : f.type === "textarea" ? (
+              <><Label>{f.label}</Label><Textarea rows={3} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} maxLength={4000} /></>
+            ) : (
+              <><Label>{f.label}</Label><Input type={f.type === "number" ? "number" : "text"} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} /></>
+            )}
           </div>
         ))}
         <div><Label>ترتيب العرض</Label><Input type="number" value={form.sort_order ?? 0} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /></div>
