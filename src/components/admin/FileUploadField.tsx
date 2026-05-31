@@ -43,13 +43,13 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
   useEffect(() => setManual(value ?? ""), [value]);
 
   const handleFile = async (file: File) => {
-    const allowed = (accept ?? ACCEPT[bucket]).split(",").map((s) => s.trim());
-    if (allowed.length && !allowed.includes(file.type)) {
+    const acceptList = (accept ?? ACCEPT[bucket] ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+    if (acceptList.length && !acceptList.includes(file.type)) {
       toast.error("نوع الملف غير مدعوم.");
       return;
     }
-    if (file.size > 20 * 1024 * 1024) {
-      toast.error("حجم الملف كبير جدًا. يرجى رفع ملف أصغر.");
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error(`حجم الملف كبير جدًا (الحد الأقصى ${maxSizeMB}MB).`);
       return;
     }
     setUploading(true);
