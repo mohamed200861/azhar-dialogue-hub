@@ -49,7 +49,7 @@ function Editor({ initial, cats, teachers, onClose, onSaved }: { initial: L | nu
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div className="md:col-span-2"><Label>العنوان *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto" /></div>
+        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form.title || "") || "auto"} /></div>
         <div><Label>المدة</Label><Input value={form.duration ?? ""} onChange={(e) => setForm({ ...form, duration: e.target.value })} placeholder="مثلاً 35 دقيقة" /></div>
         <div><Label>التصنيف</Label>
           <Select value={form.category_id || ""} onValueChange={(v) => setForm({ ...form, category_id: v })}>
