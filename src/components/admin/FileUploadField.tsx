@@ -6,26 +6,36 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Upload, Link as LinkIcon, X } from "lucide-react";
 import { toast } from "sonner";
 
-type Bucket = "images" | "covers" | "documents" | "thumbnails" | "attachments";
+type KnownBucket =
+  | "images" | "covers" | "documents" | "thumbnails" | "attachments"
+  | "quran-thumbnails" | "quran-videos-media" | "quran-materials"
+  | "khutbah-media" | "khutbah-images";
 
 interface Props {
-  bucket: Bucket;
+  bucket: KnownBucket | string;
   value?: string | null;
   onChange: (url: string | null) => void;
   accept?: string;
   label?: string;
-  preview?: "image" | "file";
+  preview?: "image" | "file" | "audio" | "video";
+  maxSizeMB?: number;
 }
 
-const ACCEPT: Record<Bucket, string> = {
-  images: "image/jpeg,image/png,image/webp,image/jpg",
-  covers: "image/jpeg,image/png,image/webp,image/jpg",
+const IMG = "image/jpeg,image/png,image/webp,image/jpg";
+const ACCEPT: Record<string, string> = {
+  images: IMG,
+  covers: IMG,
+  thumbnails: IMG,
+  "quran-thumbnails": IMG,
+  "khutbah-images": IMG,
   documents: "application/pdf",
-  thumbnails: "image/jpeg,image/png,image/webp,image/jpg",
   attachments: "application/pdf,image/jpeg,image/png,image/webp",
+  "quran-materials": "application/pdf,image/jpeg,image/png,image/webp",
+  "quran-videos-media": "video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg",
+  "khutbah-media": "video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg",
 };
 
-export function FileUploadField({ bucket, value, onChange, accept, label, preview = "image" }: Props) {
+export function FileUploadField({ bucket, value, onChange, accept, label, preview = "image", maxSizeMB = 50 }: Props) {
   const [uploading, setUploading] = useState(false);
   const [manual, setManual] = useState(value ?? "");
   const fileRef = useRef<HTMLInputElement>(null);
