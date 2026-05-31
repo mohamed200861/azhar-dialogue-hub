@@ -12,10 +12,10 @@ import { Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useFormDraft } from "@/hooks/useFormDraft";
 import { DraftStatus } from "@/components/admin/DraftStatus";
+import { FileUploadField } from "@/components/admin/FileUploadField";
+import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 
-function slugify(s: string) { return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, ""); }
-
-type Field = { key: string; label: string; type?: "text" | "textarea" | "image" | "number" };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "image" | "number"; bucket?: string };
 type Cfg = { title: string; table: string; nameField: string; extraFields: Field[]; draftPrefix: string };
 
 export function SimpleListEditor({ cfg }: { cfg: Cfg }) {
@@ -71,7 +71,7 @@ function Inline({ cfg, initial, onClose, onSaved }: { cfg: Cfg; initial: any | n
     if (!form[cfg.nameField]?.toString().trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
     const payload: any = { ...form };
-    if ("slug" in payload) payload.slug = payload.slug?.trim() || slugify(form[cfg.nameField]);
+    if ("slug" in payload) payload.slug = sanitizeSlug(payload.slug) || slugify(form[cfg.nameField]);
     if ("sort_order" in payload) payload.sort_order = Number(payload.sort_order) || 0;
     const { error } = initial
       ? await (supabase as any).from(cfg.table).update(payload).eq("id", initial.id)
@@ -89,13 +89,16 @@ function Inline({ cfg, initial, onClose, onSaved }: { cfg: Cfg; initial: any | n
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div><Label>{cfg.nameField === "name" ? "الاسم" : "العنوان"} *</Label><Input value={form[cfg.nameField] ?? ""} onChange={(e) => setForm({ ...form, [cfg.nameField]: e.target.value })} maxLength={200} /></div>
-        {"slug" in defaults && <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto" /></div>}
+        {"slug" in defaults && <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug ?? ""} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form[cfg.nameField] || "") || "auto"} /></div>}
         {cfg.extraFields.map((f) => (
-          <div key={f.key} className={f.type === "textarea" ? "md:col-span-2" : ""}>
-            <Label>{f.label}</Label>
-            {f.type === "textarea"
-              ? <Textarea rows={3} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} maxLength={4000} />
-              : <Input type={f.type === "number" ? "number" : "text"} dir={f.type === "image" ? "ltr" : undefined} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} />}
+          <div key={f.key} className={(f.type === "textarea" || f.type === "image") ? "md:col-span-2" : ""}>
+            {f.type === "image" ? (
+              <FileUploadField bucket={f.bucket || "images"} label={f.label} value={form[f.key] ?? ""} onChange={(v) => setForm({ ...form, [f.key]: v })} preview="image" />
+            ) : f.type === "textarea" ? (
+              <><Label>{f.label}</Label><Textarea rows={3} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} maxLength={4000} /></>
+            ) : (
+              <><Label>{f.label}</Label><Input type={f.type === "number" ? "number" : "text"} value={form[f.key] ?? ""} onChange={(e) => setForm({ ...form, [f.key]: e.target.value })} /></>
+            )}
           </div>
         ))}
         <div><Label>ترتيب العرض</Label><Input type="number" value={form.sort_order ?? 0} onChange={(e) => setForm({ ...form, sort_order: e.target.value })} /></div>
@@ -108,6 +111,6 @@ function Inline({ cfg, initial, onClose, onSaved }: { cfg: Cfg; initial: any | n
 
 // Concrete pages
 export function QuranCategoriesAdmin() { return <SimpleListEditor cfg={{ title: "تصنيفات القرآن", table: "quran_categories", nameField: "title", draftPrefix: "qcat", extraFields: [{ key: "description", label: "الوصف", type: "textarea" }] }} />; }
-export function QuranTeachersAdmin() { return <SimpleListEditor cfg={{ title: "معلمو القرآن", table: "quran_teachers", nameField: "name", draftPrefix: "qteacher", extraFields: [{ key: "bio", label: "نبذة", type: "textarea" }, { key: "photo_url", label: "رابط الصورة", type: "image" }] }} />; }
+export function QuranTeachersAdmin() { return <SimpleListEditor cfg={{ title: "معلمو القرآن", table: "quran_teachers", nameField: "name", draftPrefix: "qteacher", extraFields: [{ key: "bio", label: "نبذة", type: "textarea" }, { key: "photo_url", label: "صورة المعلم", type: "image", bucket: "quran-thumbnails" }] }} />; }
 export function KhutbahCategoriesAdmin() { return <SimpleListEditor cfg={{ title: "تصنيفات الخطب", table: "khutbah_categories", nameField: "title", draftPrefix: "kcat", extraFields: [{ key: "description", label: "الوصف", type: "textarea" }] }} />; }
-export function KhutbahSpeakersAdmin() { return <SimpleListEditor cfg={{ title: "الخطباء", table: "khutbah_speakers", nameField: "name", draftPrefix: "kspeaker", extraFields: [{ key: "biography", label: "السيرة", type: "textarea" }, { key: "photo_url", label: "رابط الصورة", type: "image" }] }} />; }
+export function KhutbahSpeakersAdmin() { return <SimpleListEditor cfg={{ title: "الخطباء", table: "khutbah_speakers", nameField: "name", draftPrefix: "kspeaker", extraFields: [{ key: "biography", label: "السيرة", type: "textarea" }, { key: "photo_url", label: "صورة الخطيب", type: "image", bucket: "khutbah-images" }] }} />; }

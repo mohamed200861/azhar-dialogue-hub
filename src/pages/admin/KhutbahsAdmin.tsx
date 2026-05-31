@@ -12,8 +12,8 @@ import { Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useFormDraft } from "@/hooks/useFormDraft";
 import { DraftStatus } from "@/components/admin/DraftStatus";
-
-function slugify(s: string) { return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, ""); }
+import { FileUploadField } from "@/components/admin/FileUploadField";
+import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 
 const empty: any = { slug: "", title: "", description: "", speaker_id: "", speaker_name: "", mosque: "", location: "", category_id: "", khutbah_date: "", audio_url: "", video_url: "", transcript: "", featured_image: "", publish_status: "draft", is_featured: false };
 
@@ -27,7 +27,7 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       category_id: form.category_id || null, speaker_id: form.speaker_id || null,
       khutbah_date: form.khutbah_date || null,
       published_at: form.publish_status === "published" ? (initial?.published_at ?? new Date().toISOString()) : null,
@@ -48,7 +48,7 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <div className="md:col-span-2"><Label>العنوان *</Label><Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} /></div>
-        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="auto" /></div>
+        <div><Label>المعرّف (slug)</Label><Input dir="ltr" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form.title || "") || "auto"} /></div>
         <div><Label>التاريخ</Label><Input type="date" value={form.khutbah_date ?? ""} onChange={(e) => setForm({ ...form, khutbah_date: e.target.value })} /></div>
         <div><Label>التصنيف</Label>
           <Select value={form.category_id || ""} onValueChange={(v) => setForm({ ...form, category_id: v })}>
@@ -65,9 +65,9 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
         <div><Label>اسم الخطيب (نصي)</Label><Input value={form.speaker_name ?? ""} onChange={(e) => setForm({ ...form, speaker_name: e.target.value })} /></div>
         <div><Label>المسجد</Label><Input value={form.mosque ?? ""} onChange={(e) => setForm({ ...form, mosque: e.target.value })} /></div>
         <div><Label>المكان</Label><Input value={form.location ?? ""} onChange={(e) => setForm({ ...form, location: e.target.value })} /></div>
-        <div><Label>الصورة (URL)</Label><Input dir="ltr" value={form.featured_image ?? ""} onChange={(e) => setForm({ ...form, featured_image: e.target.value })} /></div>
-        <div><Label>رابط الفيديو</Label><Input dir="ltr" value={form.video_url ?? ""} onChange={(e) => setForm({ ...form, video_url: e.target.value })} /></div>
-        <div><Label>رابط الصوت</Label><Input dir="ltr" value={form.audio_url ?? ""} onChange={(e) => setForm({ ...form, audio_url: e.target.value })} /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-images" label="الصورة الرئيسية" value={form.featured_image} onChange={(v) => setForm({ ...form, featured_image: v })} preview="image" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-media" label="الفيديو" value={form.video_url} onChange={(v) => setForm({ ...form, video_url: v })} preview="video" maxSizeMB={500} accept="video/mp4,video/webm" /></div>
+        <div className="md:col-span-2"><FileUploadField bucket="khutbah-media" label="الملف الصوتي" value={form.audio_url} onChange={(v) => setForm({ ...form, audio_url: v })} preview="audio" maxSizeMB={200} accept="audio/mpeg,audio/mp4,audio/wav,audio/ogg" /></div>
         <div className="md:col-span-2"><Label>الوصف</Label><Textarea rows={3} value={form.description ?? ""} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
         <div className="md:col-span-2"><Label>نص الخطبة</Label><Textarea rows={8} value={form.transcript ?? ""} onChange={(e) => setForm({ ...form, transcript: e.target.value })} /></div>
         <div><Label>حالة النشر</Label>

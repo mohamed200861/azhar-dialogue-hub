@@ -6,26 +6,36 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Upload, Link as LinkIcon, X } from "lucide-react";
 import { toast } from "sonner";
 
-type Bucket = "images" | "covers" | "documents" | "thumbnails" | "attachments";
+type KnownBucket =
+  | "images" | "covers" | "documents" | "thumbnails" | "attachments"
+  | "quran-thumbnails" | "quran-videos-media" | "quran-materials"
+  | "khutbah-media" | "khutbah-images";
 
 interface Props {
-  bucket: Bucket;
+  bucket: KnownBucket | string;
   value?: string | null;
   onChange: (url: string | null) => void;
   accept?: string;
   label?: string;
-  preview?: "image" | "file";
+  preview?: "image" | "file" | "audio" | "video";
+  maxSizeMB?: number;
 }
 
-const ACCEPT: Record<Bucket, string> = {
-  images: "image/jpeg,image/png,image/webp,image/jpg",
-  covers: "image/jpeg,image/png,image/webp,image/jpg",
+const IMG = "image/jpeg,image/png,image/webp,image/jpg";
+const ACCEPT: Record<string, string> = {
+  images: IMG,
+  covers: IMG,
+  thumbnails: IMG,
+  "quran-thumbnails": IMG,
+  "khutbah-images": IMG,
   documents: "application/pdf",
-  thumbnails: "image/jpeg,image/png,image/webp,image/jpg",
   attachments: "application/pdf,image/jpeg,image/png,image/webp",
+  "quran-materials": "application/pdf,image/jpeg,image/png,image/webp",
+  "quran-videos-media": "video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg",
+  "khutbah-media": "video/mp4,video/webm,audio/mpeg,audio/mp4,audio/wav,audio/ogg",
 };
 
-export function FileUploadField({ bucket, value, onChange, accept, label, preview = "image" }: Props) {
+export function FileUploadField({ bucket, value, onChange, accept, label, preview = "image", maxSizeMB = 50 }: Props) {
   const [uploading, setUploading] = useState(false);
   const [manual, setManual] = useState(value ?? "");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -33,13 +43,13 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
   useEffect(() => setManual(value ?? ""), [value]);
 
   const handleFile = async (file: File) => {
-    const allowed = (accept ?? ACCEPT[bucket]).split(",").map((s) => s.trim());
-    if (allowed.length && !allowed.includes(file.type)) {
+    const acceptList = (accept ?? ACCEPT[bucket] ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+    if (acceptList.length && !acceptList.includes(file.type)) {
       toast.error("نوع الملف غير مدعوم.");
       return;
     }
-    if (file.size > 20 * 1024 * 1024) {
-      toast.error("حجم الملف كبير جدًا. يرجى رفع ملف أصغر.");
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error(`حجم الملف كبير جدًا (الحد الأقصى ${maxSizeMB}MB).`);
       return;
     }
     setUploading(true);
@@ -97,6 +107,18 @@ export function FileUploadField({ bucket, value, onChange, accept, label, previe
           <button type="button" onClick={() => onChange(null)} className="text-destructive p-1">
             <X className="h-4 w-4" />
           </button>
+        </div>
+      )}
+      {value && preview === "audio" && (
+        <div className="flex items-center gap-2 bg-muted rounded-lg p-2">
+          <audio controls src={value} className="flex-1 h-9" />
+          <button type="button" onClick={() => onChange(null)} className="text-destructive p-1"><X className="h-4 w-4" /></button>
+        </div>
+      )}
+      {value && preview === "video" && (
+        <div className="relative">
+          <video controls src={value} className="w-full max-h-64 rounded-lg border bg-black" />
+          <button type="button" onClick={() => onChange(null)} className="absolute top-2 end-2 bg-destructive text-destructive-foreground rounded-full p-1"><X className="h-3 w-3" /></button>
         </div>
       )}
       <div className="flex gap-2">
