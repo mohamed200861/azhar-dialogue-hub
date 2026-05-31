@@ -12,8 +12,8 @@ import { Loader2, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useFormDraft } from "@/hooks/useFormDraft";
 import { DraftStatus } from "@/components/admin/DraftStatus";
-
-function slugify(s: string) { return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, ""); }
+import { FileUploadField } from "@/components/admin/FileUploadField";
+import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 
 type L = any;
 const empty: any = { slug: "", title: "", description: "", thumbnail: "", video_url: "", audio_url: "", pdf_url: "", text_content: "", category_id: "", teacher_id: "", duration: "", publish_status: "draft", is_featured: false, sort_order: 0 };
