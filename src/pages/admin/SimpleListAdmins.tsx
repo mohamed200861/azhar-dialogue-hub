@@ -15,7 +15,7 @@ import { DraftStatus } from "@/components/admin/DraftStatus";
 import { FileUploadField } from "@/components/admin/FileUploadField";
 import { slugify, sanitizeSlug } from "@/lib/admin-utils";
 
-type Field = { key: string; label: string; type?: "text" | "textarea" | "image" | "number" };
+type Field = { key: string; label: string; type?: "text" | "textarea" | "image" | "number"; bucket?: string };
 type Cfg = { title: string; table: string; nameField: string; extraFields: Field[]; draftPrefix: string };
 
 export function SimpleListEditor({ cfg }: { cfg: Cfg }) {
