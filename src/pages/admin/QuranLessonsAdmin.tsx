@@ -28,7 +28,7 @@ function Editor({ initial, cats, teachers, onClose, onSaved }: { initial: L | nu
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       category_id: form.category_id || null, teacher_id: form.teacher_id || null,
       sort_order: Number(form.sort_order) || 0,
       published_at: form.publish_status === "published" ? (initial?.published_at ?? new Date().toISOString()) : null,
