@@ -71,7 +71,7 @@ function Inline({ cfg, initial, onClose, onSaved }: { cfg: Cfg; initial: any | n
     if (!form[cfg.nameField]?.toString().trim()) return toast.error("العنوان مطلوب");
     setSaving(true);
     const payload: any = { ...form };
-    if ("slug" in payload) payload.slug = payload.slug?.trim() || slugify(form[cfg.nameField]);
+    if ("slug" in payload) payload.slug = sanitizeSlug(payload.slug) || slugify(form[cfg.nameField]);
     if ("sort_order" in payload) payload.sort_order = Number(payload.sort_order) || 0;
     const { error } = initial
       ? await (supabase as any).from(cfg.table).update(payload).eq("id", initial.id)
