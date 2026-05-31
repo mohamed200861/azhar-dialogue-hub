@@ -27,7 +27,7 @@ function Editor({ initial, cats, speakers, onClose, onSaved }: { initial: any | 
     setSaving(true);
     const payload: any = {
       ...form,
-      slug: form.slug?.trim() || slugify(form.title),
+      slug: sanitizeSlug(form.slug) || slugify(form.title),
       category_id: form.category_id || null, speaker_id: form.speaker_id || null,
       khutbah_date: form.khutbah_date || null,
       published_at: form.publish_status === "published" ? (initial?.published_at ?? new Date().toISOString()) : null,
