@@ -31,6 +31,9 @@ export const specializedSections: { href: string; label: string; desc: string }[
   { href: "/sharia-academy", label: "أكاديمية العلوم الشرعية", desc: "دورات ودبلومات وإجازات علمية." },
   { href: "/civilizational-dialogue", label: "الحوار والتواصل الحضاري", desc: "حوار بين الأديان والثقافات." },
   { href: "/research-studies", label: "البحوث والدراسات", desc: "بحوث ودراسات شرعية وفكرية." },
+  { href: "/khutbahs", label: "خطب وخطباء", desc: "مجموعة من الخطب والمحاضرات والدروس الدعوية لكبار الخطباء والدعاة." },
+  { href: "/quran", label: "هيئة القرآن الكريم", desc: "منصة متخصصة لدروس القرآن الكريم والتلاوة والتجويد والمواد التعليمية الإسلامية." },
+  { href: "/memberships", label: "العضوية", desc: "انضم إلى عضوية الاتحاد واستفد من المزايا والخدمات والبرامج المتاحة للأعضاء." },
   { href: "/newsletter", label: "نشرة الأخبار", desc: "اشترك ليصلك كل جديد." },
 ];
 
