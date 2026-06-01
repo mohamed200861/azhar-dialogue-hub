@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, useLocation, Link } from "react-router-dom";
-import { Menu, X, Mail, ChevronDown } from "lucide-react";
+import { Menu, X, Mail, ChevronDown, Crown } from "lucide-react";
 import { nav, specializedSections } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
