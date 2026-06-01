@@ -66,12 +66,33 @@ export function Header() {
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-72">
-              {specializedSections.map((s) => (
-                <DropdownMenuItem key={s.href} asChild>
-                  <Link to={s.href} className="flex flex-col items-end gap-0.5 py-2 cursor-pointer">
-                    <span className="font-semibold text-sm">{s.label}</span>
-                    <span className="text-[11px] text-muted-foreground">{s.desc}</span>
+            <DropdownMenuContent align="end" className="w-80 p-1.5">
+              {specializedSections.map((s, i) => (
+                <DropdownMenuItem
+                  key={s.href}
+                  asChild
+                  className={`p-0 focus:bg-transparent ${i > 0 ? "mt-0.5" : ""}`}
+                >
+                  <Link
+                    to={s.href}
+                    className={`group relative flex flex-col items-end gap-0.5 py-2.5 px-3 rounded-md cursor-pointer transition-all ${
+                      s.premium
+                        ? "bg-gradient-to-l from-amber-50 via-amber-50/60 to-primary/5 border-e-2 border-amber-400 hover:from-amber-100 hover:to-primary/10 shadow-sm"
+                        : "hover:bg-muted/70"
+                    }`}
+                  >
+                    {s.premium && (
+                      <span className="absolute top-2 start-2 inline-flex items-center gap-1 text-[10px] font-bold tracking-wide px-1.5 py-0.5 rounded-full bg-gradient-to-l from-amber-400 to-amber-500 text-white shadow-sm">
+                        حصري
+                      </span>
+                    )}
+                    <span className={`inline-flex items-center gap-1.5 font-semibold text-[13.5px] tracking-tight leading-snug ${s.premium ? "text-amber-900" : ""}`}>
+                      {s.premium && <Crown className="h-3.5 w-3.5 text-amber-500" />}
+                      {s.label}
+                    </span>
+                    <span className={`text-[11.5px] leading-relaxed line-clamp-2 mt-0.5 ${s.premium ? "text-amber-900/70" : "text-muted-foreground/90"}`}>
+                      {s.desc}
+                    </span>
                   </Link>
                 </DropdownMenuItem>
               ))}
