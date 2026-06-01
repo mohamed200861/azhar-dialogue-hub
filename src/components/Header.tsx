@@ -142,12 +142,27 @@ export function Header() {
                   key={s.href}
                   to={s.href}
                   className={({ isActive }) =>
-                    `block px-3 py-2 rounded-md text-sm ${
-                      isActive ? "text-primary bg-primary/5" : "text-foreground/80 hover:bg-muted"
+                    `relative block px-3 py-2 rounded-md transition-all ${
+                      s.premium
+                        ? "bg-gradient-to-l from-amber-50 via-amber-50/60 to-primary/5 border-e-2 border-amber-400 my-1 shadow-sm"
+                        : isActive
+                        ? "text-primary bg-primary/5"
+                        : "text-foreground/80 hover:bg-muted"
                     }`
                   }
                 >
-                  {s.label}
+                  {s.premium && (
+                    <span className="absolute top-1.5 start-2 inline-flex items-center text-[9px] font-bold tracking-wide px-1.5 py-0.5 rounded-full bg-gradient-to-l from-amber-400 to-amber-500 text-white shadow-sm">
+                      حصري
+                    </span>
+                  )}
+                  <span className={`inline-flex items-center gap-1.5 text-sm font-semibold ${s.premium ? "text-amber-900" : ""}`}>
+                    {s.premium && <Crown className="h-3.5 w-3.5 text-amber-500" />}
+                    {s.label}
+                  </span>
+                  <span className={`block text-[11.5px] leading-relaxed mt-0.5 line-clamp-2 ${s.premium ? "text-amber-900/70" : "text-muted-foreground/90"}`}>
+                    {s.desc}
+                  </span>
                 </NavLink>
               ))}
             </div>
