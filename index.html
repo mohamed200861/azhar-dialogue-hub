@@ -75,6 +75,25 @@
 
   <body>
     <div id="root"></div>
+    <script>
+      // One-time cleanup: unregister any stale Service Worker / Cache Storage
+      // left over from earlier deploys so new builds are always visible
+      // without a manual hard refresh.
+      (function () {
+        try {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+              regs.forEach(function (r) { r.unregister(); });
+            }).catch(function () {});
+          }
+          if (window.caches && caches.keys) {
+            caches.keys().then(function (keys) {
+              keys.forEach(function (k) { caches.delete(k); });
+            }).catch(function () {});
+          }
+        } catch (e) { /* no-op */ }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

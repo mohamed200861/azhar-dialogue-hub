@@ -471,6 +471,23 @@ export const onRequest: PagesFunction = async (ctx) => {
     return ctx.next();
   }
 
+  // Never rewrite well-known verification / static HTML files (Google Search
+  // Console, Bing, Pinterest, ads.txt-style proofs, BrowserConfig, etc.).
+  // These must be served byte-for-byte from /public.
+  if (
+    /^\/google[0-9a-f]+\.html$/i.test(url.pathname) ||
+    /^\/BingSiteAuth\.xml$/i.test(url.pathname) ||
+    /^\/pinterest-[a-z0-9]+\.html$/i.test(url.pathname) ||
+    url.pathname === "/ads.txt" ||
+    url.pathname === "/sitemap.xml" ||
+    url.pathname === "/robots.txt" ||
+    url.pathname === "/favicon.ico" ||
+    url.pathname === "/manifest.json" ||
+    url.pathname === "/browserconfig.xml"
+  ) {
+    return ctx.next();
+  }
+
   if (!isCrawler || !wantsHtml) {
     return ctx.next();
   }
