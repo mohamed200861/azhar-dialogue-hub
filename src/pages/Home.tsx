@@ -289,10 +289,6 @@ export default function Home() {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                             loading={featured ? "eager" : "lazy"}
                             decoding="async"
-                            renderWidth={featured ? 1200 : 600}
-                            sizes={featured
-                              ? "(max-width: 768px) 100vw, (max-width: 1280px) 66vw, 800px"
-                              : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 320px"}
                             {...(featured ? { fetchpriority: "high" as any } : {})}
                           />
                         </div>
