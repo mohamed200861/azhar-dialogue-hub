@@ -59,9 +59,6 @@ export function LatestPublications() {
             <h2 id="latest-publications-heading" className="heading-section mt-3">
               آخر المنشورات والإصدارات
             </h2>
-            <p className="text-muted-foreground mt-2 text-sm md:text-base max-w-2xl">
-              تحديث تلقائي لكل ما يُنشر حديثًا من أخبار وبيانات وكتب وبحوث ودروس قرآنية وخطب وفعاليات.
-            </p>
           </div>
           <Button asChild variant="outline" className="hidden sm:inline-flex">
             <Link to="/news">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
