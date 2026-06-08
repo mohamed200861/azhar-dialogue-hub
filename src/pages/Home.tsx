@@ -18,6 +18,7 @@ import { formatDate, formatDateTime, getYouTubeEmbed } from "@/lib/admin-utils";
 import { SmartImage } from "@/components/SmartImage";
 import { NewsTicker } from "@/components/NewsTicker";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LatestPublications } from "@/components/home/LatestPublications";
 
 
 import { applySeo } from "@/lib/seo";
@@ -48,7 +49,7 @@ export default function Home() {
   const { settings } = useSiteSettings();
   const logo = settings.logo_url || logoDefault;
 
-  const [news, setNews] = useState<any[] | null>(null);
+  
   const [events, setEvents] = useState<any[] | null>(null);
   const [library, setLibrary] = useState<any[] | null>(null);
   const [videos, setVideos] = useState<any[] | null>(null);
@@ -91,9 +92,7 @@ export default function Home() {
 
   useEffect(() => {
     (async () => {
-      const [newsR, eventsR, libR, vidsR] = await Promise.all([
-        supabase.from("news_posts").select("id,slug,title,excerpt,cover_image,category,publisher_source,published_at,created_at")
-          .eq("status", "published").order("published_at", { ascending: false, nullsFirst: false }).limit(5),
+      const [eventsR, libR, vidsR] = await Promise.all([
         supabase.from("events").select("id,slug,title,description,cover_image,event_type,start_datetime,location,status,organizer_source")
           .eq("publish_status", "published").eq("status", "upcoming").order("start_datetime", { ascending: true }).limit(3),
         supabase.from("library_items").select("id,slug,title,category,cover_image,publisher_source,description")
@@ -103,7 +102,6 @@ export default function Home() {
           .eq("status", "published").order("scheduled_at", { ascending: false, nullsFirst: false })
           .order("created_at", { ascending: false }).limit(4),
       ]);
-      setNews(newsR.data ?? []);
       setEvents(eventsR.data ?? []);
       setLibrary(libR.data ?? []);
       setVideos(vidsR.data ?? []);
@@ -234,90 +232,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* LATEST NEWS — moved up, right below hero/ticker/live */}
-      {settings.show_news_section !== false && (
-        <section className="section-padding bg-gradient-soft">
-          <div className="container-wide">
-            <div className="flex items-end justify-between mb-10 gap-4">
-              <div>
-                <span className="eyebrow">الأخبار</span>
-                <h2 className="heading-section mt-3">آخر الأخبار والبيانات</h2>
-              </div>
-              <Button asChild variant="outline" className="hidden sm:inline-flex">
-                <Link to="/news">{ui.viewAll} <ArrowLeft className="h-4 w-4" /></Link>
-              </Button>
-            </div>
-            <div className="min-h-[420px]">
-              {news === null ? (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className={`card-elegant overflow-hidden ${i === 0 ? "lg:col-span-2 lg:row-span-2" : ""}`}
-                    >
-                      <Skeleton className={`${i === 0 ? "aspect-[16/9]" : "aspect-[16/10]"} w-full rounded-none`} />
-                      <div className="p-4 space-y-3">
-                        <Skeleton className="h-4 w-1/3" />
-                        <Skeleton className="h-5 w-full" />
-                        <Skeleton className="h-4 w-2/3" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : news.length === 0 ? (
-                <div className="card-elegant p-12 text-center text-muted-foreground">
-                  لا توجد أخبار منشورة حاليًا. ترقبوا المحتوى الجديد قريبًا.
-                </div>
-              ) : (
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 auto-rows-fr">
-                  {news.map((n, idx) => {
-                    const featured = idx === 0 && news.length >= 3;
-                    return (
-                      <Link
-                        key={n.id}
-                        to={`/news/${n.slug || n.id}`}
-                        className={`card-elegant overflow-hidden flex flex-col group ${
-                          featured ? "lg:col-span-2 lg:row-span-2" : ""
-                        }`}
-                      >
-                        <div className={`${featured ? "aspect-[16/9]" : "aspect-[16/10]"} overflow-hidden bg-muted`}>
-                          <SmartImage
-                            src={n.cover_image}
-                            alt={n.title}
-                            variant="news"
-                            fallbackClassName="bg-gradient-emerald"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                            loading={featured ? "eager" : "lazy"}
-                            decoding="async"
-                            {...(featured ? { fetchpriority: "high" as any } : {})}
-                          />
-                        </div>
-                        <div className={`${featured ? "p-6" : "p-4"} flex flex-col flex-1`}>
-                          <div className="flex items-center gap-2 text-[11px] md:text-xs text-muted-foreground mb-2">
-                            <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
-                            <span>{formatDate(n.published_at ?? n.created_at)}</span>
-                          </div>
-                          <h3 className={`font-bold mb-2 line-clamp-2 leading-snug ${featured ? "text-xl md:text-2xl" : "text-base md:text-[17px]"}`}>
-                            {n.title}
-                          </h3>
-                          {n.excerpt && (
-                            <p className={`text-muted-foreground mb-3 flex-1 ${featured ? "text-sm md:text-base line-clamp-4" : "text-[13px] line-clamp-2"}`}>
-                              {n.excerpt}
-                            </p>
-                          )}
-                          <span className="text-sm font-semibold text-primary inline-flex items-center gap-1.5 group-hover:gap-2.5 transition-all mt-auto">
-                            {ui.readMore} <ArrowLeft className="h-4 w-4" />
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* LATEST PUBLICATIONS — unified dynamic feed from all public sources */}
+      {settings.show_news_section !== false && <LatestPublications />}
 
       {/* SPECIALIZED SECTIONS */}
       <section className="section-padding">
