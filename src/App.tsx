@@ -101,7 +101,9 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <AuthProvider>
-            <Suspense fallback={<RouteFallback />}>
+            <RouteErrorBoundary>
+              <Suspense fallback={<RouteFallback />}>
+
               <Routes>
                 {/* Public */}
                 <Route path="/" element={<Index />} />
