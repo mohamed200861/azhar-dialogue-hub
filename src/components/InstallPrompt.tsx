@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { X, Download, Share } from "lucide-react";
 
@@ -20,7 +20,7 @@ function recentlyDismissed(): boolean {
   }
 }
 
-function isStandalone(): boolean {
+export function isStandalone(): boolean {
   if (typeof window === "undefined") return false;
   return (
     window.matchMedia?.("(display-mode: standalone)").matches ||
@@ -29,8 +29,52 @@ function isStandalone(): boolean {
   );
 }
 
-function isIOS(): boolean {
+export function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
   return /iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// Module-level cache of the captured beforeinstallprompt event so both the
+// auto banner and the manual footer button can use the same prompt.
+let cachedDeferred: BeforeInstallPromptEvent | null = null;
+const listeners = new Set<(e: BeforeInstallPromptEvent | null) => void>();
+
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    cachedDeferred = e as BeforeInstallPromptEvent;
+    listeners.forEach((fn) => fn(cachedDeferred));
+  });
+  window.addEventListener("appinstalled", () => {
+    cachedDeferred = null;
+    listeners.forEach((fn) => fn(null));
+  });
+}
+
+/** Hook for components (e.g. footer button) to trigger install at any time. */
+export function useInstallPrompt() {
+  const [deferred, setDeferred] = useState<BeforeInstallPromptEvent | null>(cachedDeferred);
+  const [standalone, setStandalone] = useState<boolean>(isStandalone());
+
+  useEffect(() => {
+    const fn = (e: BeforeInstallPromptEvent | null) => setDeferred(e);
+    listeners.add(fn);
+    setStandalone(isStandalone());
+    return () => { listeners.delete(fn); };
+  }, []);
+
+  const install = useCallback(async () => {
+    if (deferred) {
+      await deferred.prompt();
+      await deferred.userChoice;
+      cachedDeferred = null;
+      setDeferred(null);
+      return "prompted" as const;
+    }
+    return isIOS() ? ("ios" as const) : ("unavailable" as const);
+  }, [deferred]);
+
+  return { canInstall: !!deferred, isIOS: isIOS(), isStandalone: standalone, install };
 }
 
 /**

@@ -88,12 +88,12 @@ export function LatestPublications() {
               {/* Mobile: snap horizontal scroll */}
               <div className="md:hidden -mx-4 px-4">
                 <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-thin">
-                  {items.map((item) => (
+                  {items.map((item, i) => (
                     <div
                       key={item.id}
                       className="snap-start shrink-0 w-[82%] xs:w-[70%]"
                     >
-                      <PublicationCard item={item} />
+                      <PublicationCard item={item} priority={i === 0} />
                     </div>
                   ))}
                 </div>
@@ -101,8 +101,8 @@ export function LatestPublications() {
 
               {/* Tablet/Desktop: responsive grid */}
               <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 auto-rows-fr">
-                {items.map((item) => (
-                  <PublicationCard key={item.id} item={item} />
+                {items.map((item, i) => (
+                  <PublicationCard key={item.id} item={item} priority={i < 2} />
                 ))}
               </div>
             </>
