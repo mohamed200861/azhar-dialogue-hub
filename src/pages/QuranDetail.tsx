@@ -53,7 +53,7 @@ export default function QuranDetail() {
         )}
 
         {lesson.description && <p className="text-foreground/85 leading-loose mb-6">{lesson.description}</p>}
-        {lesson.text_content && <div className="prose prose-sm max-w-none mb-6" dangerouslySetInnerHTML={{ __html: lesson.text_content }} />}
+        {lesson.text_content && <RichTextView html={lesson.text_content} className="prose prose-sm max-w-none mb-6" />}
 
         {lesson.pdf_url && (
           <a href={lesson.pdf_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-primary font-bold">
