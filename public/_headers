@@ -1,7 +1,8 @@
 # Cloudflare Pages headers
-# Force HTML to revalidate on every request so users always get the latest
-# index.html (and therefore the latest hashed JS/CSS chunks). Hashed assets
-# are immutable and can be cached forever.
+# Force HTML and the service worker to revalidate on every request so users
+# always get the latest index.html (and therefore the latest hashed JS/CSS
+# chunks) and the latest service worker. Hashed assets are immutable and
+# can be cached forever.
 
 /
   Cache-Control: public, max-age=0, must-revalidate
@@ -10,6 +11,19 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+/workbox-*.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/offline.html
   Cache-Control: public, max-age=0, must-revalidate
 
 /assets/*
