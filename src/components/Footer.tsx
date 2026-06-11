@@ -15,6 +15,13 @@ export function Footer() {
   const { settings } = useSiteSettings();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
+  const [showIosHelp, setShowIosHelp] = useState(false);
+  const install = useInstallPrompt();
+
+  const onInstallClick = async () => {
+    const result = await install.install();
+    if (result === "ios" || result === "unavailable") setShowIosHelp(true);
+  };
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
