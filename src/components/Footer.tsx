@@ -164,6 +164,25 @@ export function Footer() {
         </div>
       </div>
 
+      {!install.isStandalone && (
+        <div className="border-t border-white/10">
+          <div className="container-wide py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-xs text-primary-foreground/80">
+              ثبّت تطبيق اتحاد علماء الأزهر على جهازك للوصول السريع.
+            </p>
+            <Button
+              onClick={onInstallClick}
+              size="sm"
+              variant="secondary"
+              className="bg-white text-primary hover:bg-white/90"
+            >
+              <Download className="h-4 w-4 ml-1.5" />
+              تثبيت التطبيق
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="border-t border-white/10">
         <div className="container-wide py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-primary-foreground/70">
           <div>© {year} — {settings.footer_text || ui.copyright}</div>
@@ -174,6 +193,34 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      <Dialog open={showIosHelp} onOpenChange={setShowIosHelp}>
+        <DialogContent dir="rtl" className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>تثبيت التطبيق على جهازك</DialogTitle>
+            <DialogDescription>
+              اتبع الخطوات التالية حسب المتصفح:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <div>
+              <p className="font-semibold mb-1">على iPhone / iPad (Safari)</p>
+              <ol className="list-decimal pr-5 space-y-1 text-muted-foreground">
+                <li>اضغط زر المشاركة <Share className="inline h-3.5 w-3.5" /> في الأسفل.</li>
+                <li>اختر "إضافة إلى الشاشة الرئيسية".</li>
+                <li>اضغط "إضافة".</li>
+              </ol>
+            </div>
+            <div>
+              <p className="font-semibold mb-1">على Android (Chrome / Samsung)</p>
+              <ol className="list-decimal pr-5 space-y-1 text-muted-foreground">
+                <li>افتح قائمة المتصفح (⋮).</li>
+                <li>اختر "تثبيت التطبيق" أو "إضافة إلى الشاشة الرئيسية".</li>
+              </ol>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </footer>
   );
 }
