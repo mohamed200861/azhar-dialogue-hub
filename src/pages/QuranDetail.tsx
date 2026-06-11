@@ -8,6 +8,7 @@ import { ReaderFeedback } from "@/components/ReaderFeedback";
 import { applySeo } from "@/lib/seo";
 import { getYouTubeEmbed } from "@/lib/admin-utils";
 import { ArrowRight, Download, FileText, Music2 } from "lucide-react";
+import { RichTextView } from "@/components/RichTextView";
 
 export default function QuranDetail() {
   const { slug } = useParams();
