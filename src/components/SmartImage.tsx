@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookOpen, Newspaper, PlayCircle, Calendar, Image as ImageIcon, LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,13 +16,17 @@ interface Props extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src?: string | null;
   alt: string;
   variant?: Variant;
-  /** Tailwind classes for the fallback wrapper (e.g. background gradient). */
   fallbackClassName?: string;
-  /** Optional override icon */
   icon?: LucideIcon;
+  /** Mark as LCP-candidate: eager load, high priority, no lazy. */
+  priority?: boolean;
 }
 
-/** Image with graceful fallback (custom icon) when src is missing or broken. */
+/**
+ * Image with graceful fallback (custom icon) when src is missing or broken.
+ * One transparent retry (cache-bust) before showing the fallback to recover
+ * from transient CDN / network flakes.
+ */
 export function SmartImage({
   src,
   alt,
@@ -30,11 +34,34 @@ export function SmartImage({
   fallbackClassName,
   icon,
   className,
+  priority,
   ...rest
 }: Props) {
+  const [currentSrc, setCurrentSrc] = useState<string | undefined>(src || undefined);
+  const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setCurrentSrc(src || undefined);
+    setAttempt(0);
+    setFailed(false);
+  }, [src]);
+
   const Icon = icon ?? ICONS[variant];
-  const showFallback = !src || failed;
+  const showFallback = !currentSrc || failed;
+
+  const handleError = () => {
+    if (attempt < 1 && src) {
+      // Retry once with a cache-bust param.
+      const sep = src.includes("?") ? "&" : "?";
+      setCurrentSrc(`${src}${sep}_r=${Date.now()}`);
+      setAttempt(1);
+      if (import.meta.env.DEV) console.warn("[SmartImage] retry", src);
+      return;
+    }
+    if (import.meta.env.DEV) console.warn("[SmartImage] failed", src);
+    setFailed(true);
+  };
 
   if (showFallback) {
     return (
@@ -42,7 +69,7 @@ export function SmartImage({
         className={cn(
           "w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/15 to-primary-glow/10",
           fallbackClassName,
-          className
+          className,
         )}
         aria-label={alt}
         role="img"
@@ -54,14 +81,15 @@ export function SmartImage({
 
   return (
     <img
-      src={src}
+      src={currentSrc}
       alt={alt}
-      loading={rest.loading ?? "lazy"}
-      decoding={rest.decoding ?? "async"}
-      onError={() => setFailed(true)}
+      loading={priority ? "eager" : (rest.loading ?? "lazy")}
+      decoding={priority ? "sync" : (rest.decoding ?? "async")}
+      // @ts-expect-error fetchpriority is valid HTML, React 18 typing lag
+      fetchpriority={priority ? "high" : undefined}
+      onError={handleError}
       className={className}
       {...rest}
     />
   );
-
 }

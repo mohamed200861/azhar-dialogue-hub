@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { SmartImage } from "@/components/SmartImage";
 import { formatDate } from "@/lib/admin-utils";
+import { optimizedImage } from "@/lib/supabase-image";
 import { ui } from "@/i18n/content";
 import type { PublicationItem } from "@/lib/latest-publications";
 
@@ -29,9 +30,10 @@ const TYPE_TONE: Record<PublicationItem["type"], string> = {
   dialogue: "bg-teal-500/10 text-teal-700 dark:text-teal-400",
 };
 
-function PublicationCardImpl({ item }: { item: PublicationItem }) {
+function PublicationCardImpl({ item, priority = false }: { item: PublicationItem; priority?: boolean }) {
   const Icon = ICONS[item.icon] ?? Newspaper;
   const tone = TYPE_TONE[item.type];
+  const optimized = optimizedImage(item.cover, { width: 720, quality: 70 });
 
   return (
     <Link
@@ -41,14 +43,20 @@ function PublicationCardImpl({ item }: { item: PublicationItem }) {
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
         <SmartImage
-          src={item.cover}
+          src={optimized}
           alt={item.title}
           variant={item.variant}
           fallbackClassName="bg-gradient-emerald"
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          decoding="async"
+          priority={priority}
+          sizes="(max-width: 768px) 90vw, (max-width: 1280px) 33vw, 25vw"
+          width={720}
+          height={450}
         />
+        {priority && item.cover && (
+          // Inline preload hint for the browser preloader.
+          <link rel="preload" as="image" href={optimized || item.cover} />
+        )}
         <span
           className={`absolute top-3 start-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur bg-background/85 ${tone}`}
         >
