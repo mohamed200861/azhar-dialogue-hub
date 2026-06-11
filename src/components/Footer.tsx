@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Facebook, MapPin, Twitter, Youtube, Instagram } from "lucide-react";
+import { Mail, Facebook, MapPin, Twitter, Youtube, Instagram, Download, Share } from "lucide-react";
 import { nav, ui } from "@/i18n/content";
 import { Logo } from "./Logo";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useInstallPrompt } from "./InstallPrompt";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export function Footer() {
   const { settings } = useSiteSettings();
