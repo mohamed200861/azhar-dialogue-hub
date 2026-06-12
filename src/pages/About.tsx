@@ -5,8 +5,8 @@ export default function About() {
     <DynamicPageView
       pageKey="about"
       eyebrow="من نحن"
-      fallbackTitle="اتحاد علماء الأزهر"
-      fallbackDescription="مؤسسة إسلامية دعوية علمية غير ربحية تنشر المنهج الأزهري الوسطي وتخدم قضايا الأمة."
+      fallbackTitle="عن اتحاد علماء الأزهر — التعريف والرسالة"
+      fallbackDescription="تعرّف على اتحاد علماء الأزهر: نشأته وأهدافه ومنهجه الأزهري الوسطي في خدمة العلم والدعوة والحوار والفتوى."
     />
   );
 }

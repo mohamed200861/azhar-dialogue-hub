@@ -97,7 +97,7 @@ export function applySeo(opts: SeoOptions = {}) {
   } else {
     title = `${raw} — ${SITE_NAME}`;
   }
-  title = clamp(title, 70);
+  title = clamp(title, 60);
 
   const description = clamp((opts.description || DEFAULT_DESC).trim(), 160);
   const image = absoluteUrl(opts.image || DEFAULT_OG);

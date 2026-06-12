@@ -128,7 +128,12 @@ export default function Home() {
               <Sparkles className="h-3.5 w-3.5" />
               مؤسسة إسلامية دعوية علمية
             </div>
-            <h1 className="heading-display mb-5">{settings.site_name || hero.title}</h1>
+            <h1 className="heading-display mb-5">
+              {settings.site_name || hero.title}
+              <span className="block text-xl md:text-2xl font-medium opacity-90 mt-2">
+                {settings.site_slogan || hero.subtitle}
+              </span>
+            </h1>
             <p className="text-xl md:text-2xl text-primary-foreground/90 mb-3 font-normal">
               {settings.site_slogan || hero.subtitle}
             </p>

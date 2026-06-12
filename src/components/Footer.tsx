@@ -74,12 +74,19 @@ export function Footer() {
             <h3 className="text-2xl font-bold mb-2">{ui.newsletterTitle}</h3>
             <p className="text-primary-foreground/80 text-sm">{ui.newsletterDesc}</p>
           </div>
-          <form onSubmit={handleSubscribe} className="flex gap-2">
+          <form onSubmit={handleSubscribe} className="flex gap-2" aria-label="الاشتراك في النشرة البريدية">
+            <label htmlFor="footer-newsletter-email" className="sr-only">
+              البريد الإلكتروني للاشتراك في النشرة
+            </label>
             <Input
+              id="footer-newsletter-email"
+              name="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={ui.emailPlaceholder}
+              aria-label="البريد الإلكتروني"
+              autoComplete="email"
               className="bg-white/10 border-white/20 text-primary-foreground placeholder:text-primary-foreground/60"
               dir="rtl"
               disabled={busy}
