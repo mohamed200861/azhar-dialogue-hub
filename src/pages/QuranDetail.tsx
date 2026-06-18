@@ -23,7 +23,27 @@ export default function QuranDetail() {
         const { data: t } = await supabase.from("quran_teachers").select("*").eq("id", data.teacher_id).maybeSingle();
         setTeacher(t);
       }
-      if (data) applySeo({ title: `${data.title} — هيئة القرآن الكريم`, description: data.description ?? "" });
+      if (data) {
+        const pageUrl = `/quran/${data.slug ?? slug}`;
+        const img = (data as any).cover_image || (data as any).thumbnail || (data as any).featured_image || undefined;
+        applySeo({
+          title: `${data.title} — هيئة القرآن الكريم`,
+          description: data.description ?? "",
+          image: img,
+          type: "article",
+          url: pageUrl,
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: data.title,
+            headline: data.title,
+            description: data.description || undefined,
+            image: img ? [img] : undefined,
+            datePublished: (data as any).published_at || data.created_at || undefined,
+            inLanguage: "ar",
+          },
+        });
+      }
     })();
   }, [slug]);
 

@@ -18,7 +18,27 @@ export default function KhutbahDetail() {
     (async () => {
       const { data } = await supabase.from("khutbahs").select("*").eq("slug", slug).eq("publish_status", "published").maybeSingle();
       setK(data);
-      if (data) applySeo({ title: `${data.title} — خطب`, description: data.description ?? "" });
+      if (data) {
+        const pageUrl = `/khutbahs/${data.slug ?? slug}`;
+        applySeo({
+          title: `${data.title} — خطب`,
+          description: data.description ?? "",
+          image: data.featured_image || undefined,
+          type: "article",
+          url: pageUrl,
+          jsonLd: {
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: data.title,
+            headline: data.title,
+            description: data.description || undefined,
+            image: data.featured_image ? [data.featured_image] : undefined,
+            datePublished: data.khutbah_date || data.created_at || undefined,
+            inLanguage: "ar",
+            author: data.speaker_name ? { "@type": "Person", name: data.speaker_name } : undefined,
+          },
+        });
+      }
     })();
   }, [slug]);
 

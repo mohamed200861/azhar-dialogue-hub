@@ -116,12 +116,17 @@ export function applySeo(opts: SeoOptions = {}) {
   setMeta("property", "og:type", type);
   setMeta("property", "og:url", url);
   setMeta("property", "og:image", image);
+  setMeta("property", "og:image:secure_url", image);
+  setMeta("property", "og:image:width", "1200");
+  setMeta("property", "og:image:height", "630");
+  setMeta("property", "og:image:alt", title);
   setMeta("property", "og:locale", "ar_AR");
 
   setMeta("name", "twitter:card", "summary_large_image");
   setMeta("name", "twitter:title", title);
   setMeta("name", "twitter:description", description);
   setMeta("name", "twitter:image", image);
+  setMeta("name", "twitter:image:alt", title);
 
   setJsonLd(opts.jsonLd);
 }
