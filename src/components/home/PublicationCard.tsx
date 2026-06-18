@@ -33,7 +33,9 @@ const TYPE_TONE: Record<PublicationItem["type"], string> = {
 function PublicationCardImpl({ item, priority = false }: { item: PublicationItem; priority?: boolean }) {
   const Icon = ICONS[item.icon] ?? Newspaper;
   const tone = TYPE_TONE[item.type];
-  const optimized = optimizedImage(item.cover, { width: 720, quality: 70 });
+  // Use `contain` resize so the Supabase render endpoint never crops the
+  // image server-side — we want the full image visible inside the card.
+  const optimized = optimizedImage(item.cover, { width: 720, quality: 70, resize: "contain" });
 
   return (
     <Link
@@ -41,34 +43,18 @@ function PublicationCardImpl({ item, priority = false }: { item: PublicationItem
       aria-label={`${item.badge}: ${item.title}`}
       className="card-elegant overflow-hidden flex flex-col group h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted to-secondary/40">
-        {/* Blurred backdrop so portrait covers (books) and landscape photos
-            both fill the frame without ever being cropped. */}
-        {item.cover && (
-          <img
-            src={optimized || item.cover}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-40"
-            loading="lazy"
-            decoding="async"
-          />
-        )}
+      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/60 to-secondary/30">
         <SmartImage
           src={optimized}
           alt={item.title}
           variant={item.variant}
           fallbackClassName="bg-gradient-emerald"
-          className="relative w-full h-full object-contain p-2 group-hover:scale-[1.03] transition-transform duration-500"
+          className="relative w-full h-full object-contain p-2"
           priority={priority}
           sizes="(max-width: 768px) 90vw, (max-width: 1280px) 33vw, 25vw"
           width={720}
           height={540}
         />
-        {priority && item.cover && (
-          // Inline preload hint for the browser preloader.
-          <link rel="preload" as="image" href={optimized || item.cover} />
-        )}
         <span
           className={`absolute top-3 start-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold backdrop-blur bg-background/85 ${tone}`}
         >
