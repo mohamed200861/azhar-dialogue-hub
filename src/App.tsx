@@ -44,6 +44,7 @@ const Quran = lazy(() => import("./pages/Quran.tsx"));
 const QuranDetail = lazy(() => import("./pages/QuranDetail.tsx"));
 const Khutbahs = lazy(() => import("./pages/Khutbahs.tsx"));
 const KhutbahDetail = lazy(() => import("./pages/KhutbahDetail.tsx"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent.tsx"));
 
 // Admin — lazy
 const AdminSetup = lazy(() => import("./pages/admin/Setup.tsx"));
