@@ -34,6 +34,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallback: "/offline.html",
         navigateFallbackDenylist: [
           /^\/admin/,
+          /^\/\.lovable\//,
           /^\/~oauth/,
           /^\/functions\//,
           /^\/rest\//,
