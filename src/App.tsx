@@ -44,6 +44,7 @@ const Quran = lazy(() => import("./pages/Quran.tsx"));
 const QuranDetail = lazy(() => import("./pages/QuranDetail.tsx"));
 const Khutbahs = lazy(() => import("./pages/Khutbahs.tsx"));
 const KhutbahDetail = lazy(() => import("./pages/KhutbahDetail.tsx"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent.tsx"));
 
 // Admin — lazy
 const AdminSetup = lazy(() => import("./pages/admin/Setup.tsx"));
@@ -133,6 +134,9 @@ const App = () => (
                 <Route path="/quran/:slug" element={<QuranDetail />} />
                 <Route path="/khutbahs" element={<Khutbahs />} />
                 <Route path="/khutbahs/:slug" element={<KhutbahDetail />} />
+
+                {/* OAuth consent for external agent integrations (MCP) */}
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
 
                 {/* Admin */}
                 <Route path="/admin/setup" element={<AdminSetup />} />

@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -16,6 +17,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
+    mcpPlugin(),
     VitePWA({
       // Single registrar lives in src/pwa/register.ts — do not auto-inject.
       injectRegister: null,
@@ -32,6 +34,7 @@ export default defineConfig(({ mode }) => ({
         navigateFallback: "/offline.html",
         navigateFallbackDenylist: [
           /^\/admin/,
+          /^\/\.lovable\//,
           /^\/~oauth/,
           /^\/functions\//,
           /^\/rest\//,
