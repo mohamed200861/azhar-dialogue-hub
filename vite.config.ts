@@ -44,7 +44,11 @@ export default defineConfig(({ mode }) => ({
           /^\/rest\//,
           /^\/auth\//,
           /\/_middleware/,
+          // Anything that looks like a real file (verification files, sitemap,
+          // robots, media) must hit the network, never the SPA shell.
+          /\/[^/?]+\.[a-z0-9]{2,5}(\?|$)/i,
         ],
+
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
         // Don't precache the offline page binary twice or admin chunks.
         globIgnores: ["**/admin-*.js", "**/node_modules/**"],
