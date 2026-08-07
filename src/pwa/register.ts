@@ -73,9 +73,25 @@ async function unregisterAndClean(): Promise<void> {
 
 let registered = false;
 
+/**
+ * Older deploys used a NetworkFirst "html-pages" cache together with an
+ * offline.html navigation fallback. Entries in it can still serve stale
+ * (or offline) HTML to returning users, so drop it once on startup.
+ */
+async function dropLegacyHtmlCache(): Promise<void> {
+  try {
+    if (typeof caches === "undefined") return;
+    await caches.delete("html-pages");
+  } catch {
+    /* no-op */
+  }
+}
+
 export function registerPWA(): void {
   if (registered) return;
   registered = true;
+
+  void dropLegacyHtmlCache();
 
   if (isRefusedContext()) {
     // Clean up any stale SW left from previous deploys / earlier visits.
@@ -84,6 +100,7 @@ export function registerPWA(): void {
   }
 
   if (!("serviceWorker" in navigator)) return;
+
 
   // Dynamic import so the workbox-window code is not in the main chunk.
   void import("virtual:pwa-register")
