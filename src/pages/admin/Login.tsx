@@ -12,6 +12,9 @@ import { toast } from "sonner";
 export default function AdminLogin() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const rawNext = params.get("next") ?? "";
+  const next = /^\/(?!\/)/.test(rawNext) ? rawNext : "/admin";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -25,7 +28,7 @@ export default function AdminLogin() {
     })();
   }, []);
 
-  if (!loading && user && isAdmin) return <Navigate to="/admin" replace />;
+  if (!loading && user && isAdmin) return <Navigate to={next} replace />;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
