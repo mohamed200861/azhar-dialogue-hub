@@ -135,6 +135,9 @@ const App = () => (
                 <Route path="/khutbahs" element={<Khutbahs />} />
                 <Route path="/khutbahs/:slug" element={<KhutbahDetail />} />
 
+                {/* OAuth consent for external agent integrations (MCP) */}
+                <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
                 {/* Admin */}
                 <Route path="/admin/setup" element={<AdminSetup />} />
                 <Route path="/admin/login" element={<AdminLogin />} />
