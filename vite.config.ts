@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
+    mcpPlugin(),
     VitePWA({
       // Single registrar lives in src/pwa/register.ts — do not auto-inject.
       injectRegister: null,
