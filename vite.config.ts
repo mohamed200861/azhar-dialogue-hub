@@ -31,7 +31,11 @@ export default defineConfig(({ mode }) => ({
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true,
-        navigateFallback: "/offline.html",
+        // SPA fallback MUST be the app shell, not offline.html.
+        // Workbox registers this NavigationRoute FIRST, so it wins for every
+        // navigation — pointing it at offline.html made every deep link show
+        // the offline page even when online.
+        navigateFallback: "/index.html",
         navigateFallbackDenylist: [
           /^\/admin/,
           /^\/\.lovable\//,
@@ -40,22 +44,15 @@ export default defineConfig(({ mode }) => ({
           /^\/rest\//,
           /^\/auth\//,
           /\/_middleware/,
+          // Anything that looks like a real file (verification files, sitemap,
+          // robots, media) must hit the network, never the SPA shell.
+          /\/[^/?]+\.[a-z0-9]{2,5}(\?|$)/i,
         ],
+
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
         // Don't precache the offline page binary twice or admin chunks.
         globIgnores: ["**/admin-*.js", "**/node_modules/**"],
         runtimeCaching: [
-          {
-            // HTML navigations — always try network first; fall back to cache,
-            // then to offline.html via navigateFallback.
-            urlPattern: ({ request }) => request.mode === "navigate",
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "html-pages",
-              networkTimeoutSeconds: 3,
-              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 * 24 },
-            },
-          },
           {
             // Hashed app assets — long, immutable.
             urlPattern: ({ url, sameOrigin }) =>
