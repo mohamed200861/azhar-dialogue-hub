@@ -78,7 +78,11 @@ export default function AdminLogin() {
       return;
     }
     toast.success("تم تسجيل الدخول بنجاح");
-    navigate("/admin", { replace: true });
+    if (next.startsWith("/.lovable/oauth/consent")) {
+      window.location.href = next;
+      return;
+    }
+    navigate(next, { replace: true });
   };
 
   return (
