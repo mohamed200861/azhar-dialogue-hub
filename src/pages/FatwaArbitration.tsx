@@ -94,7 +94,9 @@ export default function FatwaArbitration() {
         attachment_url = up.data.path;
       }
 
-      const { data: inserted, error } = await supabase.from("fatwa_arbitration_requests").insert({
+      const newId = crypto.randomUUID();
+      const { error } = await supabase.from("fatwa_arbitration_requests").insert({
+        id: newId,
         full_name: form.full_name.trim(),
         email: form.email.trim(),
         phone: form.phone.trim() || null,
@@ -105,9 +107,9 @@ export default function FatwaArbitration() {
         is_urgent: form.is_urgent,
         attachment_url,
         department_id: departmentId,
-      } as any).select("id").maybeSingle();
+      } as any);
       if (error) throw error;
-      fireFormConfirmation("fatwa", inserted?.id);
+      fireFormConfirmation("fatwa", newId);
       setSuccess(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err: any) {

@@ -59,17 +59,19 @@ export default function CivilizationalDialogue() {
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0].message);
     setSubmitting(true);
-    const { data: inserted, error } = await supabase.from("dialogue_requests").insert({
+    const newId = crypto.randomUUID();
+    const { error } = await supabase.from("dialogue_requests").insert({
+      id: newId,
       full_name: parsed.data.full_name,
       email: parsed.data.email,
       organization: parsed.data.organization || null,
       country: parsed.data.country || null,
       request_kind: parsed.data.request_kind,
       message: parsed.data.message,
-    }).select("id").maybeSingle();
+    });
     setSubmitting(false);
     if (error) return toast.error("تعذّر إرسال الطلب. حاول لاحقًا.");
-    fireFormConfirmation("dialogue", inserted?.id);
+    fireFormConfirmation("dialogue", newId);
     setSuccess(true);
     setForm({ full_name: "", email: "", organization: "", country: "", request_kind: REQ_KINDS[0], message: "" });
     window.scrollTo({ top: 0, behavior: "smooth" });

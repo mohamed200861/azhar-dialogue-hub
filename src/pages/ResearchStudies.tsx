@@ -78,16 +78,18 @@ export default function ResearchStudies() {
         if (up.error) throw up.error;
         attachment_url = up.data.path;
       }
-      const { data: inserted, error } = await supabase.from("research_submissions").insert({
+      const newId = crypto.randomUUID();
+      const { error } = await supabase.from("research_submissions").insert({
+        id: newId,
         full_name: parsed.data.full_name,
         email: parsed.data.email,
         title: parsed.data.title,
         category: parsed.data.category,
         abstract: parsed.data.abstract,
         attachment_url,
-      }).select("id").maybeSingle();
+      });
       if (error) throw error;
-      fireFormConfirmation("research", inserted?.id);
+      fireFormConfirmation("research", newId);
       setSuccess(true);
       setForm({ full_name: "", email: "", title: "", category: "sharia", abstract: "" });
       setFile(null);
