@@ -50,19 +50,21 @@ export default function ContactPage() {
       return;
     }
     setSubmitting(true);
-    const { data: inserted, error } = await supabase.from("contact_messages").insert({
+    const newId = crypto.randomUUID();
+    const { error } = await supabase.from("contact_messages").insert({
+      id: newId,
       name: parsed.data.name,
       email: parsed.data.email,
       subject: parsed.data.subject || null,
       contact_type: parsed.data.contact_type,
       message: parsed.data.message,
-    }).select("id").maybeSingle();
+    });
     setSubmitting(false);
     if (error) {
       toast.error("تعذر إرسال الرسالة. يرجى المحاولة لاحقًا.");
       return;
     }
-    fireFormConfirmation("contact", inserted?.id);
+    fireFormConfirmation("contact", newId);
     toast.success("تم إرسال رسالتك بنجاح. سنقوم بالرد عليك في أقرب وقت ممكن.");
     setForm({ name: "", email: "", subject: "", contact_type: REASONS[0], message: "" });
   };
