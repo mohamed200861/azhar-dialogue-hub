@@ -31,6 +31,14 @@ export default function MembershipApplicationsAdmin() {
 
   useEffect(() => { if (sel) setForm({ status: sel.status, admin_notes: sel.admin_notes ?? "" }); }, [sel?.id]);
 
+  const openAttachment = async (path: string) => {
+    const { data, error } = await supabase.storage.from("membership-attachments").createSignedUrl(path, 600);
+    if (error || !data?.signedUrl) return toast.error("تعذر فتح الملف");
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
+
+
   const save = async () => {
     if (!sel) return;
     setSaving(true);
