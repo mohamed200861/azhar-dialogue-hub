@@ -31,6 +31,14 @@ export default function MembershipApplicationsAdmin() {
 
   useEffect(() => { if (sel) setForm({ status: sel.status, admin_notes: sel.admin_notes ?? "" }); }, [sel?.id]);
 
+  const openAttachment = async (path: string) => {
+    const { data, error } = await supabase.storage.from("membership-attachments").createSignedUrl(path, 600);
+    if (error || !data?.signedUrl) return toast.error("تعذر فتح الملف");
+    window.open(data.signedUrl, "_blank", "noopener");
+  };
+
+
+
   const save = async () => {
     if (!sel) return;
     setSaving(true);
@@ -80,8 +88,8 @@ export default function MembershipApplicationsAdmin() {
               <div><strong>الجنسية:</strong> {sel.citizenship ?? "—"}</div>
               <div><strong>التخصص:</strong> {sel.academic_specialization ?? "—"}</div>
               <div><strong>الوظيفة:</strong> {sel.job_title ?? "—"}</div>
-              {sel.cv_url && <div><strong>السيرة الذاتية:</strong> <a href={`https://jqyioadvwldtiszmpmlt.supabase.co/storage/v1/object/authenticated/membership-attachments/${sel.cv_url}`} target="_blank" rel="noreferrer" className="text-primary">عرض</a></div>}
-              {sel.personal_photo_url && <div><strong>الصورة:</strong> <a href={`https://jqyioadvwldtiszmpmlt.supabase.co/storage/v1/object/authenticated/membership-attachments/${sel.personal_photo_url}`} target="_blank" rel="noreferrer" className="text-primary">عرض</a></div>}
+              {sel.cv_url && <div><strong>السيرة الذاتية:</strong> <button type="button" onClick={() => openAttachment(sel.cv_url)} className="text-primary underline">عرض</button></div>}
+              {sel.personal_photo_url && <div><strong>الصورة:</strong> <button type="button" onClick={() => openAttachment(sel.personal_photo_url)} className="text-primary underline">عرض</button></div>}
             </div>
             {sel.scientific_contributions && <div className="mb-3 p-3 bg-muted/40 rounded text-sm"><strong>الإسهامات:</strong><br />{sel.scientific_contributions}</div>}
             <div className="space-y-3 border-t pt-4">
