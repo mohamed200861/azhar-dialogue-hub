@@ -80,8 +80,8 @@ export default function MembershipApplicationsAdmin() {
               <div><strong>الجنسية:</strong> {sel.citizenship ?? "—"}</div>
               <div><strong>التخصص:</strong> {sel.academic_specialization ?? "—"}</div>
               <div><strong>الوظيفة:</strong> {sel.job_title ?? "—"}</div>
-              {sel.cv_url && <div><strong>السيرة الذاتية:</strong> <a href={`https://jqyioadvwldtiszmpmlt.supabase.co/storage/v1/object/authenticated/membership-attachments/${sel.cv_url}`} target="_blank" rel="noreferrer" className="text-primary">عرض</a></div>}
-              {sel.personal_photo_url && <div><strong>الصورة:</strong> <a href={`https://jqyioadvwldtiszmpmlt.supabase.co/storage/v1/object/authenticated/membership-attachments/${sel.personal_photo_url}`} target="_blank" rel="noreferrer" className="text-primary">عرض</a></div>}
+              {sel.cv_url && <div><strong>السيرة الذاتية:</strong> <button type="button" onClick={() => openAttachment(sel.cv_url)} className="text-primary underline">عرض</button></div>}
+              {sel.personal_photo_url && <div><strong>الصورة:</strong> <button type="button" onClick={() => openAttachment(sel.personal_photo_url)} className="text-primary underline">عرض</button></div>}
             </div>
             {sel.scientific_contributions && <div className="mb-3 p-3 bg-muted/40 rounded text-sm"><strong>الإسهامات:</strong><br />{sel.scientific_contributions}</div>}
             <div className="space-y-3 border-t pt-4">
