@@ -58,7 +58,7 @@ const schema = z.object({
 });
 
 async function uploadPrivate(file: File): Promise<string | null> {
-  if (file.size > 20 * 1024 * 1024) { toast.error("الحد الأقصى 20 ميغابايت"); return null; }
+  if (file.size > 10 * 1024 * 1024) { toast.error("الحد الأقصى 10 ميغابايت"); return null; }
   const ok = ["application/pdf","application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "image/jpeg","image/png","image/jpg"].includes(file.type);
