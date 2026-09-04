@@ -23,3 +23,4 @@ project_id = "jqyioadvwldtiszmpmlt"
     verify_jwt = false
   [functions.unsubscribe-confirm]
     verify_jwt = false
+
