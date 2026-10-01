@@ -70,22 +70,27 @@ export default function NewsPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((n) => (
-                <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
-                  <div className="aspect-[16/10] overflow-hidden">
-                    <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
-                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
-                      <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(n.published_at ?? n.created_at)}</span>
+              {filtered.flatMap((n, i) => {
+                const cell: ReactNode = (
+                  <Link key={n.id} to={`/news/${n.slug || n.id}`} className="card-elegant overflow-hidden flex flex-col group">
+                    <div className="aspect-[16/10] overflow-hidden">
+                      <SmartImage src={n.cover_image} alt={n.title} variant="news" fallbackClassName="bg-gradient-emerald" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     </div>
-                    <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
-                    {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
-                    <div className="text-xs text-muted-foreground mt-auto">نُشر بواسطة: <span className="font-medium text-foreground/80">{n.publisher_source}</span></div>
-                  </div>
-                </Link>
-              ))}
+                    <div className="p-6 flex flex-col flex-1">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{n.category}</span>
+                        <span className="inline-flex items-center gap-1"><Calendar className="h-3 w-3" /> {formatDate(n.published_at ?? n.created_at)}</span>
+                      </div>
+                      <h3 className="font-bold text-lg mb-2 line-clamp-2">{n.title}</h3>
+                      {n.excerpt && <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{n.excerpt}</p>}
+                      <div className="text-xs text-muted-foreground mt-auto">نُشر بواسطة: <span className="font-medium text-foreground/80">{n.publisher_source}</span></div>
+                    </div>
+                  </Link>
+                );
+                // In-feed ad ogni 4 notizie (mai dopo l'ultima)
+                const showAd = (i + 1) % 4 === 0 && i < filtered.length - 1;
+                return showAd ? [cell, <InFeedAd key={`ad-${i}`} />] : [cell];
+              })}
             </div>
           )}
         </div>
