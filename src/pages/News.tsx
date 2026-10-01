@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
@@ -9,6 +9,7 @@ import { PageHero } from "@/components/PageHero";
 import { Search, Calendar, Loader2, Download, ArrowRight } from "lucide-react";
 import { formatDate } from "@/lib/admin-utils";
 import { applySeo } from "@/lib/seo";
+import { InFeedAd } from "@/components/InFeedAd";
 
 const CATEGORIES = ["بيانات رسمية","أخبار الاتحاد","مقالات","قضايا معاصرة","تهاني وتعازي","لقاءات وحوارات","أنشطة الاتحاد"];
 
