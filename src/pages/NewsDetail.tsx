@@ -9,6 +9,7 @@ import { formatDate, fileNameFromUrl, resolveStorageUrl } from "@/lib/admin-util
 import { applySeo } from "@/lib/seo";
 import { RichTextView } from "@/components/RichTextView";
 import { ReaderFeedback } from "@/components/ReaderFeedback";
+import { MultiplexAd } from "@/components/MultiplexAd";
 
 export default function NewsDetail() {
   const { slug } = useParams();
@@ -131,6 +132,7 @@ export default function NewsDetail() {
           <ReaderFeedback entityType="news" entityId={post.id} pagePath={`/news/${post.slug || post.id}`} />
         </div>
       </article>
+      <MultiplexAd />
     </SiteLayout>
   );
 }
